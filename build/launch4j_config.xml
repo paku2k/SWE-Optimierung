@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>D:\David\Akten\01_WICHTIG\W02_ARBEIT\02_Ausbildung_Studium\2018_HSH_BEng_Mechatronik\5_2020W\SWE\eclipse-workspace\SWE_MO\build\moptimizer.jar</jar>
+  <outfile>D:\David\Akten\01_WICHTIG\W02_ARBEIT\02_Ausbildung_Studium\2018_HSH_BEng_Mechatronik\5_2020W\SWE\eclipse-workspace\SWE_MO\build\moptimizer.exe</outfile>
+  <errTitle>You need Java (min version 1.8.0) installed for this application!</errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
+  <stayAlive>true</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
+  <manifest></manifest>
+  <icon>D:\David\Akten\01_WICHTIG\W02_ARBEIT\02_Ausbildung_Studium\2018_HSH_BEng_Mechatronik\5_2020W\SWE\eclipse-workspace\SWE_MO\src\_wisFiles\img\icon.ico</icon>
+  <jre>
+    <path></path>
+    <bundledJre64Bit>false</bundledJre64Bit>
+    <bundledJreAsFallback>false</bundledJreAsFallback>
+    <minVersion>1.8.0</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+    <runtimeBits>64/32</runtimeBits>
+  </jre>
+  <versionInfo>
+    <fileVersion>0.0.1.1</fileVersion>
+    <txtFileVersion>0.0.1.1</txtFileVersion>
+    <fileDescription>mOptimizer </fileDescription>
+    <copyright>HSH SWE T3</copyright>
+    <productVersion>0.0.1.1</productVersion>
+    <txtProductVersion>0.0.1.1</txtProductVersion>
+    <productName>mOptimizer</productName>
+    <companyName></companyName>
+    <internalName>moptimizer</internalName>
+    <originalFilename>moptimizer.exe</originalFilename>
+    <trademarks></trademarks>
+    <language>ENGLISH_US</language>
+  </versionInfo>
+</launch4jConfig>
