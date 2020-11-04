@@ -3,8 +3,8 @@ package swe_mo.ui;
 import java.util.LinkedList;
 import java.util.Queue;
 
-/*import swe_mo_optimizer.*;
-import swe_mo_solver.*;*/
+//import swe_mo.optimizer.*;
+//import swe_mo.solver.*;
 
 
 public class UiBackend {	
