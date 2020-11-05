@@ -109,6 +109,7 @@ public class DErand1 {
 		newP = xPop.get(index1);
 		newP.substract(xPop.get(index2));
 		
+		
 		return newP;
 	}
 	

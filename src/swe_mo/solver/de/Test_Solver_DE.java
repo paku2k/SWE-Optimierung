@@ -30,7 +30,7 @@ public class Test_Solver_DE {
 		
 		System.out.println(part1);
 		
-part1.substract(part2);
+		part1.substract(part2);
 		
 		System.out.println(part1);
 
