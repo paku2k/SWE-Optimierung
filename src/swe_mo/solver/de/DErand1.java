@@ -75,18 +75,59 @@ public class DErand1 {
 		p.multiply(this.F);
 		p.add(xPop.get(index));
 		
+		//TODO: Ensure that p is not out of bounds
+		
 		
 		return p;
 	}
 	
 	public Particle_DE crossOver(Particle_DE vectorX, Particle_DE vectorV) {
-		//Crosses over vectorX and vectorV to generate vectorU which will may used in the next generation
-		return new Particle_DE(0);
+		//Crosses over vectorX and vectorV to generate vectorU which may be used in the next generation
+		int n = CRN.rInt(N, 0);
+		int L = 0;
+		Particle_DE u = new Particle_DE(N);
+		
+		do {
+			L++;
+		}
+		while( (CRN.rn(1, 0)<this.CR) && (L<N) );
+		
+		System.out.println("L: "+L);
+		System.out.println("n: "+n);
+
+		
+		for(int j = 0; j<(vectorV.position.size()*2); j++) {
+			
+			if(j>=n&&j<=(n+L-1)) {
+				u.position.set(j%N, vectorV.position.get(j%N));
+			}
+			else {
+				if(j<N) {
+					u.position.set(j, vectorX.position.get(j));
+				}
+			}
+			
+		}
+		
+		return u;
 	}
 	
 	public Particle_DE compare(Particle_DE vectorX, Particle_DE vectorU) {
 		//Compares vectorX and vectorU and returns the better one. If both give the same result, vectorU is returned
-		return vectorU;
+		double xRes=fF.calculate(vectorX);
+		double uRes=fF.calculate(vectorU);
+			
+		System.out.println("XRES: "+xRes);
+		System.out.println("URES: "+uRes);
+		
+		if(xRes<uRes) {
+			return vectorX;
+		}
+		else
+		{
+			return vectorU;
+		}
+		
 	}
 	
 	public Particle_DE calculateRandomDifference(int skip) {
@@ -108,6 +149,7 @@ public class DErand1 {
 		
 		newP = xPop.get(index1);
 		newP.substract(xPop.get(index2));
+		
 		
 		return newP;
 	}
