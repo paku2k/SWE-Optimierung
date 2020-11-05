@@ -10,7 +10,7 @@ public class Test_particle {
 		int max = 10;
 		
 		System.out.println("Hello World!");
-		System.out.println("Der Partikel hat das Attribut a mit dem Wert: "+ Particle_DE.a);
+		
 		
 		//for(int i = 0; i<10; i++) {
 		//	System.out.println("Random Number Methode: "+ CRN.rn(max, min));
