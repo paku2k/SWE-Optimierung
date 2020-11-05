@@ -26,6 +26,7 @@ public class DErand1 {
 		this.lowerBound=lowerBound;
 		this.maxGenerations=maxGenerations;
 		this.fF=fF;
+		this.generation=0;
 		
 				for(int i = NP; i>0; i--) {
 					Particle_DE part = new Particle_DE(N, upperBound, lowerBound);
@@ -45,7 +46,7 @@ public class DErand1 {
 		this.F=F;
 		this.CR=CR;
 		this.fF=fF;
-
+		this.generation=0;
 		this.maxGenerations=maxGenerations;
 		
 				for(int i = NP; i>0; i--) {
@@ -59,9 +60,14 @@ public class DErand1 {
 		// Solver
 	}
 	
-	public Particle_DE calculateV(Particle_DE vectorX) {
+	public Particle_DE calculateV(int index) {
 		//calculates the Vector V for current generation
-		return new Particle_DE(0);
+		Particle_DE p=this.calculateRandomDifference(index);
+		p.multiply(this.F);
+		p.add(xPop.get(index));
+		
+		
+		return p;
 	}
 	
 	public Particle_DE crossOver(Particle_DE vectorX, Particle_DE vectorV) {
