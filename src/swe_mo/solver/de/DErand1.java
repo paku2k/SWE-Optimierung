@@ -26,7 +26,7 @@ public class DErand1 {
 		this.lowerBound=lowerBound;
 		this.maxGenerations=maxGenerations;
 		this.fF=fF;
-		
+		this.xPop = new ArrayList<Particle_DE>();
 				for(int i = NP; i>0; i--) {
 					Particle_DE part = new Particle_DE(N, upperBound, lowerBound);
 			    	xPop.add(part);
@@ -45,6 +45,7 @@ public class DErand1 {
 		this.F=F;
 		this.CR=CR;
 		this.fF=fF;
+		this.xPop = new ArrayList<Particle_DE>();
 
 		this.maxGenerations=maxGenerations;
 		
@@ -77,7 +78,24 @@ public class DErand1 {
 	public Particle_DE calculateRandomDifference(int skip) {
 		//Calculates a random difference between two vectors of the population and returns it as a new vector
 		//skip defines, what index to skip (because it belongs to the original vector)
-		return new Particle_DE(0);
+		int index1;
+		int index2;
+		Particle_DE newP = new Particle_DE(this.N);
+		
+		do {
+			index1 = CRN.rInt(0, (int)NP-1);
+		}
+		while (index1 == skip);
+		
+		do {
+			index2 = CRN.rInt(0, (int)NP-1);
+		}
+		while (index2 == skip || index2 == index1);
+		
+		newP = xPop.get(index1);
+		newP.substract(xPop.get(index2));
+		
+		return newP;
 	}
 	
 

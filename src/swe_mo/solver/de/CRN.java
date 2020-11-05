@@ -7,4 +7,7 @@ public class CRN {
 		double random = (Math.random()*(max-min))+min;
 		return random;
 	}
+	public static int rInt(int max, int min) {
+		return (int)rn((double)min, (double)max+1.0);
+	}
 }

@@ -1,7 +1,9 @@
 package swe_mo.solver.de;
 
-public abstract class FitnessFunction {
+public class FitnessFunction {
 
-	abstract double calculate(Particle_DE vector);
+	 double calculate(Particle_DE vector)	{
+		 return 0.0;
+	 }
 	
 }
