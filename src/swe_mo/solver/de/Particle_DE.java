@@ -1,5 +1,6 @@
 package swe_mo.solver.de;
 import java.util.ArrayList;
+import java.lang.StringBuilder;
 
 public class Particle_DE {
 
@@ -21,5 +22,38 @@ public class Particle_DE {
 	    	position.add(0.0);
 	    }
 	  }
+	
+	public void add(Particle_DE part2) {
+		for(int i=0; i<this.position.size(); i++) {
+			this.position.set(i, part2.position.get(i)+this.position.get(i));
+		}
+		
+	}
+	
+	public void substract(Particle_DE part2) {
+		//Substracts new from this particle
+		for(int i=0; i<this.position.size(); i++) {
+			this.position.set(i, this.position.get(i)-part2.position.get(i));
+		}
+		
+	}
+	
+	public void multiply(double mult) {
+		//Multiply particle
+		for(int i=0; i<this.position.size(); i++) {
+			this.position.set(i, this.position.get(i)*mult);
+		}
+		
+	}
+	
+	@Override
+	public String toString(){
+		String temp="[";
+		for(int i=0; i<this.position.size(); i++) {
+			temp=temp+" , "+this.position.get(i).toString();
+		}
+		temp=temp+"]";
+		return temp;
+	}
 	
 }
