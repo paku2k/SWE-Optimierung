@@ -17,7 +17,10 @@ public class Test_particle {
 		//}
 		
 		Particle_DE p = new Particle_DE(dimension, min, max);
-		System.out.println("Die Position des Partikels ist: " + p.position);
+		System.out.println("Die Position des Partikels p ist: " + p.position);
+		
+		p.position.set(0, (double)0);
+		System.out.println("Die 1. Position des Partikels p wurde auf " + p.position.get(0) + " geändert.");
 	}
 
 }
