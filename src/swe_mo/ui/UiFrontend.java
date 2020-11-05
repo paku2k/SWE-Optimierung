@@ -400,7 +400,7 @@ public class UiFrontend {
 				}
 			}
 		});
-		stCmd.setText("> ");
+		stCmd.setText(">> ");
 		stCmd.addKeyListener(keyadapter);
 		stCmd.addKeyListener(new KeyAdapter() {
 			@Override
@@ -460,7 +460,7 @@ public class UiFrontend {
 		} catch(Exception ex) {
 			clogger.err(AUTH, "readCommand", ex);
 		}
-		stCmd.setText(stCmd.getText()+"\r"+ans+"\r> ");
+		stCmd.setText(stCmd.getText()+"\r"+ans+"\r\r>> ");
 		setCaretPosEnd("stCmd");
 		cmd_last = stCmd.getText().length();
 	}

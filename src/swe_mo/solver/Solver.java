@@ -1,5 +1,6 @@
 package swe_mo.solver;
 
+import swe_mo.solver.de.test_david;
 import swe_mo.ui.clogger;
 
 
@@ -7,37 +8,99 @@ import swe_mo.ui.clogger;
 
 
 public class Solver {
-	final static String AUTH = "SLV";
+	final String AUTH = "SLV";
 	
+	private Thread solverThread;
+	
+	private int id;
 	private String algorithm;
+	private double status;
+	private double status_old;
+	private int result;
+	private int config;
+
 	
-	public Solver(String algorithm){
-		clogger.dbg(AUTH,"solver","test");
+	public Solver(int id, String algorithm){
 		this.algorithm = algorithm;
+		this.id = id;
+		status = -2;
+		
+		//set default config
 	}
-	public Solver() {
-		this("default");
+	public Solver(int id) {
+		this(id, "default");
+	}
+		
+	
+	
+	public void configure(String parameter, Object value) throws Exception{
+
+		config = (int)value;
+		
+		status = -1;
+	}
+	
+	public void start(){
+		//determine which method to use, initialize and start
+		
+		solverThread = new Thread(new Runnable_DE());
+		solverThread.start();
+		status = 0;
+
 	}
 	
 	
-	public void configure(String parameter, String value) throws Exception{
+	public void terminate(){
 		
 	}
 	
-	public void start() throws Exception{
-		
+	
+	public int getResult() throws InterruptedException {
+		if(status>100) {
+			solverThread.join();
+			return result;
+		}
+		return 0;
 	}
 	
-	public void terminate() throws Exception{
-		
+	public double status() {
+		return status;
 	}
 	
-	public boolean checkResult() {
-		return false;
+	public boolean statusChng() {
+		boolean r = status!=status_old;
+		status_old = status;
+		return r;
 	}
 	
-	public void getResult() {
-		
+	
+	
+	
+	public void updateStatus(double s) {
+		status = s;
+	}
+	
+	
+
+	
+	
+	
+	
+	
+	public class Runnable_DE implements Runnable{		
+		@Override
+		public void run() {
+			result = new test_david(id,config).calc();//DEsolve
+			if(status<=100) status = 101;
+		}
+	}
+	
+	
+	public class Runnable_PSO implements Runnable{	
+		@Override
+		public void run() {
+			result = new test_david(id, config).calc();//PSOsolve
+		}
 	}
 	
 }
