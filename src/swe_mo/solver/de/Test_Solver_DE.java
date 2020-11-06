@@ -23,6 +23,9 @@ public class Test_Solver_DE {
 		System.out.println(part2);		
 		
 		System.out.println(rand1.compare(part1, part2));
+		part1.substract(part2);
+		
+		System.out.println(part1);
 
 	}
 
