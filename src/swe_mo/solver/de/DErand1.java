@@ -12,8 +12,10 @@ public class DErand1 {
 	private int generation;
 	double upperBound;
 	double lowerBound;
+	double best = Double.MAX_VALUE;
 	FitnessFunction fF;
 	ArrayList<Particle_DE> xPop;
+	Particle_DE bestParicle = new Particle_DE(N);
 	
 	public DErand1(int N, int NP, double F, double CR, int maxGenerations, double upperBound, double lowerBound, FitnessFunction fF) {
 		//With this constructor the population will be created with random set particles within the provided bounds. 
@@ -65,8 +67,14 @@ public class DErand1 {
 	
 	}
 	
-	public void solve() {
+	public double solve() {
 		// Solver
+		for(this.generation=0; generation<this.maxGenerations; generation++) {
+			for(int i=0; i<NP; i++) {
+				xPop.set(i, compare(xPop.get(i), crossOver(xPop.get(i), calculateV(i))));
+			}
+		}
+		return best;
 	}
 	
 	public Particle_DE calculateV(int index) {
@@ -74,9 +82,15 @@ public class DErand1 {
 		Particle_DE p=this.calculateRandomDifference(index);
 		p.multiply(this.F);
 		p.add(xPop.get(index));
-		
-		//TODO: Ensure that p is not out of bounds
-		
+	
+		for (int i = 0; i < p.position.size(); i++) {
+			if(p.position.get(i)>this.upperBound) {
+				p.position.set(i, this.upperBound);
+			}
+			if(p.position.get(i)<this.lowerBound) {
+				p.position.set(i, this.lowerBound);
+			}
+		}
 		
 		return p;
 	}
@@ -121,10 +135,18 @@ public class DErand1 {
 		System.out.println("URES: "+uRes);
 		
 		if(xRes<uRes) {
+			if(xRes<this.best) {
+				this.best = xRes;
+				this.bestParicle = vectorX;
+			}
 			return vectorX;
 		}
 		else
 		{
+			if(uRes<this.best) {
+				this.best = uRes;
+				this.bestParicle = vectorU;
+			}
 			return vectorU;
 		}
 		
