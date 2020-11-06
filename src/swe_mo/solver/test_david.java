@@ -1,6 +1,4 @@
-package swe_mo.solver.de;
-
-import swe_mo.solver.SolverManager;
+package swe_mo.solver;
 
 public class test_david {
 	private int result;

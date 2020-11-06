@@ -1,6 +1,5 @@
 package swe_mo.solver;
 
-import swe_mo.solver.de.test_david;
 import swe_mo.ui.clogger;
 
 
