@@ -18,12 +18,14 @@ public class Solver {
 	private double status_old;
 	private int result;
 	private int config;
+	private boolean terminated;
 
 	
 	public Solver(int id, String algorithm){
 		this.algorithm = algorithm;
 		this.id = id;
 		status = -2;
+		terminated = false;
 		
 		//set default config
 	}
@@ -49,10 +51,15 @@ public class Solver {
 
 	}
 	
-	
-	public void terminate(){
-		
+	public void terminate() {
+		terminated = true;
+		status = 102;
 	}
+	
+	public boolean getTerminatedStatus() {
+		return terminated;
+	}
+	
 	
 	
 	public int getResult() throws InterruptedException {
@@ -87,10 +94,11 @@ public class Solver {
 	
 	
 	
-	public class Runnable_DE implements Runnable{		
+	public class Runnable_DE implements Runnable{	
+		test_david t = new test_david(id,config);
 		@Override
 		public void run() {
-			result = new test_david(id,config).calc();//DEsolve
+			result = t.calc();//DEsolve
 			if(status<=100) status = 101;
 		}
 	}

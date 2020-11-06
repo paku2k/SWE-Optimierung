@@ -13,22 +13,21 @@ public class test_david {
 	
 	public test_david(int id, int config){
 		this.id = id;
-		this.MAX = config;
+		this.MAX = (double)config*1000L;
 	}
 	
 	public int calc() {
 		status_m = 0;
-		for(double i=0; i<MAX; i++) {
+		for(double i=0; i<MAX && !SolverManager.checkTerminated(id); i++) {
 			result *= 0.1;
 			result += i;
 			status = i/MAX*100;
 			i*=1.000000002;
-			if(status > status_m+5) {
+			if(status > status_m+2) {
 				SolverManager.updateStatus(id, status);
 				status_m = status;
 			}
 		}
-		SolverManager.updateStatus(id, 100);
 		return result;
 	}
 }

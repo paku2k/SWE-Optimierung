@@ -50,6 +50,8 @@ public class UiBackend {
 			
 		}
 		
+		SolverManager.terminateAll();
+		
 		clogger.info(AUTH, "run", "UiBackend stopped");
 	}
 	
@@ -197,6 +199,15 @@ public class UiBackend {
 				} catch(Exception e) {
 					clogger.err(AUTH, "cmd_interprete", e);
 					return "Could not start (Test-)Solver";
+				}
+				
+		} else if(cmd.equals("ts term")) {
+				try {
+					SolverManager.terminate(solver_id);
+					return "(Test-)Solver terminated";
+				} catch(Exception e) {
+					clogger.err(AUTH, "cmd_interprete", e);
+					return "Could not terminate (Test-)Solver";
 				}
 
 				

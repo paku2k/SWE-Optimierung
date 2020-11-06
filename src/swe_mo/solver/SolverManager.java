@@ -33,13 +33,15 @@ public class SolverManager {
 		} else if(status(id) == 101) {
 			throw new Exception("Solving finished, Results already available.");	
 		} else if(status(id) == 102) {
-			throw new Exception("Solving terminated with failure.");				
+			throw new Exception("Solving terminated.");	
 		} else if(status(id) == 103) {
+			throw new Exception("Solving terminated with failure.");		
+		} else if(status(id) == 104) {
 			throw new Exception("Solver not found (deleted).");			
 		} else if(status(id) >= 0 && status(id) < 100) {
 			throw new Exception("Solver already running.");						
 		}
-		runningSolvers.get(id).configure("max",2000000000);		
+		runningSolvers.get(id).configure("max",100000000);		
 	}
 	
 	
@@ -53,8 +55,10 @@ public class SolverManager {
 		} else if(status(id) == 101) {
 			throw new Exception("Solving finished, Results already available.");	
 		} else if(status(id) == 102) {
-			throw new Exception("Solving terminated with failure.");				
+			throw new Exception("Solving terminated.");	
 		} else if(status(id) == 103) {
+			throw new Exception("Solving terminated with failure.");			
+		} else if(status(id) == 104) {
 			throw new Exception("Solver not found (deleted).");			
 		} else if(status(id) >= 0 && status(id) < 100) {
 			throw new Exception("Solver already running.");						
@@ -73,8 +77,11 @@ public class SolverManager {
 		} else if(status(id) == 100) {
 			throw new Exception("Solving finished, preparing Results.");	
 		} else if(status(id) == 102) {
-			throw new Exception("Solving terminated with failure.");				
+			throw new Exception("Solving terminated.");	
 		} else if(status(id) == 103) {
+			clogger.warn(AUTH, "result", "Solving terminated with failure.");	
+			return runningSolvers.get(id).getResult();
+		} else if(status(id) == 104) {
 			throw new Exception("Solver not found (deleted).");			
 		} else if(status(id) >= 0 && status(id) < 100) {
 			throw new Exception("Solver running.");						
@@ -85,12 +92,71 @@ public class SolverManager {
 	public static void delete(int id) throws Exception {
 		if(status(id) == -3) {
 			throw new Exception("No Solver with this ID.");	
-		} else if(status(id) == 103) {
+		} else if(status(id) == 104) {
 			throw new Exception("Solver already deleted.");			
 		} else if(status(id) >= 0 && status(id) < 100) {
 			throw new Exception("Solver is running. Try terminating.");						
 		}
 		runningSolvers.set(id, null);
+	}
+	
+	
+	public static boolean checkTerminated(int id){
+		try {
+			if(status(id) == -3) {
+				throw new Exception("No Solver with this ID.");
+			} else if(status(id) == -2) {
+				throw new Exception("Solver not configured");	
+			} else if(status(id) == -1) {
+				throw new Exception("Solver not started");	
+			} else if(status(id) == 100) {
+				throw new Exception("Solving finished, preparing Results.");	
+			} else if(status(id) == 101) {
+				throw new Exception("Solving finished, Results already available.");
+			} else if(status(id) == 102) {
+				throw new Exception("Solving already terminated.");	
+			} else if(status(id) == 103) {
+				throw new Exception("Solving terminated with failure.");				
+			} else if(status(id) == 104) {
+				throw new Exception("Solver not found (deleted).");						
+			} else
+				return runningSolvers.get(id).getTerminatedStatus();
+		} catch(Exception e) {
+			clogger.err(AUTH, "checkTerminated", e);
+			return true;
+		}
+	}
+	
+	
+	public static void terminate(int id) throws Exception{
+		if(status(id) == -3) {
+			throw new Exception("No Solver with this ID.");
+		} else if(status(id) == -2) {
+			throw new Exception("Solver not configured");	
+		} else if(status(id) == -1) {
+			throw new Exception("Solver not started");	
+		} else if(status(id) == 100) {
+			throw new Exception("Solving finished, preparing Results.");	
+		} else if(status(id) == 101) {
+			throw new Exception("Solving finished, Results already available.");	
+		} else if(status(id) == 102) {
+			throw new Exception("Solving already terminated.");	
+		} else if(status(id) == 103) {
+			throw new Exception("Solving terminated with failure.");				
+		} else if(status(id) == 104) {
+			throw new Exception("Solver not found (deleted).");	
+		}
+		runningSolvers.get(id).terminate();
+	}
+	
+	public static void terminateAll() {
+		for(int i=0; i < runningSolvers.size(); i++) {
+			try {
+				terminate(i);
+			} catch (Exception e) {
+				
+			}
+		}
 	}
 	
 	
@@ -101,15 +167,16 @@ public class SolverManager {
 		//-1		solver configured
 		//[0,100] 	started, progress [%]
 		//101 		ended, result ready
-		//102 		error
-		//103 		deleted
+		//102 		terminated
+		//103 		error
+		//104 		deleted
 		if(id >= runningSolvers.size()) {
 			return -3;			
 		} else {
 			try {
 				return runningSolvers.get(id).status();
 			} catch(Exception e) {
-				return 103;	//Solver Object not accessible anymore -> deleted		
+				return 104;	//Solver Object not accessible anymore -> deleted		
 			}
 		}
 	}
