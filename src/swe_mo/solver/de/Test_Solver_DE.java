@@ -20,8 +20,9 @@ public class Test_Solver_DE {
 		Particle_DE part2 = new Particle_DE(10,-10.0,10.0);
 		
 		System.out.println(part1);
-		System.out.println(part2);		
 		
+		System.out.println("HALLO");
+		System.out.println("DANIEL");	
 		System.out.println(rand1.compare(part1, part2));
 
 	}
