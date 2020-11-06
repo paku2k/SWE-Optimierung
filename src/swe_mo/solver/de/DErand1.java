@@ -67,6 +67,9 @@ public class DErand1 {
 	
 	public void solve() {
 		// Solver
+		for(this.generation=0; generation<this.maxGenerations; generation++) {
+			
+		}
 	}
 	
 	public Particle_DE calculateV(int index) {
