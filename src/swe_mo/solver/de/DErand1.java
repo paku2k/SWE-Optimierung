@@ -12,14 +12,16 @@ public class DErand1 {
 	private int generation;
 	double upperBound;
 	double lowerBound;
-	double best = Double.MAX_VALUE;
+	double best;
+	Particle_DE bestParicle;
 	FitnessFunction fF;
 	ArrayList<Particle_DE> xPop;
-	Particle_DE bestParicle = new Particle_DE(N);
 	
 	public DErand1(int N, int NP, double F, double CR, int maxGenerations, double upperBound, double lowerBound, FitnessFunction fF) {
 		//With this constructor the population will be created with random set particles within the provided bounds. 
 		
+		this.bestParicle  = new Particle_DE(N);
+		this.best = Double.MAX_VALUE;
 		this.N=N;
 		this.NP=NP;
 		this.F=F;
@@ -46,7 +48,9 @@ public class DErand1 {
 		// it will initialize all NP particles with all dimensions to be zero
 		
 		//No bounds are created
-		
+
+		this.bestParicle  = new Particle_DE(N);
+		this.best = Double.MAX_VALUE;
 		this.N=N;
 		this.NP=NP;
 		this.F=F;
@@ -68,12 +72,20 @@ public class DErand1 {
 	}
 	
 	public double solve() {
+
 		// Solver
 		for(this.generation=0; generation<this.maxGenerations; generation++) {
+			
 			for(int i=0; i<NP; i++) {
+
 				xPop.set(i, compare(xPop.get(i), crossOver(xPop.get(i), calculateV(i))));
+
+				
 			}
+			//System.out.println("\n\n NEW GENERATION \n\n");
+
 		}
+
 		return best;
 	}
 	
@@ -82,6 +94,7 @@ public class DErand1 {
 		Particle_DE p=this.calculateRandomDifference(index);
 		p.multiply(this.F);
 		p.add(xPop.get(index));
+
 	
 		for (int i = 0; i < p.position.size(); i++) {
 			if(p.position.get(i)>this.upperBound) {
@@ -91,6 +104,11 @@ public class DErand1 {
 				p.position.set(i, this.lowerBound);
 			}
 		}
+		
+		//System.out.println("v: "+p);
+		//System.out.println("x: "+xPop.get(index));
+
+
 		
 		return p;
 	}
@@ -104,10 +122,10 @@ public class DErand1 {
 		do {
 			L++;
 		}
+	
 		while( (CRN.rn(1, 0)<this.CR) && (L<N) );
-		
-		System.out.println("L: "+L);
-		System.out.println("n: "+n);
+		//System.out.println("L: "+L);
+		//System.out.println("n: "+n);
 
 		
 		for(int j = 0; j<(vectorV.position.size()*2); j++) {
@@ -122,31 +140,49 @@ public class DErand1 {
 			}
 			
 		}
+
+		//System.out.println("u: "+u);
+
 		
 		return u;
 	}
 	
 	public Particle_DE compare(Particle_DE vectorX, Particle_DE vectorU) {
 		//Compares vectorX and vectorU and returns the better one. If both give the same result, vectorU is returned
-		double xRes=fF.calculate(vectorX);
-		double uRes=fF.calculate(vectorU);
-			
-		System.out.println("XRES: "+xRes);
-		System.out.println("URES: "+uRes);
+		double xRes=fF.calculateRastrigin(vectorX);
+		double uRes=fF.calculateRastrigin(vectorU);
+		//System.out.println("current best: "+best);
+		//System.out.println("xRes: "+xRes);
+		//System.out.println("uRes: "+uRes);
+
 		
 		if(xRes<uRes) {
 			if(xRes<this.best) {
 				this.best = xRes;
-				this.bestParicle = vectorX;
+				bestParicle = vectorX;
+				System.out.println("Best Value: " + best);
+
+				//System.out.println("BestX: "+vectorX);
+
 			}
+			
+
 			return vectorX;
 		}
 		else
 		{
 			if(uRes<this.best) {
 				this.best = uRes;
-				this.bestParicle = vectorU;
+				bestParicle = vectorU;
+				System.out.println("Best Value: " + best);
+
+				//System.out.println("BestU: "+vectorU);
+
+
+
 			}
+
+			
 			return vectorU;
 		}
 		
