@@ -54,7 +54,13 @@ public class clogger {
 									+colorToUiF(type.getColor())+" | "+type.getName()+" | "
 																+msg
 																/*+"  @ "+AUTH+" <"+sourceMethod+">"*/);
-			
+		}	
+		if(filterLog(type,"System.out")) {	
+			//for testing
+			System.out.println((new SimpleDateFormat("HH:mm:ss.SSS").format(timeStamp))
+					+" | "+type.getName()+" | "
+					+msg
+					+"  @ "+AUTH+" <"+sourceMethod+">");
 		}
 		if(filterLog(type,"LogFile")) {
 			ExcelWB.addLine_logData((new SimpleDateFormat("yy.MM.dd HH:mm:ss.SSS").format(timeStamp)), type.getName(), AUTH, sourceMethod, msg);
@@ -67,8 +73,10 @@ public class clogger {
 	private static boolean filterLog(LogType type, String outputstream) {
 		if(outputstream.equals("UIlog"))
 			return type.getLevel() >= DEBUG.getLevel();
-		else if(outputstream.equals("LogFile"))
-			return true;
+			else if(outputstream.equals("LogFile"))
+				return true;
+			else if(outputstream.equals("System.out"))
+				return true;
 		else 
 			return true;
 	}
