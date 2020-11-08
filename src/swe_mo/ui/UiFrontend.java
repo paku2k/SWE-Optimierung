@@ -346,7 +346,7 @@ public class UiFrontend {
 		stCmd.addVerifyKeyListener(new VerifyKeyListener() {
 			public void verifyKey(VerifyEvent e) {
 				if(specialFnKeys(e, true)) return;
-				
+								
 				if (e.keyCode==99) {
 					if(CTRL_pressed) return; //allow ctrl+c
 					if(ALT_pressed) return;	//allow alt+c for direct copy
@@ -354,21 +354,32 @@ public class UiFrontend {
 				if (e.keyCode==SWT.ARROW_LEFT || e.keyCode==SWT.ARROW_RIGHT) {
 					if(SHIFT_pressed) return; //allow marking
 				}
-				
-				if (stCmd.getCaretOffset() < cmd_last) {
-					setCaretPosEnd("stCmd");
+				if (e.keyCode==97) {
+					if(CTRL_pressed) {
+						stCmd.setSelection(cmd_last, stCmd.getText().length());
+					}
 				}
 				if (e.keyCode==118) {
 					e.doit = false;
+					if(stCmd.getCaretOffset() >= cmd_last) 
+						e.doit = true;
+					else
+						setCaretPosEnd("stCmd");
+						
 					if(!CTRL_pressed) return;
 					//check clipboard text before pasting
 					try {
+						e.doit = false;
 						String clipboard = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
 						clipboard = clipboard.replace("> ","").replace(">","").replace("\n", "").replace("\r", "");
 						stCmd.setText(stCmd.getText()+clipboard);	
 					} catch (Exception ex) {
-						System.out.println("x");
+
 					}					
+					setCaretPosEnd("stCmd");
+				}
+				
+				if (stCmd.getCaretOffset() < cmd_last) {
 					setCaretPosEnd("stCmd");
 				}
 				if (e.keyCode==SWT.ARROW_UP ||
@@ -389,7 +400,7 @@ public class UiFrontend {
 				}
 			}
 		});
-		stCmd.setText("> ");
+		stCmd.setText(">> ");
 		stCmd.addKeyListener(keyadapter);
 		stCmd.addKeyListener(new KeyAdapter() {
 			@Override
@@ -449,7 +460,7 @@ public class UiFrontend {
 		} catch(Exception ex) {
 			clogger.err(AUTH, "readCommand", ex);
 		}
-		stCmd.setText(stCmd.getText()+"\r"+ans+"\r> ");
+		stCmd.setText(stCmd.getText()+"\r"+ans+"\r\r>> ");
 		setCaretPosEnd("stCmd");
 		cmd_last = stCmd.getText().length();
 	}

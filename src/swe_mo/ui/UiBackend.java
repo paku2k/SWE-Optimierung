@@ -3,6 +3,8 @@ package swe_mo.ui;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import swe_mo.solver.SolverManager;
+
 //import swe_mo.optimizer.*;
 //import swe_mo.solver.*;
 
@@ -16,7 +18,7 @@ public class UiBackend {
 	private static Thread Thread_UiFrontend;
 	private static Thread Thread_WebInterfaceServer;
 	
-	
+	static int solver_id;
 	
 	public static void start() {
 		if(exit) return;
@@ -47,6 +49,8 @@ public class UiBackend {
 			clogger.err(AUTH, "run",  e);		
 			
 		}
+		
+		SolverManager.terminateAll();
 		
 		clogger.info(AUTH, "run", "UiBackend stopped");
 	}
@@ -95,13 +99,15 @@ public class UiBackend {
 			clogger.err(_AUTH, "while_run", e);
 		}
 				
+		//solver test status
+		if(SolverManager.status(solver_id) >= 0 && SolverManager.status(solver_id) <= 100) {
+			if(SolverManager.statusChng(solver_id)) clogger.dbg(AUTH, "while_run", "Status is "+(int)SolverManager.status(solver_id)+"%");			
+		}
+				
 	}
 	
 	
-	
-
-	
-	
+		
 	
 	public static int cmd_cnt = 0;
 	public static Object cmd(String AUTH, String cmd) {
@@ -165,6 +171,82 @@ public class UiBackend {
 				return "could not open (wis not running)";
 			}
 			
+			
+			
+		} else if(cmd.equals("ts tst")) {
+			cmd(AUTH,"ts create");
+			cmd(AUTH,"ts config");
+			cmd(AUTH,"ts start");
+			
+			
+		} else if(cmd.equals("ts create")) {
+				solver_id = SolverManager.newSolver("");
+				return solver_id;
+				
+		} else if(cmd.equals("ts config")) {
+				try {
+					SolverManager.configure(solver_id);
+					return "(Test-)Solver configured";
+				} catch(Exception e) {
+					clogger.err(AUTH, "cmd_interprete", e);
+					return "Could not configure (Test-)Solver";
+				}
+				
+		} else if(cmd.equals("ts start")) {
+				try {
+					SolverManager.start(solver_id);
+					return "(Test-)Solver started";
+				} catch(Exception e) {
+					clogger.err(AUTH, "cmd_interprete", e);
+					return "Could not start (Test-)Solver";
+				}
+				
+		} else if(cmd.equals("ts term")) {
+				try {
+					SolverManager.terminate(solver_id);
+					return "(Test-)Solver terminated";
+				} catch(Exception e) {
+					clogger.err(AUTH, "cmd_interprete", e);
+					return "Could not terminate (Test-)Solver";
+				}
+
+				
+		} else if(cmd.equals("ts getres")) {
+				try {
+					return "Result is: "+SolverManager.result(solver_id);
+				} catch(Exception e) {
+					clogger.err(_AUTH, "cmd_interprete", e);
+				}
+				return "No result available";
+
+				
+		} else if(cmd.equals("ts getstat")) {
+				try {
+					return "Status: "+(int)SolverManager.status(solver_id);					
+				} catch(Exception e) {
+					clogger.err(_AUTH, "cmd_interprete", e);
+				}
+				return "Error while reading status";
+				
+				
+		} else if(cmd.equals("ts delete")) {
+				try {
+					SolverManager.delete(solver_id);
+					return "Solver deleted";
+				} catch(Exception e) {
+					clogger.err(_AUTH, "cmd_interprete", e);
+				}
+				return "Could not delete";
+				
+		} else if(cmd.equals("help ts")) {
+			return     "List of commands (ts)\r"
+					 + "\t" + "create\r"
+					 + "\t" + "config\r"
+					 + "\t" + "start\r"
+					 + "\t" + "getstat\r"
+					 + "\t" + "getres\r"
+					 + "\t" + "delete";
+			
 		} else if(cmd.equals("help")) {
 			return     "List of commands\r"
 					 + "\t" + "start\r"
@@ -179,7 +261,7 @@ public class UiBackend {
 					 + "\t\t" + "start webgui\r"
 					 + "\t\t" + "get\r"
 					 + "\t\t\t" + "port\r"
-					 + "\t\t\t" + "status\r";
+					 + "\t\t\t" + "status";
 			
 			
 		} else {
