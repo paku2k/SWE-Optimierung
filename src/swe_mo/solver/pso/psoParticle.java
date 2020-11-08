@@ -2,7 +2,6 @@
 package swe_mo.solver.pso;
 
 import java.util.ArrayList;
-import swe_mo.solver.de.CRN;
 import swe_mo.solver.de.Particle_DE;
 
 public class psoParticle extends Particle_DE {
@@ -11,13 +10,17 @@ public class psoParticle extends Particle_DE {
 	ArrayList<Double> velocity = new ArrayList<Double>();
 	ArrayList<Double> personalBestPosition = new ArrayList<Double>();
 	double personalMinimum;
-	double w, cc, cs;  								//wie werden sie inizialisiert? setter/getter-Methoden?	
+	double w, cc, cs, dt;
 	
 	
-	public psoParticle(int dimension, double max, double min) {
+	public psoParticle(int dimension, double max, double min, double w, double cc, double cs, double dt) {
 			//This constructor creates a particle with the given dimension 
 			//and initializes all dimensions with a random number within the given bounds
 		super(dimension, max, min);
+		this.w=w;
+		this.cc=cc;
+		this.cs=cs;
+		this.dt=dt;
 		initializesVelocity();
 		updatePersonalBestPosition();
 	}
@@ -32,31 +35,31 @@ public class psoParticle extends Particle_DE {
 	
 	
 	public void initializesVelocity(){
-		for(int i=0;i<this.position.size();i++) {
-			this.velocity.add(this.position.get(i));
+		for(int i=0;i<position.size();i++) {
+			velocity.add(position.get(i));
 		}
 		
 	}
 	
-	public void updateVelocity(psoParticle globalBestPosition) {
+	public void updateVelocity(ArrayList<Double> socialComponent) {
 		double rc=Math.random();
 		double rs=Math.random();
-		for(int i=0; i<this.velocity.size(); i++) {
-			this.velocity.set(i, w*this.velocity.get(i)  +  cc*rc*(this.personalBestPosition.get(i)-this.position.get(i))  +  cs*rs*(globalBestPosition.position.get(i)-this.position.get(i)));
+		for(int i=0; i<velocity.size(); i++) {
+			velocity.set(i, w*velocity.get(i)  +  cc*rc*(personalBestPosition.get(i)-position.get(i))  +  cs*rs*(socialComponent.get(i)-position.get(i)));
 		}
 	}
 		
 	
 	public void updatePersonalBestPosition() {
-		for(int i=0;i<this.position.size();i++) {
-			this.personalBestPosition.set(i,this.position.get(i));
+		for(int i=0;i<position.size();i++) {
+			personalBestPosition.set(i,position.get(i));
 		}
 	}
 	
 	
 	public void updatePosition() {
-		for(int i=0; i<this.position.size(); i++) {
-			this.position.set(i, this.position.get(i)+this.velocity.get(i));
+		for(int i=0; i<position.size(); i++) {
+			position.set(i, position.get(i)+velocity.get(i)*dt);
 		}
 	}
 	
