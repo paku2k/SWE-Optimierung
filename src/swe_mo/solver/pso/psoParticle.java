@@ -22,7 +22,7 @@ public class psoParticle extends Particle_DE {
 		this.cs=cs;
 		this.dt=dt;
 		initializesVelocity();
-		updatePersonalBestPosition();
+		initializesPersonalBestPosition();
 	}
 		
 	
@@ -30,7 +30,7 @@ public class psoParticle extends Particle_DE {
 		//This constructor creates a particle with the given dimension and initializes all dimensions with zero
 		super(dimension);
 		initializesVelocity();
-		updatePersonalBestPosition();
+		initializesPersonalBestPosition();
 	}
 	
 	
@@ -52,10 +52,16 @@ public class psoParticle extends Particle_DE {
 	
 	public void updatePersonalBestPosition() {
 		for(int i=0;i<position.size();i++) {
-			personalBestPosition.set(i,position.get(i));
+			personalBestPosition.set(i, position.get(i));
 		}
 	}
 	
+	
+	public void initializesPersonalBestPosition() {
+		for(int i=0;i<position.size();i++) {
+			personalBestPosition.add(i, position.get(i));
+		}
+	}
 	
 	public void updatePosition() {
 		for(int i=0; i<position.size(); i++) {
