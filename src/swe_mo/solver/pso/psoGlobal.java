@@ -32,6 +32,7 @@ public class psoGlobal {
 			this.dt = dt;
 			this.numIter = numIter;
 			globalMinimum = 100000;
+			
 		}
 	
 			public void solve() {
@@ -45,13 +46,13 @@ public class psoGlobal {
 				
 				for(int i=0; i<numIter; i++) {
 					for(int j=0; j<particleCount; j++) {
+						updateGlobalBestPosition(dimension, swarm.get(j).position);
 						swarm.get(j).updateVelocity(globalBestPosition);
 						swarm.get(j).updatePosition();
 						swarm.get(j).updatePersonalBestPosition();
-						updateGlobalBestPosition(dimension, swarm.get(j).position);
 					}
-					System.out.printf("Minimum in Iteration %i: %d", i, globalMinimum);
-					System.out.printf("Beste Position in Iteration %i: %s", i, Arrays.toString(swarm.toArray()));
+					System.out.println("Minimum in Iteration "+i+": "+globalMinimum);
+					System.out.println("Beste Position in Iteration "+i+": "+Arrays.toString(swarm.toArray()));
 				}
 			}
 			
@@ -60,6 +61,7 @@ public class psoGlobal {
 				double minimum = debugFitter.calcSpehreFunction(dimension, position);
 				if(minimum<globalMinimum) {
 					globalMinimum = minimum;
+					globalBestPosition = new ArrayList<Double>(position);
 				}
 			}
 			
