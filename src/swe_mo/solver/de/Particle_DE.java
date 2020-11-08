@@ -4,7 +4,7 @@ import java.lang.StringBuilder;
 
 public class Particle_DE {
 
-	ArrayList<Double> position = new ArrayList<Double>(); 
+	public ArrayList<Double> position = new ArrayList<Double>(); 
 	
 	
 	public Particle_DE(int dimension, double max, double min) {
