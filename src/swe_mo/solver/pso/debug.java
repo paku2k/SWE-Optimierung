@@ -4,7 +4,17 @@ public class debug {
 
 	public static void main(String[] args) {
 
-		psoGlobal psoSolver = new psoGlobal(5, -5.12, 5.12, 100, 0.7, 0.6, 0.5, 0.9, 5000);
+		int dimension = 5;
+		double min = -5.12;
+		double max = 5.12;
+		int particleCount = 200;
+		double w = 0.7;
+		double cc = 0.5;
+		double cs = 0.5;
+		double dt = 1;
+		int numIter = 5000;
+		
+		psoGlobal psoSolver = new psoGlobal(dimension, min, max, particleCount, w, cc, cs, dt, numIter);
 		psoSolver.solve();
 	}
 }

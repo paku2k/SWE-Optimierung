@@ -1,41 +1,42 @@
 package swe_mo.solver.pso;
 
 import java.util.ArrayList;
-import java.util.Arrays; 
-//import swe_mo.solver.pso.*;
+import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class psoGlobal {
 
 	int dimension;
-	double globalMinimum;
+	int numIter;
 	int particleCount;
 	double min;
 	double max;
-	ArrayList<Double> globalBestPosition = new ArrayList<Double>();
 	double w;
 	double cc;
 	double cs;
 	double dt;
-	int numIter;
+	double globalMinimum;
+	ArrayList<Double> globalBestPosition = new ArrayList<Double>();
 	debugFitness debugFitter = new debugFitness();
 
 	
 		public psoGlobal(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter) {
-		
+		// This constructor creates and  initializes a psoGlobal-Solver for classical Particle Swarm Optimization.
+			
 			this.dimension = dimension;
+			this.numIter = numIter;
+			this.particleCount = particleCount;
 			this.min = min;
 			this.max = max;
-			this.particleCount = particleCount;
 			this.w = w;
 			this.cc = cc;
 			this.cs = cs;
 			this.dt = dt;
-			this.numIter = numIter;
-			globalMinimum = 100000;
-			
 		}
 	
+		
 			public void solve() {
+			// This method is the engine of the solver, that creates the swarm and updates / finds the globalBestPosition
 				
 				ArrayList<psoParticle> swarm = new ArrayList<psoParticle>();
 					
@@ -43,6 +44,8 @@ public class psoGlobal {
 					psoParticle p = new psoParticle(dimension, max, min, w, cc, cs, dt);
 					swarm.add(p);
 				}
+				
+				globalMinimum = debugFitter.calcSpehreFunction(dimension, swarm.get(ThreadLocalRandom.current().nextInt(0, particleCount + 1)).position);
 				
 				for(int i=0; i<numIter; i++) {
 					for(int j=0; j<particleCount; j++) {
@@ -58,6 +61,8 @@ public class psoGlobal {
 			
 			
 			public void updateGlobalBestPosition(int dimension, ArrayList<Double> position) {
+			// This method updates the globalBestPosition through calculating the corresponding value for a given position
+				
 				double minimum = debugFitter.calcSpehreFunction(dimension, position);
 				if(minimum<globalMinimum) {
 					globalMinimum = minimum;
