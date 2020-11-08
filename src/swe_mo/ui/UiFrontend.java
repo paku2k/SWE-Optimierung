@@ -27,39 +27,49 @@ import org.eclipse.swt.events.VerifyEvent;
 
 
 public class UiFrontend {
-	final static String AUTH = "UiF";
+	private final static String AUTH = "UiF";
+	
 	private static boolean running = false;
 	private static boolean exit = false;
-	protected static Shell shell;
-	static Display display;
 	
 	private static int cmd_last;
 	
+ 	
+	
+	
+	
+	
+/*
+ * SSS FUNCTIONS (public)
+ * 
+ * start
+ * stop
+ * status
+ * 
+ */
 	
 	/**
+	 * start the UiFrontend
+	 * run the UiFrontend 
+	 * and dispose
+	 * 
 	 * @wbp.parser.entryPoint
 	 */
-	public static void start() {
+	public static void start() throws Exception{
 		if(exit) return;
 		try {
 			display = Display.getDefault();
-			initComponents();
-			scaleCompToDpi(shell);			
-			addEventListenersToShell();		
+			initComponents();				
 			shell.open();
 			shell.layout();	
 			
 			running = true;
 			clogger.info(AUTH, "start", "UiFrontend started");
 		} catch (Exception e) {
-			clogger.err(AUTH, "start", e);
-			e.printStackTrace();
-			return;
+			throw e;
 		}
 
-		run();
-	}
-	private static void run() {
+
 		while (!shell.isDisposed() && running) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
@@ -70,41 +80,50 @@ public class UiFrontend {
 		clogger.info(AUTH, "run", "UiFrontend stopped");
 	}
 	
+	/**
+	 * stop the UiFrontend
+	 * 
+	 * @param permanently used for disabling UiF at app exit
+	 */
 	public static void stop(boolean permanently) {
 		running = false;
 		exit = permanently;
 	}
 	
-	public static boolean running() {
-		return running;
+	/**
+	 * returns the status 
+	 * 
+	 * @return status (1=running, 0=not running, -1=exit)
+	 */
+	public static int status() {
+		if(exit) {
+			return -1;
+		} else if(running) {
+			return 1;
+		}
+		return 0;
 	}
 	
+	 	
 	
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
+/*
+ * MODIFIERS FOR ASYNC ACTIONS (public)
+ * 
+ * wisStatusChange
+ * stLog_newEntry
+ * setMinimized 
+ * 
+ */
 	
 	/**
-	 * async modifiers 
+	 * update status of WIS (via asyncExec)
+	 * 
+	 * @param state started or not started
+	 * @param port	port of running wis
 	 */		
-	static Button btnStartWis;
-	static Button btnOpenPage;
-	static Label lblWisStatusContent;
-	static StyledText stLog;
-	static StyledText stCmd;
-	
-
 	public static void wisStatusChange(boolean state, int port) {
 		if(!running) return;
 		btnStartWis.getDisplay().asyncExec(new Runnable() {
@@ -122,6 +141,12 @@ public class UiFrontend {
 			}
 		});
 	}
+	
+	/**
+	 * write an entry line to log
+	 * 
+	 * @param entry the log string with color information (§§rrr,ggg,bbb§)
+	 */
 	public static void stLog_newEntry(String entry) {
 		if(!running) return;
 		stLog.getDisplay().asyncExec(new Runnable() {
@@ -155,6 +180,12 @@ public class UiFrontend {
 			}
 		});
 	}
+	
+	/**
+	 * minimize or show application window
+	 * 
+	 * @param minimize true or false
+	 */
 	public static void setMinimized(boolean minimize) {
 		if(!running) return;
 		shell.getDisplay().asyncExec(new Runnable() {
@@ -167,288 +198,262 @@ public class UiFrontend {
 			}
 		});
 	}
-		
+	
+ 	
 	
 	
+	
+	
+/*
+ * EVENT LISTENERS (private)
+ * 
+ * -> keyadapter_fnkeys
+ * -> keyadapter_cmd
+ * -> verifykeyadapter_cmd
+ * -> mouseadapter_btnStartWis
+ * -> mouseadapter_btnOpenPage
+ * -> shelllistener
+ * 
+ * specialKeys
+ * 
+ */	
+	
+	/** doubleclick filter threshold in ms
+	 *  two clicks are counted as doubleclick when less than the threshold apart */
+	private final static int DOUBLECLICK_THRESHOLD = 1000; 
 
 	
 	
-	
-	
-	/**
-	 * Event Listeners
-	 */
-	final static int DOUBLECLICK_THRESHOLD = 1000;
-	
-	
-	static KeyAdapter keyadapter = new KeyAdapter() {
+	private static KeyAdapter keyadapter_fnkeys = new KeyAdapter() {
+		@Override
+		public void keyPressed(KeyEvent e) {
+			specialKeys(e,true);
+		}
 		@Override
 		public void keyReleased(KeyEvent e) {
+			specialKeys(e,false);
+			
 			if (e.keyCode==SWT.F12){
-				if((boolean)UiBackend.cmd(AUTH, "wis get status")) {
-					lblWisStatusContent.setForeground(SWTResourceManager.getColor(255, 153, 0));
-					lblWisStatusContent.setText("Stopping");
-					UiBackend.cmd(AUTH, "stop wis");	
-				} else {
-					lblWisStatusContent.setForeground(SWTResourceManager.getColor(255, 153, 0));
-					lblWisStatusContent.setText("Starting");
-					UiBackend.cmd(AUTH, "start wis");	
-				}
-				
+				toggleWIS();
 			}
 			if (e.keyCode==SWT.F11){
-				if((boolean)UiBackend.cmd(AUTH, "wis get status")) {
-					UiBackend.cmd(AUTH, "wis open webgui");
-				} 
+				try {
+					if((boolean)UiBackend.cmd(AUTH, "wis status -a")) {
+						UiBackend.cmd(AUTH, "wis open");
+					} 
+				} catch(Exception ex) {
+					clogger.err(AUTH, "keyadapter_fnkeys", ex);
+				}
 			}
 		}
 	};
 	
-	
-	private static void addEventListenersToShell() {
-		shell.addShellListener(new ShellListener() {
-			@Override
-			public void shellActivated(ShellEvent e) {
-				// TODO Auto-generated method stub				
+	private static KeyAdapter keyadapter_cmd = new KeyAdapter() {
+		@Override
+		public void keyReleased(KeyEvent e) {
+			//System.out.println(e.character + " ("+e.keyCode+")");
+			
+			if (e.keyCode==99) {
+				if(ALT_pressed) {
+					Point sel = stCmd.getSelection();
+					String selectedText = stCmd.getText().substring(sel.x, sel.y).replace("> ","").replace(">","").replace("\n", "").replace("\r", "");
+					stCmd.setText(stCmd.getText()+selectedText);
+					setCaretPosEnd("stCmd");
+				}
 			}
+			
+			if (e.keyCode==13 || //return
+				e.keyCode==SWT.KEYPAD_CR){
+				readCommand();
+			}
+			if (e.keyCode==SWT.ARROW_UP ||
+				e.keyCode==SWT.ARROW_DOWN) {
+				stCmd.setText(stCmd.getText().substring(0,cmd_last)+travLastCommands(e.keyCode));	
+				setCaretPosEnd("stCmd");
+			}
+			if (e.keyCode==SWT.ESC) {
+				stCmd.setText(stCmd.getText().substring(0,cmd_last));
+				setCaretPosEnd("stCmd");
+			}
+		}
+	};
+	
+	private static VerifyKeyListener verifykeyadapter_cmd = new VerifyKeyListener() {
+		public void verifyKey(VerifyEvent e) {
+			if(specialKeys(e, true)) return; //if pressed key is special key
+							
+			if (e.keyCode==99) { //c
+				if(CTRL_pressed) return; //allow ctrl+c
+				if(ALT_pressed) return;	//allow alt+c for direct copy
+			}
+			if (e.keyCode==SWT.ARROW_LEFT || e.keyCode==SWT.ARROW_RIGHT) {
+				if(SHIFT_pressed) return; //allow marking
+			}
+			if (e.keyCode==97) { //a
+				if(CTRL_pressed) {
+					stCmd.setSelection(cmd_last, stCmd.getText().length());
+				}
+			}
+			if (e.keyCode==118) { //v
+				e.doit = false;
+				if(stCmd.getCaretOffset() >= cmd_last) 
+					e.doit = true;
+				else
+					setCaretPosEnd("stCmd");
+					
+				if(!CTRL_pressed) return;
+				//check clipboard text before pasting
+				try {
+					e.doit = false;
+					String clipboard = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
+					clipboard = clipboard.replace("> ","").replace(">","").replace("\n", "").replace("\r", "");
+					stCmd.setText(stCmd.getText()+clipboard);	
+				} catch (Exception ex) {
 
-			@Override
-			public void shellClosed(ShellEvent e) {
-				// TODO Auto-generated method stub
-		        MessageBox messageBox = new MessageBox(shell, SWT.APPLICATION_MODAL | SWT.YES | SWT.NO);
-		        messageBox.setText("Warning");
-		        messageBox.setMessage("You are about to close the program. Continue?");
-		        if (messageBox.open() == SWT.YES) {
+				}					
+				setCaretPosEnd("stCmd");
+			}
+			
+			if (stCmd.getCaretOffset() < cmd_last) {
+				setCaretPosEnd("stCmd");
+			}
+			if (e.keyCode==SWT.ARROW_UP ||
+				e.keyCode==SWT.ARROW_DOWN ||
+				e.keyCode==13 || //return
+				e.keyCode==SWT.KEYPAD_CR ||
+				e.keyCode==16777223 || //pos1
+				e.keyCode==SWT.PAGE_UP) {
+				e.doit = false;				
+			}
+			if (e.keyCode==SWT.ARROW_LEFT ||
+				e.keyCode==8) {//backspace
+				if(stCmd.getCaretOffset() > cmd_last) {
+					e.doit = true;
+				} else {
+					e.doit = false;
+				}
+			}
+		}
+	};
+	
+	private static MouseAdapter mouseadapter_btnStartWis = new MouseAdapter() {
+		long last_click;
+		@Override
+		public void mouseUp(MouseEvent e) {
+			if(last_click + DOUBLECLICK_THRESHOLD > System.currentTimeMillis()) return;
+			toggleWIS();
+			last_click = System.currentTimeMillis();	
+		}
+	};
+	
+	private static MouseAdapter mouseadapter_btnOpenPage = new MouseAdapter() {
+		long last_click;
+		@Override
+		public void mouseUp(MouseEvent e) {
+			if(last_click + DOUBLECLICK_THRESHOLD > System.currentTimeMillis()) return;
+			
+			try {
+				UiBackend.cmd(AUTH, "wis open -m");
+			} catch(Exception ex) {
+				clogger.err(AUTH, "mouseadapter_btnOpenPage", ex);
+			}
+			last_click = System.currentTimeMillis();
+		}
+	};
+	
+	private static ShellListener shelllistener = new ShellListener() {
+		@Override
+		public void shellActivated(ShellEvent e) {}
+
+		@Override
+		public void shellClosed(ShellEvent e) {
+			// TODO Auto-generated method stub
+	        MessageBox messageBox = new MessageBox(shell, SWT.APPLICATION_MODAL | SWT.YES | SWT.NO);
+	        messageBox.setText("Warning");
+	        messageBox.setMessage("You are about to stop and close the application. Continue?");
+        	e.doit = false;	
+	        if (messageBox.open() == SWT.YES) {
+	    		try {
+					UiBackend.cmd(AUTH, "app exit");
 		    		running = false;
-					UiBackend.cmd(AUTH, "exit");
 		        	e.doit = true;
-		        } else
-		        	e.doit = false;				
-			}
+	    		} catch(Exception ex) {
+	    			clogger.err(AUTH, "shelllistener", ex);
+	    		}
+	        }	
+		}
 
-			@Override
-			public void shellDeactivated(ShellEvent e) {
-				// TODO Auto-generated method stub				
-			}
+		@Override
+		public void shellDeactivated(ShellEvent e) {}
 
-			@Override
-			public void shellDeiconified(ShellEvent e) {
-				// TODO Auto-generated method stub				
-			}
+		@Override
+		public void shellDeiconified(ShellEvent e) {}
 
-			@Override
-			public void shellIconified(ShellEvent e) {
-				// TODO Auto-generated method stub				
-			}
-		    });
-
-		shell.addKeyListener(keyadapter);
-	}
-	
+		@Override
+		public void shellIconified(ShellEvent e) {}
+	};
 	
 	
 	/**
-	 * Create Window Elements 
+	 * track special keys (CTRL, ALT, SHIFT) for correct handling of shortcuts (e.g. copy paste actions)	
 	 */
-	protected static void initComponents() {
-		shell = new Shell(display, SWT.CLOSE | SWT.TITLE | SWT.MIN & (~SWT.RESIZE));
-		shell.setImage(SWTResourceManager.getImage(UiFrontend.class, "/icon.png"));
-		shell.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		shell.setSize(600, 550);
-		shell.setText("Metaheuristic Optimization");
-		
-		Label lblHeader = new Label(shell, SWT.CENTER);
-		lblHeader.setFont(SWTResourceManager.getFont("Segoe UI Semibold", 18, SWT.NORMAL));
-		lblHeader.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		lblHeader.setBounds(10, 10, 568, 29);
-		lblHeader.setText("Metaheuristic Optimization UI");
-
-		Group grpWebgui = new Group(shell, SWT.NONE);
-		grpWebgui.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		grpWebgui.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
-		grpWebgui.setText("WebGUI");
-		grpWebgui.setBounds(10, 64, 568, 58);
-		
-		btnStartWis = new Button(grpWebgui, SWT.FLAT);
-		btnStartWis.setToolTipText("F12");
-		btnStartWis.addKeyListener(keyadapter);
-		btnStartWis.addMouseListener(new MouseAdapter() {
-			long last_click;
-			@Override
-			public void mouseUp(MouseEvent e) {
-				if(last_click + DOUBLECLICK_THRESHOLD > System.currentTimeMillis()) return;
-				
-				if((boolean)UiBackend.cmd(AUTH, "wis get status")) {
-					lblWisStatusContent.setForeground(SWTResourceManager.getColor(255, 153, 0));
-					lblWisStatusContent.setText("Stopping");
-					UiBackend.cmd(AUTH, "stop wis");	
-				} else {
-					lblWisStatusContent.setForeground(SWTResourceManager.getColor(255, 153, 0));
-					lblWisStatusContent.setText("Starting");
-					UiBackend.cmd(AUTH, "start wis");	
-				}			
-				last_click = System.currentTimeMillis();	
-			}
-		});		
-		btnStartWis.setForeground(SWTResourceManager.getColor(34, 139, 34));
-		btnStartWis.setBounds(448, 21, 110, 23);
-		btnStartWis.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
-		btnStartWis.setText("Start WebGUI");
-		
-		btnOpenPage = new Button(grpWebgui, SWT.FLAT);
-		btnOpenPage.setToolTipText("F11");
-		btnOpenPage.setEnabled(false);
-		btnOpenPage.addKeyListener(keyadapter);
-		btnOpenPage.addMouseListener(new MouseAdapter() {
-			long last_click;
-			@Override
-			public void mouseUp(MouseEvent e) {
-				if(last_click + DOUBLECLICK_THRESHOLD > System.currentTimeMillis()) return;
-
-				UiBackend.cmd(AUTH, "wis open webgui");
-				last_click = System.currentTimeMillis();
-			}
-		});
-		btnOpenPage.setText("Open in Browser");
-		btnOpenPage.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
-		btnOpenPage.setBounds(332, 21, 110, 23);
-		
-		Label lblWisStatus = new Label(grpWebgui, SWT.NONE);
-		lblWisStatus.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
-		lblWisStatus.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		lblWisStatus.setBounds(10, 29, 49, 15);
-		lblWisStatus.setText("Status:");
-		
-		lblWisStatusContent = new Label(grpWebgui, SWT.NONE);
-		lblWisStatusContent.setForeground(SWTResourceManager.getColor(255, 0, 0));
-		lblWisStatusContent.setText("Not Started");
-		lblWisStatusContent.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
-		lblWisStatusContent.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		lblWisStatusContent.setBounds(65, 29, 250, 15);
-		
-		Group grpCmdLog = new Group(shell, SWT.NONE);
-		grpCmdLog.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
-		grpCmdLog.setText("CMD / LOG");
-		grpCmdLog.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		grpCmdLog.setBounds(10, 151, 568, 357);
-		
-		stLog = new StyledText(grpCmdLog, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
-		stLog.addKeyListener(keyadapter);
-		stLog.setEditable(false);
-		stLog.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		stLog.setSelectionBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROUND));
-		stLog.setFont(SWTResourceManager.getFont("Lucida Console", 10, SWT.NORMAL));
-		stLog.setBounds(0, 25, 568, 119);
-		
-		stCmd = new StyledText(grpCmdLog, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
-		stCmd.setSelectionForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
-		stCmd.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		stCmd.addVerifyKeyListener(new VerifyKeyListener() {
-			public void verifyKey(VerifyEvent e) {
-				if(specialFnKeys(e, true)) return;
-								
-				if (e.keyCode==99) {
-					if(CTRL_pressed) return; //allow ctrl+c
-					if(ALT_pressed) return;	//allow alt+c for direct copy
-				}
-				if (e.keyCode==SWT.ARROW_LEFT || e.keyCode==SWT.ARROW_RIGHT) {
-					if(SHIFT_pressed) return; //allow marking
-				}
-				if (e.keyCode==97) {
-					if(CTRL_pressed) {
-						stCmd.setSelection(cmd_last, stCmd.getText().length());
-					}
-				}
-				if (e.keyCode==118) {
-					e.doit = false;
-					if(stCmd.getCaretOffset() >= cmd_last) 
-						e.doit = true;
-					else
-						setCaretPosEnd("stCmd");
-						
-					if(!CTRL_pressed) return;
-					//check clipboard text before pasting
-					try {
-						e.doit = false;
-						String clipboard = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
-						clipboard = clipboard.replace("> ","").replace(">","").replace("\n", "").replace("\r", "");
-						stCmd.setText(stCmd.getText()+clipboard);	
-					} catch (Exception ex) {
-
-					}					
-					setCaretPosEnd("stCmd");
-				}
-				
-				if (stCmd.getCaretOffset() < cmd_last) {
-					setCaretPosEnd("stCmd");
-				}
-				if (e.keyCode==SWT.ARROW_UP ||
-					e.keyCode==SWT.ARROW_DOWN ||
-					e.keyCode==13 || //return
-					e.keyCode==SWT.KEYPAD_CR ||
-					e.keyCode==16777223 || //pos1
-					e.keyCode==SWT.PAGE_UP) {
-					e.doit = false;				
-				}
-				if (e.keyCode==SWT.ARROW_LEFT ||
-					e.keyCode==8) {//backspace
-					if(stCmd.getCaretOffset() > cmd_last) {
-						e.doit = true;
-					} else {
-						e.doit = false;
-					}
-				}
-			}
-		});
-		stCmd.setText(">> ");
-		stCmd.addKeyListener(keyadapter);
-		stCmd.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				specialFnKeys(e,true);
-			}
-			@Override
-			public void keyReleased(KeyEvent e) {
-				//System.out.println(e.character + " ("+e.keyCode+")");
-				specialFnKeys(e,false);
-				
-				if (e.keyCode==99) {
-					if(ALT_pressed) {
-						Point sel = stCmd.getSelection();
-						String selectedText = stCmd.getText().substring(sel.x, sel.y).replace("> ","").replace(">","").replace("\n", "").replace("\r", "");
-						stCmd.setText(stCmd.getText()+selectedText);
-						setCaretPosEnd("stCmd");
-					}
-				}
-				
-				if (e.keyCode==13 || //return
-					e.keyCode==SWT.KEYPAD_CR){
-					readCommand(e);
-				}
-				if (e.keyCode==SWT.ARROW_UP ||
-					e.keyCode==SWT.ARROW_DOWN) {
-					stCmd.setText(stCmd.getText().substring(0,cmd_last)+travLastCommands(e.keyCode));	
-					setCaretPosEnd("stCmd");
-				}
-				if (e.keyCode==SWT.ESC) {
-					stCmd.setText(stCmd.getText().substring(0,cmd_last));
-					setCaretPosEnd("stCmd");
-				}
-			}
-		});
-		stCmd.setSelectionBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		stCmd.setFont(SWTResourceManager.getFont("Lucida Console", 10, SWT.NORMAL));
-		stCmd.setBackground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
-		stCmd.setMargins(5, 0, 5, 0);;
-		stCmd.setBounds(0, 150, 568, 207);
-		
-		cmd_last = stCmd.getText().length();
+	private static boolean CTRL_pressed = false;
+	private static boolean ALT_pressed = false;
+	private static boolean SHIFT_pressed = false;
+	private static boolean specialKeys(KeyEvent e, boolean pressed) {
+		if (e.keyCode==SWT.CTRL) {
+			CTRL_pressed = pressed;
+			e.doit = true;
+		} else if (e.keyCode==SWT.ALT) {
+			ALT_pressed = pressed;
+			e.doit = true;
+		} else if (e.keyCode==SWT.SHIFT) { 
+			SHIFT_pressed = pressed; 
+			e.doit = true;
+		} else {
+			return false;
+		}
+		return true;
 	}
 	
+ 	
 	
-	private static ArrayList<String> command_history  = new ArrayList<String>();
 	
-	private static void readCommand(KeyEvent e) {
+	
+	
+/*
+ * EVENT HANDLERS (private)
+ * 
+ * toggleWIS
+ * readCommand
+ * travLastCommands
+ * setCaretPosEnd
+ * 
+ */
+	
+	/**
+	 * toggle WebInterfaceServer on/off
+	 */
+	private static void toggleWIS() {
+		try {
+			if((boolean)UiBackend.cmd(AUTH, "wis status -a")) {
+				lblWisStatusContent.setForeground(SWTResourceManager.getColor(255, 153, 0));
+				lblWisStatusContent.setText("Stopping");
+				UiBackend.cmd(AUTH, "wis stop");	
+			} else {
+				lblWisStatusContent.setForeground(SWTResourceManager.getColor(255, 153, 0));
+				lblWisStatusContent.setText("Starting");
+				UiBackend.cmd(AUTH, "wis start");	
+			}	
+		} catch(Exception e) {
+			clogger.err(AUTH, "toggleWIS", e);
+		}
+	}	
+	
+	/**
+	 * read the command from stCmd and return the answer
+	 */
+	private static void readCommand() {
 		String cmd = stCmd.getText().substring(cmd_last,stCmd.getText().length()).replace("\n", "").replace("\r", "");
 		if(cmd.equals("")) return;
 		if(command_history.contains(cmd)) command_history.remove(cmd);
@@ -457,15 +462,22 @@ public class UiFrontend {
 		String ans = "";
 		try {
 			ans = UiBackend.cmd(AUTH, cmd).toString();
-		} catch(Exception ex) {
-			clogger.err(AUTH, "readCommand", ex);
+		} catch(Exception e) {
+			clogger.err(AUTH, "readCommand", e);
+			ans = "ERR: "+e.getMessage();
 		}
 		stCmd.setText(stCmd.getText()+"\r"+ans+"\r\r>> ");
 		setCaretPosEnd("stCmd");
 		cmd_last = stCmd.getText().length();
 	}
 	
+	
 	static int travLastCommands_relativePosition = 0;
+	private static ArrayList<String> command_history  = new ArrayList<String>();
+
+	/**
+	 * traverse last commands with arrow_up and arrow_down keys
+	 */
 	private static String travLastCommands(int keyCode) {
 		if(keyCode==SWT.ARROW_UP) {
 			travLastCommands_relativePosition++;
@@ -490,6 +502,11 @@ public class UiFrontend {
 		}
 	}
 	
+	/**
+	 * set caret position to end of entry for stCmd or stLog
+	 * 
+	 * @param st String defining of which styledText field the caret is to be set 
+	 */
 	private static void setCaretPosEnd(String st) {
 		if(st.equals("stCmd")) {
 			stCmd.setCaretOffset(stCmd.getText().length());
@@ -500,43 +517,136 @@ public class UiFrontend {
 		} 
 	}
 	
-	
-	
-
-	private static boolean CTRL_pressed = false;
-	private static boolean ALT_pressed = false;
-	private static boolean SHIFT_pressed = false;
-	private static boolean specialFnKeys(KeyEvent e, boolean pressed) {
-		if (e.keyCode==SWT.CTRL) {
-			CTRL_pressed = pressed;
-			e.doit = true;
-		} else if (e.keyCode==SWT.ALT) {
-			ALT_pressed = pressed;
-			e.doit = true;
-		} else if (e.keyCode==SWT.SHIFT) { 
-			SHIFT_pressed = pressed; 
-			e.doit = true;
-		} else {
-			return false;
-		}
-		return true;
-	}
-
-
-
+ 	
 	
 	
 	
 	
+/*
+ * INIT FUNCTIONS (private)
+ * 
+ * initComponents
+ * 
+ */
 	
-	
-	
-	
-	
+	private static Shell shell;
+	private static Display display;
+	private static Button btnStartWis;
+	private static Button btnOpenPage;
+	private static Label lblWisStatusContent;
+	private static StyledText stLog;
+	private static StyledText stCmd;
 	
 	
 	/**
-	 * Helper Function to parse RGB from string "rrr,ggg,bbb"
+	 * initialize components for window
+	 */
+	private static void initComponents() {
+		shell = new Shell(display, SWT.CLOSE | SWT.TITLE | SWT.MIN & (~SWT.RESIZE));
+		shell.setImage(SWTResourceManager.getImage(UiFrontend.class, "/icon.png"));
+		shell.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		shell.setSize(600, 550);
+		shell.setText("Metaheuristic Optimization");
+		shell.addShellListener(shelllistener);
+		shell.addKeyListener(keyadapter_fnkeys);
+		
+		Label lblHeader = new Label(shell, SWT.CENTER);
+		lblHeader.setFont(SWTResourceManager.getFont("Segoe UI Semibold", 18, SWT.NORMAL));
+		lblHeader.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		lblHeader.setBounds(10, 10, 568, 29);
+		lblHeader.setText("Metaheuristic Optimization UI");
+
+		Group grpWebgui = new Group(shell, SWT.NONE);
+		grpWebgui.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		grpWebgui.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+		grpWebgui.setText("WebGUI");
+		grpWebgui.setBounds(10, 64, 568, 58);
+		
+		btnStartWis = new Button(grpWebgui, SWT.FLAT);
+		btnStartWis.setToolTipText("F12");
+		btnStartWis.setForeground(SWTResourceManager.getColor(34, 139, 34));
+		btnStartWis.setBounds(448, 21, 110, 23);
+		btnStartWis.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
+		btnStartWis.setText("Start WebGUI");
+		btnStartWis.addKeyListener(keyadapter_fnkeys);
+		btnStartWis.addMouseListener(mouseadapter_btnStartWis);		
+		
+		btnOpenPage = new Button(grpWebgui, SWT.FLAT);
+		btnOpenPage.setToolTipText("F11");
+		btnOpenPage.setEnabled(false);
+		btnOpenPage.setText("Open in Browser");
+		btnOpenPage.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
+		btnOpenPage.setBounds(332, 21, 110, 23);
+		btnOpenPage.addKeyListener(keyadapter_fnkeys);
+		btnOpenPage.addMouseListener(mouseadapter_btnOpenPage);
+		
+		Label lblWisStatus = new Label(grpWebgui, SWT.NONE);
+		lblWisStatus.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
+		lblWisStatus.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		lblWisStatus.setBounds(10, 29, 49, 15);
+		lblWisStatus.setText("Status:");
+		
+		lblWisStatusContent = new Label(grpWebgui, SWT.NONE);
+		lblWisStatusContent.setForeground(SWTResourceManager.getColor(255, 0, 0));
+		lblWisStatusContent.setText("Not Started");
+		lblWisStatusContent.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
+		lblWisStatusContent.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		lblWisStatusContent.setBounds(65, 29, 250, 15);
+		
+		Group grpCmdLog = new Group(shell, SWT.NONE);
+		grpCmdLog.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+		grpCmdLog.setText("CMD / LOG");
+		grpCmdLog.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		grpCmdLog.setBounds(10, 151, 568, 357);
+		
+		stLog = new StyledText(grpCmdLog, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+		stLog.setEditable(false);
+		stLog.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		stLog.setSelectionBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROUND));
+		stLog.setFont(SWTResourceManager.getFont("Lucida Console", 10, SWT.NORMAL));
+		stLog.setBounds(0, 25, 568, 119);
+		stLog.addKeyListener(keyadapter_fnkeys);
+		
+		stCmd = new StyledText(grpCmdLog, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+		stCmd.setSelectionForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+		stCmd.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		stCmd.setText(">> ");
+		stCmd.setSelectionBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		stCmd.setFont(SWTResourceManager.getFont("Lucida Console", 10, SWT.NORMAL));
+		stCmd.setBackground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+		stCmd.setMargins(5, 0, 5, 0);;
+		stCmd.setBounds(0, 150, 568, 207);
+		stCmd.addVerifyKeyListener(verifykeyadapter_cmd);
+		stCmd.addKeyListener(keyadapter_fnkeys);
+		stCmd.addKeyListener(keyadapter_cmd);
+		
+		cmd_last = stCmd.getText().length();
+		
+		scaleCompToDpi(shell);	
+	}
+	
+ 	
+	
+	
+	
+	
+/*
+ * HELPER FUNCTIONS (private)
+ * 
+ * parseRGB
+ * 
+ * scaleCompToDpi
+ * scaleShellToDpi
+ * scaleToDpi
+ * scaleControl 
+ * 
+ */	
+	
+	/**
+	 * parses a RGB Object from a String with RGB values
+	 * 
+	 * @param 	input	a String with RGB values in the form of "rrr,ggg,bbb"
+	 * @return			the RGB object, if error while parsing (0,0,0)
 	 */
 	public static RGB parseRGB(String input) {	
 		String[] values = input.split(",");
@@ -550,30 +660,41 @@ public class UiFrontend {
 	}
 	
 	
-	
+	/** current screen resolution (dpi) */
+	private static final int DPI_CURRENT = Display.getDefault().getDPI().x;
+	/** default screen resolution of the project (dpi) */
+	private static final float DPI_DEFAULT = 82.0f;
+	/** scale factor of screen resolution (current/default) */
+	private static final float DPI_SCALE = DPI_CURRENT / DPI_DEFAULT;
+
 	/**
-	 * Scaling the Window (for scaled Windows Screens) 
+	 * scales the window (shell + components) to the screen resolution
+	 * 
+	 * @input	composite	the to be scaled composite	   
 	 */
-	public static final int DPI_CURRENT = Display.getDefault().getDPI().x;
-	public static final float DPI_DEFAULT = 82.0f;//96
-	public static final float DPI_SCALE = DPI_CURRENT / DPI_DEFAULT;
-		
-	public static void scaleCompToDpi(Composite composite) {
-		// Scale the shell
-		scaleShellToDpi(composite);
-		
-		// Scale all components
-		scaleToDpi(composite);
+	private static void scaleCompToDpi(Composite composite) {		
+		scaleShellToDpi(composite); // Scale the shell		
+		scaleToDpi(composite); // Scale all components
 	}
-	
-	public static void scaleShellToDpi(Composite composite) {
+
+	/**
+	 * scales the shell to the screen resolution
+	 * 
+	 * @input	composite	the to be scaled shell   
+	 */
+	private static void scaleShellToDpi(Composite composite) {
 		Point size = composite.getSize();
 		size.x *= DPI_SCALE;
 		size.y *= DPI_SCALE;
 		composite.setSize(size);
 	}
-	
-	public static void scaleToDpi(Composite composite) {
+
+	/**
+	 * scales the composite and its children to the screen resolution recursively
+	 * 
+	 * @input	composite	the to be scaled composite (parent)
+	 */	
+	private static void scaleToDpi(Composite composite) {
 	    for(Control control : composite.getChildren()) {
 	        if(control instanceof Composite) {
 	            scaleToDpi((Composite) control);
@@ -582,6 +703,11 @@ public class UiFrontend {
 	    }
 	}
 
+	/**
+	 * scales size and position of the control element
+	 * 
+	 * @input	control		the to be scaled control object
+	 */	
 	private static void scaleControl(Control control) {
 	    int x = (int) (control.getLocation().x * DPI_SCALE);
 	    int y = (int) (control.getLocation().y * DPI_SCALE);
