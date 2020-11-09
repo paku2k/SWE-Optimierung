@@ -47,7 +47,7 @@ public class Particle_DE {
 	
 	@Override
 	public String toString(){
-		String temp="[";
+		String temp="[" + this.position.get(0).toString();
 		for(int i=0; i<this.position.size(); i++) {
 			temp=temp+" , "+this.position.get(i).toString();
 		}

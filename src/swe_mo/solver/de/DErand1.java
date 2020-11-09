@@ -179,7 +179,6 @@ public class DErand1 {
 				//System.out.println("BestU: "+vectorU);
 
 
-
 			}
 
 			
