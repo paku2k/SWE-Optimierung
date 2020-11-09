@@ -21,25 +21,18 @@ public class psoParticle extends Particle_DE {
 		this.cc=cc;
 		this.cs=cs;
 		this.dt=dt;
-		initializesVelocity();
-		initializesPersonalBestPosition();
+		velocity = new ArrayList<Double>(position);
+		personalBestPosition = new ArrayList<Double>(position);
 	}
 		
 	
 	public psoParticle(int dimension) {
 		//This constructor creates a particle with the given dimension and initializes all dimensions with zero
 		super(dimension);
-		initializesVelocity();
-		initializesPersonalBestPosition();
+		velocity = new ArrayList<Double>(position);//initializesVelocity();
+		personalBestPosition = new ArrayList<Double>(position);//initializesPersonalBestPosition();
 	}
 	
-	
-	public void initializesVelocity(){
-		for(int i=0;i<position.size();i++) {
-			velocity.add(position.get(i));
-		}
-		
-	}
 	
 	public void updateVelocity(ArrayList<Double> socialComponent) {
 		double rc=Math.random();
@@ -51,17 +44,9 @@ public class psoParticle extends Particle_DE {
 		
 	
 	public void updatePersonalBestPosition() {
-		for(int i=0;i<position.size();i++) {
-			personalBestPosition.set(i, position.get(i));
-		}
+		personalBestPosition = new ArrayList<Double>(position);
 	}
 	
-	
-	public void initializesPersonalBestPosition() {
-		for(int i=0;i<position.size();i++) {
-			personalBestPosition.add(i, position.get(i));
-		}
-	}
 	
 	public void updatePosition() {
 		for(int i=0; i<position.size(); i++) {
