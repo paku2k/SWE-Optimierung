@@ -3,6 +3,8 @@ package swe_mo.solver.pso;
 
 import java.util.ArrayList;
 import swe_mo.solver.de.Particle_DE;
+import swe_mo.solver.pso.debugFitness;
+
 
 public class psoParticle extends Particle_DE {
 	
@@ -11,12 +13,15 @@ public class psoParticle extends Particle_DE {
 	ArrayList<Double> personalBestPosition = new ArrayList<Double>();
 	double personalMinimum;
 	double w, cc, cs, dt;
+	int dimension;
+	debugFitness debugFitter = new debugFitness();
 	
 	
 	public psoParticle(int dimension, double max, double min, double w, double cc, double cs, double dt) {
 			//This constructor creates a particle with the given dimension 
 			//and initializes all dimensions with a random number within the given bounds
 		super(dimension, max, min);
+		this.dimension=dimension;
 		this.w=w;
 		this.cc=cc;
 		this.cs=cs;
@@ -29,8 +34,8 @@ public class psoParticle extends Particle_DE {
 	public psoParticle(int dimension) {
 		//This constructor creates a particle with the given dimension and initializes all dimensions with zero
 		super(dimension);
-		velocity = new ArrayList<Double>(position);//initializesVelocity();
-		personalBestPosition = new ArrayList<Double>(position);//initializesPersonalBestPosition();
+		velocity = new ArrayList<Double>(position);
+		personalBestPosition = new ArrayList<Double>(position);
 	}
 	
 	
@@ -44,7 +49,11 @@ public class psoParticle extends Particle_DE {
 		
 	
 	public void updatePersonalBestPosition() {
-		personalBestPosition = new ArrayList<Double>(position);
+		double minimum = debugFitter.calcSpehreFunction(dimension, position);
+		if(minimum<personalMinimum) {
+			personalMinimum = minimum;
+			personalBestPosition = new ArrayList<Double>(position);
+		}
 	}
 	
 	

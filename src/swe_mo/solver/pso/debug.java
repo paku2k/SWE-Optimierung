@@ -9,7 +9,7 @@ public class debug {
 		double max = 5.12;
 		int particleCount = 200;
 		double w = 0.7;
-		double cc = 0.5;
+		double cc = 0.1;
 		double cs = 0.5;
 		double dt = 1;
 		int numIter = 5000;
