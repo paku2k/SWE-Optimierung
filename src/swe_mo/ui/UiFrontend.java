@@ -253,11 +253,14 @@ public class UiFrontend {
 		public void keyReleased(KeyEvent e) {
 			//System.out.println(e.character + " ("+e.keyCode+")");
 			
-			if (e.keyCode==99) {
+			if (e.keyCode==99) { //c
 				if(ALT_pressed) {
 					Point sel = stCmd.getSelection();
 					String selectedText = stCmd.getText().substring(sel.x, sel.y).replace("> ","").replace(">","").replace("\n", "").replace("\r", "");
 					stCmd.setText(stCmd.getText()+selectedText);
+					for(StyleRange s : stCmd_Colors) {
+						stCmd.setStyleRange(s);
+					}
 					setCaretPosEnd("stCmd");
 				}
 			}
@@ -269,10 +272,16 @@ public class UiFrontend {
 			if (e.keyCode==SWT.ARROW_UP ||
 				e.keyCode==SWT.ARROW_DOWN) {
 				stCmd.setText(stCmd.getText().substring(0,cmd_last)+travLastCommands(e.keyCode));	
+				for(StyleRange s : stCmd_Colors) {
+					stCmd.setStyleRange(s);
+				}
 				setCaretPosEnd("stCmd");
 			}
 			if (e.keyCode==SWT.ESC) {
 				stCmd.setText(stCmd.getText().substring(0,cmd_last));
+				for(StyleRange s : stCmd_Colors) {
+					stCmd.setStyleRange(s);
+				}
 				setCaretPosEnd("stCmd");
 			}
 		}
@@ -306,8 +315,11 @@ public class UiFrontend {
 				try {
 					e.doit = false;
 					String clipboard = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
-					clipboard = clipboard.replace("> ","").replace(">","").replace("\n", "").replace("\r", "");
+					clipboard = clipboard.replace("> ","").replace(">","").replace("\n", " ").replace("\r\r", " ").replace("\r", "");
 					stCmd.setText(stCmd.getText()+clipboard);	
+					for(StyleRange s : stCmd_Colors) {
+						stCmd.setStyleRange(s);
+					}
 				} catch (Exception ex) {
 
 				}					
@@ -453,20 +465,44 @@ public class UiFrontend {
 	/**
 	 * read the command from stCmd and return the answer
 	 */
+	private static ArrayList<StyleRange> stCmd_Colors = new ArrayList<StyleRange>();
+	
 	private static void readCommand() {
 		String cmd = stCmd.getText().substring(cmd_last,stCmd.getText().length()).replace("\n", "").replace("\r", "");
 		if(cmd.equals("")) return;
 		if(command_history.contains(cmd)) command_history.remove(cmd);
 		command_history.add(cmd);		
 		travLastCommands_relativePosition = 0;
-		String ans = "";
+		
+		String ans = "§§200,200,200§\n";
 		try {
-			ans = UiBackend.cmd(AUTH, cmd).toString();
+			ans += UiBackend.cmd(AUTH, cmd).toString();
 		} catch(Exception e) {
 			clogger.err(AUTH, "readCommand", e);
-			ans = "ERR: "+e.getMessage();
+			ans += "§§255,0,0§ERR: "+e.getMessage();
 		}
-		stCmd.setText(stCmd.getText()+"\r"+ans+"\r\r>> ");
+		ans += "§§255,255,255§\r\r>> ";		
+				
+		//split by §§ and delete all empty entries
+		ArrayList<String> colorsplit = new ArrayList<String>(Arrays.asList(ans.split("§§")));
+		for(int i=0; i < colorsplit.size(); i++) {
+			if(colorsplit.get(i).isEmpty()) colorsplit.remove(i);
+		}
+		
+		//write every item with correct color
+		for(String s : colorsplit) {
+			String[] str = s.split("§");
+			stCmd.append(str[1]);
+		
+			StyleRange styleRange = new StyleRange();
+			styleRange.length = str[1].length();
+			styleRange.start = stCmd.getText().length()-styleRange.length;
+			styleRange.foreground = new Color(stCmd.getDisplay(), parseRGB(str[0]));
+			stCmd.setStyleRange(styleRange);
+			
+			stCmd_Colors.add(styleRange);
+		}			
+
 		setCaretPosEnd("stCmd");
 		cmd_last = stCmd.getText().length();
 	}
