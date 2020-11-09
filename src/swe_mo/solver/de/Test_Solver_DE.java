@@ -9,7 +9,7 @@ public class Test_Solver_DE {
 		int NP = 500;
 		double F = 0.7; //Empfehlung F0.5...1
 		double CR = 0.3; //Empfehlung CR=0.3
-		int maxGenerations = 20000;
+		int maxGenerations = 2;
 		double upperBound = 5.12;
 		double lowerBound = -5.12;
 		FitnessFunction fF = new FitnessFunction();
