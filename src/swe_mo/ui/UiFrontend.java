@@ -461,12 +461,14 @@ public class UiFrontend {
 			clogger.err(AUTH, "toggleWIS", e);
 		}
 	}	
-	
+
+	private static ArrayList<StyleRange> stCmd_Colors = new ArrayList<StyleRange>();
+	private final static String BASE_COLOR = "255,255,255";
+	private final static String ANS_COLOR = "200,200,200";
+	private final static String ERR_COLOR = "255,0,0";
 	/**
 	 * read the command from stCmd and return the answer
-	 */
-	private static ArrayList<StyleRange> stCmd_Colors = new ArrayList<StyleRange>();
-	
+	 */	
 	private static void readCommand() {
 		String cmd = stCmd.getText().substring(cmd_last,stCmd.getText().length()).replace("\n", "").replace("\r", "");
 		if(cmd.equals("")) return;
@@ -474,14 +476,14 @@ public class UiFrontend {
 		command_history.add(cmd);		
 		travLastCommands_relativePosition = 0;
 		
-		String ans = "§§200,200,200§\n";
+		String ans = "§§"+ANS_COLOR+"§\n";
 		try {
 			ans += UiBackend.cmd(AUTH, cmd).toString();
 		} catch(Exception e) {
 			clogger.err(AUTH, "readCommand", e);
-			ans += "§§255,0,0§ERR: "+e.getMessage();
+			ans += "§§"+ERR_COLOR+"§ERR: "+e.getMessage();
 		}
-		ans += "§§255,255,255§\r\r>> ";		
+		ans += "§§"+BASE_COLOR+"§\r\r>> ";		
 				
 		//split by §§ and delete all empty entries
 		ArrayList<String> colorsplit = new ArrayList<String>(Arrays.asList(ans.split("§§")));
@@ -645,7 +647,7 @@ public class UiFrontend {
 		
 		stCmd = new StyledText(grpCmdLog, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
 		stCmd.setSelectionForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
-		stCmd.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		stCmd.setForeground(SWTResourceManager.getColor(parseRGB(BASE_COLOR)));
 		stCmd.setText(">> ");
 		stCmd.setSelectionBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		stCmd.setFont(SWTResourceManager.getFont("Lucida Console", 10, SWT.NORMAL));
@@ -677,7 +679,7 @@ public class UiFrontend {
  * scaleControl 
  * 
  */	
-	
+
 	/**
 	 * parses a RGB Object from a String with RGB values
 	 * 
