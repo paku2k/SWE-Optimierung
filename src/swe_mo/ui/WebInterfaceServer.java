@@ -420,6 +420,11 @@ public class WebInterfaceServer{
      */
     private static int createRandomPort(int lowerbound, int upperbound) {
     	try {
+    		if(lowerbound > upperbound) {
+    			int m = lowerbound;
+    			lowerbound = upperbound;
+    			upperbound = m;
+    		}
         	if(lowerbound < 1024) lowerbound = 1024;
         	if(upperbound > 65535) upperbound = 65535;
         	
