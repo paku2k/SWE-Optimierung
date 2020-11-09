@@ -189,7 +189,7 @@ public class WebInterfaceServer{
     	    	    
     	    	} else if(requestParameters.getPath().equals("/xhr")) {
     	    		//xhr request (sending cmd commands and receiving+send answers via json)
-    	    		clogger.dbg(AUTH, "handleRequest", requestParameters.toString());
+    	    		//clogger.dbg(AUTH, "handleRequest", requestParameters.toString());
     		        String r = "{ "; 
 
     	    		if(requestParameters.getParValue("cmdcnt")!=null) { //count of transmitted cmd
