@@ -23,7 +23,7 @@ public class psoParticle extends Particle_DE {
 		super(dimension, max, min);
 		this.dimension=dimension;
 		this.w=w;
-		this.cc=cc;
+		this.cc=cc; 
 		this.cs=cs;
 		this.dt=dt;
 		velocity = new ArrayList<Double>(position);
