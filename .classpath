@@ -30,5 +30,6 @@
 	<classpathentry kind="lib" path="libraries/org.eclipse.swt/src.zip"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="libraries/org.json/json-20200518.jar"/>
+	<classpathentry kind="lib" path="D:/Uni/Semester 5/Softwareengineering/03_eclipse/libraries/jfreechart-1.5.1.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
