@@ -1,10 +1,9 @@
 package swe_mo.solver.de;
 import java.util.ArrayList;
-import java.lang.StringBuilder;
 
 public class Particle_DE {
 
-	ArrayList<Double> position = new ArrayList<Double>(); 
+	public ArrayList<Double> position = new ArrayList<Double>(); 
 	
 	
 	public Particle_DE(int dimension, double max, double min) {
@@ -48,8 +47,8 @@ public class Particle_DE {
 	
 	@Override
 	public String toString(){
-		String temp="[";
-		for(int i=0; i<this.position.size(); i++) {
+		String temp="[" + this.position.get(0).toString();
+		for(int i=1; i<this.position.size(); i++) {
 			temp=temp+" , "+this.position.get(i).toString();
 		}
 		temp=temp+"]";

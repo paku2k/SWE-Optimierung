@@ -1,37 +1,29 @@
 
 package swe_mo.solver.de;
 
+import swe_mo.solver.FitnessFunction;
+
 public class Test_Solver_DE {
 	
 	public static void main(String[] args) {
 
-		int N = 10;
-		int NP = 10;
-		double F = 0.7;
-		double CR = 0.9;
-		int maxGenerations = 10;
-		int generation = 0;
-		double upperBound = 5;
-		double lowerBound = 5;
+		int N = 20;
+		int NP = 200;
+		double F = 0.8; //Empfehlung F0.5...1
+		double CR = 0.3; //Empfehlung CR=0.3
+		int maxGenerations = 500000;
+		double upperBound = 5.12;
+		double lowerBound = -5.12;
 		FitnessFunction fF = new FitnessFunction();
 		
 		DErand1 rand1 = new DErand1(N, NP, F, CR, maxGenerations, upperBound, lowerBound, fF);
-		
-		Particle_DE part1 = new Particle_DE(10,-10.0,10.0);
-		Particle_DE part2 = new Particle_DE(10,-10.0,10.0);
-		
-		System.out.println(part1);
-		System.out.println(part2);		
-    
-    System.out.println("DANIEL");	
+		rand1.solve();
+		System.out.println("Best Fitness Function value: "+rand1.best);
+		Particle_DE p = rand1.bestParicle;
+		System.out.println("BEST Particle:  "+p);
 
 		
-		System.out.println(rand1.compare(part1, part2));
-		part1.substract(part2);
-		
-		System.out.println(part1);
-
-	}
+		}
 
 }
 
