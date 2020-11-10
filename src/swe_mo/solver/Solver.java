@@ -1,6 +1,8 @@
 package swe_mo.solver;
 
 import swe_mo.ui.clogger;
+import swe_mo.solver.de.*;
+import swe_mo.solver.pso.*;
 
 
 
@@ -14,7 +16,7 @@ public class Solver {
 	private String algorithm;
 	private double status;
 	private boolean terminated;
-	private int result; 																							//result class
+	private double result; 																							//result class
 	private int config; 																							//config class
 
 	
@@ -39,10 +41,23 @@ public class Solver {
 		status = -1;
 	}
 	
-	public void start(){
-																													//determine which method to use, initialize and start
-		
-		solverThread = new Thread(new Runnable_DE());
+	public void start(){				
+		solverThread = new Thread(new Runnable() {	
+			@Override
+			public void run() {
+				try {
+					if(algorithm.equals("DErand1")) {
+						result = new DErand1(5,50,0.8,0.3,500000,5.12,-5.12,new FitnessFunction()).solve();								
+					} else {
+						result = new test_david(id,config).calc();															
+					}
+					if(status<=100) status = 101;
+				} catch(Exception e) {
+					clogger.err(AUTH, "Runnable_Solver id="+id, e);
+					status = 103;
+				}
+			}
+		});
 		solverThread.start();
 		status = 0;
 
@@ -63,7 +78,7 @@ public class Solver {
 	}
 	
 	
-	public int getResult() throws InterruptedException {															//return result class
+	public double getResult() throws InterruptedException {															//return result class
 		if(status>100) {
 			solverThread.join();
 			return result;
@@ -81,39 +96,4 @@ public class Solver {
 	public void updateStatus(double s) {
 		status = s;
 	}
-	
-	
-
-	
-	
-	
-	
-	
-	public class Runnable_DE implements Runnable{	
-		@Override
-		public void run() {
-			try {
-				result = new test_david(id,config).calc();															//DEsolve
-				if(status<=100) status = 101;
-			} catch(Exception e) {
-				clogger.err(AUTH, "Runnable_DE", e);
-				status = 103;
-			}
-		}
-	}
-	
-	
-	public class Runnable_PSO implements Runnable{	
-		@Override
-		public void run() {
-			try {
-				result = new test_david(id,config).calc();															//PSOsolve
-				if(status<=100) status = 101;
-			} catch(Exception e) {
-				clogger.err(AUTH, "Runnable_PSO", e);
-				status = 103;
-			}
-		}
-	}
-	
 }

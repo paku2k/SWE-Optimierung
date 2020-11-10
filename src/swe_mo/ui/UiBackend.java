@@ -516,12 +516,19 @@ public class UiBackend {
 				cmd_queue.remove();		
 				
 				try {
-					if(!cmd_queue.isEmpty()) {					
-						SolverManager.start(Integer.parseInt(cmd_queue.poll()));		
+					if(!cmd_queue.isEmpty()) {							
+						int id = Integer.parseInt(cmd_queue.poll());								
+						if(!cmd_queue.isEmpty()) {								
+							SolverManager.start(id, Integer.parseInt(cmd_queue.poll()));	
+							return "Solvers started.";								
+						} else {
+							SolverManager.start(id);		
+							return "Solver started.";					
+						}
 					} else {					
 						SolverManager.start();
+						return "Solver started.";
 					}
-					return "Solver started.";
 				} catch(Exception e) {
 					throw e;
 				}
@@ -536,9 +543,15 @@ public class UiBackend {
 								SolverManager.terminateAll();
 								return "All Solvers terminated.";
 							}
-						} else {
-							SolverManager.terminate(Integer.parseInt(cmd_queue.poll()));					
-							return "Solver terminated.";	
+						} else {			
+							int id = Integer.parseInt(cmd_queue.poll());								
+							if(!cmd_queue.isEmpty()) {								
+								SolverManager.terminate(id, Integer.parseInt(cmd_queue.poll()));	
+								return "Solvers terminated.";								
+							} else {
+								SolverManager.terminate(id);		
+								return "Solver terminated.";					
+							}
 						}
 					} else {					
 						SolverManager.terminate();						
@@ -561,9 +574,9 @@ public class UiBackend {
 				cmd_queue.remove();					
 				
 				if(!cmd_queue.isEmpty()) {		
-					return "Result is: "+(int)SolverManager.result(Integer.parseInt(cmd_queue.poll()));	
+					return "Result is: "+SolverManager.result(Integer.parseInt(cmd_queue.poll()));	
 				} else {	
-					return "Result is: "+(int)SolverManager.result();	
+					return "Result is: "+SolverManager.result();	
 				}	
 				
 			} else if(cmd_queue.peek().equals("delete")) {
@@ -576,9 +589,15 @@ public class UiBackend {
 								SolverManager.deleteAll();
 								return "All Solvers deleted.";
 							}
-						} else {
-							SolverManager.delete(Integer.parseInt(cmd_queue.poll()));					
-							return "Solver deleted.";	
+						} else {	
+							int id = Integer.parseInt(cmd_queue.poll());								
+							if(!cmd_queue.isEmpty()) {	
+								SolverManager.delete(id, Integer.parseInt(cmd_queue.poll()));					
+								return "Solvers deleted.";								
+							} else {
+								SolverManager.delete(id);					
+								return "Solver deleted.";					
+							}
 						}
 					} else {					
 						SolverManager.delete();						

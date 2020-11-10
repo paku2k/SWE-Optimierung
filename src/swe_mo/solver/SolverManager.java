@@ -95,6 +95,21 @@ public class SolverManager {
 		start(runningSolvers.size()-1);
 	}
 	
+	public static void start(int id1, int id2) throws Exception {
+		if(id1>id2) {
+			int m = id1;
+			id1 = id2;
+			id2 = m;
+		}
+		if(id1<0) id1=0;
+		if(id2>runningSolvers.size()-1) id2 = runningSolvers.size()-1;
+		
+		for(int i=id1; i<=id2; i++) {
+			if(status(i)<0 && status(i)>-3)
+				start(i);			
+		}		
+	}
+	
 	public static void start(int id) throws Exception {
 		if(status(id) == -3) {
 			throw new Exception("No Solver with this ID.");
@@ -121,6 +136,21 @@ public class SolverManager {
 
 	public static void terminate() throws Exception{
 		terminate(runningSolvers.size()-1);
+	}
+	
+	public static void terminate(int id1, int id2) throws Exception {
+		if(id1>id2) {
+			int m = id1;
+			id1 = id2;
+			id2 = m;
+		}
+		if(id1<0) id1=0;
+		if(id2>runningSolvers.size()-1) id2 = runningSolvers.size()-1;
+		
+		for(int i=id1; i<=id2; i++) {
+			if(status(i)>=0 && status(i)<100)
+				terminate(i);			
+		}		
 	}
 	
 	public static void terminate(int id) throws Exception{
@@ -171,7 +201,7 @@ public class SolverManager {
 		//102 		terminated
 		//103 		error
 		//104 		deleted
-		if(id >= runningSolvers.size()) {
+		if(id >= runningSolvers.size() || id < 0) {
 			return -3;			
 		} else {
 			try {
@@ -185,11 +215,11 @@ public class SolverManager {
 	
 	
 
-	public static int result() throws Exception {
+	public static double result() throws Exception {
 		return result(runningSolvers.size()-1);
 	}
 	
-	public static int result(int id) throws Exception {
+	public static double result(int id) throws Exception {
 		if(status(id) == -3) {
 			throw new Exception("No Solver with this ID.");
 		} else if(status(id) == -2) {
@@ -216,6 +246,21 @@ public class SolverManager {
 
 	public static void delete() throws Exception {
 		delete(runningSolvers.size()-1);
+	}
+	
+	public static void delete(int id1, int id2) throws Exception {
+		if(id1>id2) {
+			int m = id1;
+			id1 = id2;
+			id2 = m;
+		}
+		if(id1<0) id1=0;
+		if(id2>runningSolvers.size()-1) id2 = runningSolvers.size()-1;
+		
+		for(int i=id1; i<=id2; i++) {
+			if(status(i) == -3 || status(i) == 104 || (status(i) >= 0 && status(i) < 100)) continue;	
+			delete(i);			
+		}		
 	}
 	
 	public static void delete(int id) throws Exception {
