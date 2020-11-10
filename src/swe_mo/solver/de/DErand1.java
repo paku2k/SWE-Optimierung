@@ -47,7 +47,11 @@ public class DErand1 {
 		//If, for whatever reason, the population should be populated manually, this constructor can be used
 		// it will initialize all NP particles with all dimensions to be zero
 		
-		//No bounds are created
+		//Bounds are created to be max.
+		
+		this.upperBound=Double.MAX_VALUE;
+		this.lowerBound=-Double.MAX_VALUE;
+		
 
 		this.bestParicle  = new Particle_DE(N);
 		this.best = Double.MAX_VALUE;
@@ -149,8 +153,8 @@ public class DErand1 {
 	
 	public Particle_DE compare(Particle_DE vectorX, Particle_DE vectorU) {
 		//Compares vectorX and vectorU and returns the better one. If both give the same result, vectorU is returned
-		double xRes=fF.calculateRastrigin(vectorX);
-		double uRes=fF.calculateRastrigin(vectorU);
+		double xRes=fF.calculatef2(vectorX);
+		double uRes=fF.calculatef2(vectorU);
 		//System.out.println("current best: "+best);
 		//System.out.println("xRes: "+xRes);
 		//System.out.println("uRes: "+uRes);
@@ -160,7 +164,9 @@ public class DErand1 {
 			if(xRes<this.best) {
 				this.best = xRes;
 				bestParicle = vectorX;
-				System.out.println("Best Value: " + best);
+				System.out.println("Best Value:"+ best);
+				System.out.println("In generation: "+ generation);
+
 
 				//System.out.println("BestX: "+vectorX);
 
@@ -174,7 +180,8 @@ public class DErand1 {
 			if(uRes<this.best) {
 				this.best = uRes;
 				bestParicle = vectorU;
-				System.out.println("Best Value: " + best);
+				System.out.println("Best Value:"+ best);
+				System.out.println("In generation: "+ generation);
 
 				//System.out.println("BestU: "+vectorU);
 

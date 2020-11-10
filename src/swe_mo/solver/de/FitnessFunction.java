@@ -26,6 +26,17 @@ public class FitnessFunction {
 		 
 		 return sum;
 	 }
+	 
+	 
+	 double calculatef1(Particle_DE vector)	{
+		 double sum = 0.0;
+		 for(Double d : vector.position)
+		 {
+			 sum += Math.pow(d,2);
+		 }
+		 
+		 return sum;
+	 }
 	
 	 
 	 double calculateRastrigin(Particle_DE vector) {
