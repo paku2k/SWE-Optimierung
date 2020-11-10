@@ -1,5 +1,7 @@
 package swe_mo.solver.pso;
 
+import org.jfree.*;
+
 public class debug {
 
 	public static void main(String[] args) {
@@ -16,5 +18,7 @@ public class debug {
 		
 		psoGlobal psoSolver = new psoGlobal(dimension, min, max, particleCount, w, cc, cs, dt, numIter);
 		psoSolver.solve();
+		
+		
 	}
 }
