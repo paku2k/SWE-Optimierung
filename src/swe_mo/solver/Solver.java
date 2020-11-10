@@ -5,7 +5,6 @@ import swe_mo.ui.clogger;
 
 
 
-
 public class Solver {
 	final String AUTH = "SLV";
 	
@@ -14,10 +13,9 @@ public class Solver {
 	private int id;
 	private String algorithm;
 	private double status;
-	private double status_old;
-	private int result;
-	private int config;
 	private boolean terminated;
+	private int result; 																							//result class
+	private int config; 																							//config class
 
 	
 	public Solver(int id, String algorithm){
@@ -26,7 +24,7 @@ public class Solver {
 		status = -2;
 		terminated = false;
 		
-		//set default config
+		config = 2000000000;																						//set default config
 	}
 	public Solver(int id) {
 		this(id, "default");
@@ -34,15 +32,15 @@ public class Solver {
 		
 	
 	
-	public void configure(String parameter, Object value) throws Exception{
+	public void configure(String parameter, Object value) throws Exception{											//use config class?
 
 		config = (int)value;
-		
+				
 		status = -1;
 	}
 	
 	public void start(){
-		//determine which method to use, initialize and start
+																													//determine which method to use, initialize and start
 		
 		solverThread = new Thread(new Runnable_DE());
 		solverThread.start();
@@ -55,13 +53,17 @@ public class Solver {
 		status = 102;
 	}
 	
-	public boolean getTerminatedStatus() {
+	public boolean getTerminated() {
 		return terminated;
 	}
 	
 	
+	public String getAlgorithm() {
+		return algorithm;
+	}
 	
-	public int getResult() throws InterruptedException {
+	
+	public int getResult() throws InterruptedException {															//return result class
 		if(status>100) {
 			solverThread.join();
 			return result;
@@ -71,12 +73,6 @@ public class Solver {
 	
 	public double status() {
 		return status;
-	}
-	
-	public boolean statusChng() {
-		boolean r = status!=status_old;
-		status_old = status;
-		return r;
 	}
 	
 	
@@ -94,11 +90,15 @@ public class Solver {
 	
 	
 	public class Runnable_DE implements Runnable{	
-		test_david t = new test_david(id,config);
 		@Override
 		public void run() {
-			result = t.calc();//DEsolve
-			if(status<=100) status = 101;
+			try {
+				result = new test_david(id,config).calc();															//DEsolve
+				if(status<=100) status = 101;
+			} catch(Exception e) {
+				clogger.err(AUTH, "Runnable_DE", e);
+				status = 103;
+			}
 		}
 	}
 	
@@ -106,7 +106,13 @@ public class Solver {
 	public class Runnable_PSO implements Runnable{	
 		@Override
 		public void run() {
-			result = new test_david(id, config).calc();//PSOsolve
+			try {
+				result = new test_david(id,config).calc();															//PSOsolve
+				if(status<=100) status = 101;
+			} catch(Exception e) {
+				clogger.err(AUTH, "Runnable_PSO", e);
+				status = 103;
+			}
 		}
 	}
 	

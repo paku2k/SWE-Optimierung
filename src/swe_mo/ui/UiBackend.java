@@ -17,7 +17,6 @@ public class UiBackend {
 	private static WebInterfaceServer wis = new WebInterfaceServer();
 	private static Thread Thread_UiFrontend;
 	private static Thread Thread_WebInterfaceServer;	
-	private static int solver_id;
 	
  	
 	
@@ -55,7 +54,8 @@ public class UiBackend {
 			} catch (Exception e) {
 				clogger.err(AUTH, "run", e);	
 			}
-		}
+		}		
+		
 		//stopping
 				
 		// wait for Threads to stop
@@ -121,11 +121,6 @@ public class UiBackend {
 			clogger.err(_AUTH, "while_run", e);
 		}
 				
-		//solver test status
-		if(SolverManager.status(solver_id) >= 0 && SolverManager.status(solver_id) <= 100) {
-			if(SolverManager.statusChng(solver_id)) clogger.dbg(AUTH, "while_run", "Status is "+(int)SolverManager.status(solver_id)+"%");			
-		}
-				
 	}
 	
 	/**
@@ -177,6 +172,8 @@ public class UiBackend {
 		return status;
 	}
 	
+
+	
 	/**
 	 * interprete cmd line command
 	 * 
@@ -188,209 +185,427 @@ public class UiBackend {
 	 * @throws Exception
 	 */	
 	private static Object cmd_interprete(String AUTH, String cmd) throws Exception {
-
-		if(cmd.equals("ts tst")) {
-			cmd(AUTH,"ts create");
-			cmd(AUTH,"ts config");
-			cmd(AUTH,"ts start");
-			
-			
-		} else if(cmd.equals("ts create")) {
-				solver_id = SolverManager.newSolver("");
-				return solver_id;
-				
-		} else if(cmd.equals("ts config")) {
-				try {
-					SolverManager.configure(solver_id);
-					return "(Test-)Solver configured";
-				} catch(Exception e) {
-					clogger.err(AUTH, "cmd_interprete", e);
-					return "Could not configure (Test-)Solver";
-				}
-				
-		} else if(cmd.equals("ts start")) {
-				try {
-					SolverManager.start(solver_id);
-					return "(Test-)Solver started";
-				} catch(Exception e) {
-					clogger.err(AUTH, "cmd_interprete", e);
-					return "Could not start (Test-)Solver";
-				}
-				
-		} else if(cmd.equals("ts term")) {
-				try {
-					SolverManager.terminate(solver_id);
-					return "(Test-)Solver terminated";
-				} catch(Exception e) {
-					clogger.err(AUTH, "cmd_interprete", e);
-					return "Could not terminate (Test-)Solver";
-				}
-
-				
-		} else if(cmd.equals("ts getres")) {
-				try {
-					return "Result is: "+SolverManager.result(solver_id);
-				} catch(Exception e) {
-					clogger.err(_AUTH, "cmd_interprete", e);
-				}
-				return "No result available";
-
-				
-		} else if(cmd.equals("ts getstat")) {
-				try {
-					return "Status: "+(int)SolverManager.status(solver_id);					
-				} catch(Exception e) {
-					clogger.err(_AUTH, "cmd_interprete", e);
-				}
-				return "Error while reading status";
-				
-				
-		} else if(cmd.equals("ts delete")) {
-				try {
-					SolverManager.delete(solver_id);
-					return "Solver deleted";
-				} catch(Exception e) {
-					clogger.err(_AUTH, "cmd_interprete", e);
-				}
-				return "Could not delete";
+		//cut the command string
+		Queue<String> cmd_queue = new LinkedList<String>();
+		String[] cmd_split = cmd.replace("    "," ").replace("   "," ").replace("  "," ").split(" ");
+		for(String s : cmd_split) {
+			if(s != "" && s != null)
+				cmd_queue.offer(s);
+		}
+		
+		if(cmd_queue.isEmpty()) {
+			throw new Exception("No command given.");
+		}
+		
 				
 
-				
-				
-				
-	//new
-				
-		//help
-		} else if(cmd.equals("help")) {
-			return     "List of modules\r"
-					 + "\t" + "app \t\tApplication Control\r"
-					 + "\t" + "cfg \t\tApplication Configuration\r"
-					 + "\t" + "uif \t\tUiFrontend\r"
-					 + "\t" + "wis \t\tWebInterfaceServer\r"
-					 + "\t" + "sm  \t\tSolverManager\r"
-					 + "\t" + "om  \t\tOptimizer";
+		//help	
+		if(cmd_queue.peek().equals("help")) {
+			cmd_queue.remove();
+			
+			if(cmd_queue.isEmpty()) {
+				return     "List of modules\r"
+						 + "\t" + "app \t\tApplication Control\r"
+						 + "\t" + "cfg \t\tApplication Configuration\r"
+						 + "\t" + "uif \t\tUiFrontend\r"
+						 + "\t" + "wis \t\tWebInterfaceServer\r"
+						 + "\t" + "sm  \t\tSolverManager\r"
+						 + "\t" + "om  \t\tOptimizer";
+			} else {
+				return cmd(AUTH, cmd_queue.poll()+" help");
+			}
 			
 			
-			
+
 		// app
-		} else if(cmd.equals("app") || cmd.equals("app help") || cmd.equals("help app")) {
-			return     "app - List of commands\r"
-					 + "\t" + "exit \t\tStop and exit Application";
+		} else if(cmd_queue.peek().equals("app")) {
+			cmd_queue.remove();
 			
-		} else if(cmd.equals("app exit")) {
-			if(wis.status()) wis.stop(true);
-			UiFrontend.stop(true);
-			UiBackend.stop(true);
-			return "Exiting application.";
-					
+			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
+				return     "app - List of commands\r"
+						 + "\t" + "exit \t\tStop and exit Application";		
+				
+			} else if(cmd_queue.peek().equals("exit")) {
+				cmd_queue.remove();
+				
+				if(wis.status()) wis.stop(true);
+				UiFrontend.stop(true);
+				UiBackend.stop(true);
+				return "Exiting application.";
+			}
+			
+			
+
+		//cfg
+		} else if(cmd_queue.peek().equals("cfg")) {
+			cmd_queue.remove();
+
+			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
+				return     "cfg - List of commands\r"
+						 + "Not implemented yet.";
+				
+			}	
+			return "Not implemented yet.";
+			
 			
 
 		// uif	
-		} else if(cmd.equals("uif") || cmd.equals("uif help") || cmd.equals("help uif")) {
-			return     "uif - List of commands\r"
-					 + "\t" + "start \t\tStart UiFrontend\r"
-					 + "\t" + "min   \t\tMinimize Window\r"
-					 + "\t" + "show  \t\tShow Window\r"
-					 + "\t" + "status\t\tGet Status of UiFrontend";	
-			
-		} else if(cmd.equals("uif start")) {
-			if(Thread_UiFrontend!=null && Thread_UiFrontend.isAlive()) return "UiFrontend is already running.";
-			try {
-				Thread_UiFrontend = new Thread() { public void run() {try {UiFrontend.start();} catch (Exception e) {clogger.err(AUTH, "Thread_UiFrontend", e);}}};
-				Thread_UiFrontend.start();
-				return "Starting UiFrontend.";
-			} catch(Exception e) {
-				throw new Exception("Could not start UiFrontend. ("+e.getMessage()+")");
-			}
-			
-		} else if(cmd.equals("uif min")) {
-			if(Thread_UiFrontend!=null && Thread_UiFrontend.isAlive()) {
-				UiFrontend.setMinimized(true);
-				return "Minimized UiFrontend Window.";
-			} else {
-				throw new Exception("UiFrontend not running.");
-			}
-			
-		} else if(cmd.equals("uif show")) {
-			if(Thread_UiFrontend!=null && Thread_UiFrontend.isAlive()) {
-				UiFrontend.setMinimized(false);
-				return "Show UiFrontend Window.";
-			} else {
-				throw new Exception("UiFrontend not running.");
-			}
-			
-		} else if(cmd.equals("uif status")) {
-			if(Thread_UiFrontend!=null && Thread_UiFrontend.isAlive()) {
-				switch(UiFrontend.status()) {
-				case -1:
-					return "exit";
-				case 0:
-					return "not running";
-				case 1:
-					return "running";
+		} else if(cmd_queue.peek().equals("uif")) {
+			cmd_queue.remove();
+
+			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
+				return     "uif - List of commands\r"
+						 + "\t" + "start \t\tStart UiFrontend\r"
+						 + "\t" + "min   \t\tMinimize Window\r"
+						 + "\t" + "show  \t\tShow Window\r"
+						 + "\t" + "status\t\tGet Status of UiFrontend";	
+				
+			} else if(cmd_queue.peek().equals("start")) {
+				cmd_queue.remove();				
+
+				if(Thread_UiFrontend!=null && Thread_UiFrontend.isAlive()) return "UiFrontend is already running.";
+				try {
+					Thread_UiFrontend = new Thread() { public void run() {try {UiFrontend.start();} catch (Exception e) {clogger.err(AUTH, "Thread_UiFrontend", e);}}};
+					Thread_UiFrontend.start();
+					return "Starting UiFrontend.";
+				} catch(Exception e) {
+					throw new Exception("Could not start UiFrontend. ("+e.getMessage()+")");
 				}
-			} else {
-				throw new Exception("UiFrontend not running.");
+				
+			} else if(cmd_queue.peek().equals("min")) {
+				cmd_queue.remove();				
+
+				if(Thread_UiFrontend!=null && Thread_UiFrontend.isAlive()) {
+					UiFrontend.setMinimized(true);
+					return "Minimized UiFrontend Window.";
+				} else {
+					throw new Exception("UiFrontend not running.");
+				}
+				
+			} else if(cmd_queue.peek().equals("show")) {
+				cmd_queue.remove();			
+				
+				if(Thread_UiFrontend!=null && Thread_UiFrontend.isAlive()) {
+					UiFrontend.setMinimized(false);
+					return "Show UiFrontend Window.";
+				} else {
+					throw new Exception("UiFrontend not running.");
+				}
+				
+			} else if(cmd_queue.peek().equals("status")) {
+				cmd_queue.remove();		
+				
+				if(Thread_UiFrontend!=null && Thread_UiFrontend.isAlive()) {
+					switch(UiFrontend.status()) {
+					case -1:
+						return "exit";
+					case 0:
+						return "not running";
+					case 1:
+						return "running";
+					}
+				} else {
+					throw new Exception("UiFrontend not running.");
+				}
+			
 			}
 			
 								
 
 		// wis	
-		} else if(cmd.equals("wis") || cmd.equals("wis help") || cmd.equals("help wis")) {
-			return     "wis - List of commands\r"
-					 + "\t" + "start \t\tStart WebInterfaceServer\r"
-					 + "\t" + "stop  \t\tStop WebInterfaceServer\r"
-					 + "\t" + "open  \t\tOpen WebGUI in Browser\r"
-					 + "\t" + "status\t\tGet Status of WebInterfaceServer";
-			
-		} else if(cmd.equals("wis start")) {
-			Thread_WebInterfaceServer = new Thread() { public void run() {try {wis.start();} catch (Exception e) {clogger.err(AUTH, "Thread_WebInterfaceServer", e);}}};
-			Thread_WebInterfaceServer.start();
-			return "Starting WIS (Port: "+wis.getPort()+")";
-			
-		} else if(cmd.equals("wis start -n")) {
-			if(wis.status()) UiBackend.cmd(_AUTH, "wis stop");
-			wis = new WebInterfaceServer();
-			return UiBackend.cmd(_AUTH, "wis start");
-			
-		} else if(cmd.equals("wis stop")) {
-			if(wis.status()) {
-				wis.stop(false);
-				cmd(AUTH, "uif show");
-				return "Stopping WIS.";
-			} else {
-				throw new Exception("WIS already stopped.");
-			}
+		} else if(cmd_queue.peek().equals("wis")) {
+			cmd_queue.remove();
 
-		} else if(cmd.equals("wis open")) {
-			try {
-				wis.open();
+			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
+				return     "wis - List of commands\r"
+						 + "\t" + "start \t\tStart WebInterfaceServer\r"
+						 + "\t" + "stop  \t\tStop WebInterfaceServer\r"
+						 + "\t" + "open  \t\tOpen WebGUI in Browser\r"
+						 + "\t" + "status\t\tGet Status of WebInterfaceServer";
+				
+			} else if(cmd_queue.peek().equals("start")) {
+				cmd_queue.remove();		
+				
+				if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-n")) {
+					cmd_queue.remove();
+
+					if(wis.status()) UiBackend.cmd(_AUTH, "wis stop");
+					
+					if(cmd_queue.isEmpty()) {
+						wis = new WebInterfaceServer();
+					} else {
+						int port = Integer.parseInt(cmd_queue.poll());
+						
+						if(!cmd_queue.isEmpty()) {
+							wis = new WebInterfaceServer(port, Integer.parseInt(cmd_queue.poll()));
+						} else {
+							wis = new WebInterfaceServer(port);
+						}
+					}					
+					
+					return UiBackend.cmd(_AUTH, "wis start");
+					
+				} else if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-r")) {
+					if(wis.status()) UiBackend.cmd(_AUTH, "wis stop");
+					return UiBackend.cmd(_AUTH, "wis start");					
+				}
+				
+				if(cmd_queue.isEmpty()) {
+					Thread_WebInterfaceServer = new Thread() { public void run() {try {wis.start();} catch (Exception e) {clogger.err(AUTH, "Thread_WebInterfaceServer", e);}}};
+					Thread_WebInterfaceServer.start();
+					return "Starting WIS (Port: "+wis.getPort()+")";
+				}
+				
+			} else if(cmd_queue.peek().equals("stop")) {
+				cmd_queue.remove();		
+
+				if(wis.status()) {
+					wis.stop(false);
+					cmd(AUTH, "uif show");
+					return "Stopping WIS.";
+				} else {
+					throw new Exception("WIS already stopped.");
+				}
+				
+			} else if(cmd_queue.peek().equals("open")) {
+				cmd_queue.remove();						
+
+				try {
+					wis.open();
+				} catch(Exception e) {
+					throw new Exception("Could not open WebGUI. ("+e.getMessage()+")");
+				}
+				
+				if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-m")) {
+					cmd_queue.remove();
+					cmd(AUTH, "uif min");	
+				}
+
 				return "Opening WebGUI";
-			} catch(Exception e) {
-				throw new Exception("Could not open WebGUI. ("+e.getMessage()+")");
+				
+				
+			} else if(cmd_queue.peek().equals("status")) {
+				cmd_queue.remove();		
+				
+				if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-a")) {
+					cmd_queue.remove();
+					return wis.status();	
+					
+				} else if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-p")) {
+					cmd_queue.remove();
+					return wis.getPort();
+				}
+
+				return (wis.status()?"running":"not running")+". Configured port: "+wis.getPort();	
 			}
 			
-		} else if(cmd.equals("wis open -m")) {
-			cmd(AUTH, "wis open");
-			cmd(AUTH, "uif min");			
+			
 
-		} else if(cmd.equals("wis status")) {
-			return (wis.status()?"running":"not running")+". Configured port: "+wis.getPort();			
+		//sm
+		} else if(cmd_queue.peek().equals("sm")) {
+			cmd_queue.remove();
 
-		} else if(cmd.equals("wis status -a")) {
-			return wis.status();			
+			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
+				return     "sm - List of commands\r"
+						 + "\t" + "list \t\tList all Solvers\r"
+						 + "\t" + "create \t\tCreate new Solver-Instance\r"
+						 + "\t" + "config \t\tConfigure Solver\r"
+						 + "\t" + "start \t\tStart Solving\r"
+						 + "\t" + "term \t\tTerminate Solver\r"
+						 + "\t" + "status \t\tGet Status of Solver(-Manager)\r"
+						 + "\t" + "result \t\tGet Result\r"
+						 + "\t" + "delete \t\tDelete Solver-Instance\r";
+								
+			} else if(cmd_queue.peek().equals("list")) {
+				cmd_queue.remove();		
+				
+				if(!cmd_queue.isEmpty()) {
+					boolean show_running = true;
+					boolean show_notrunning = true;
+					String type = "";
+					double status = -5;
+					double status_max = 105;
+					
+					int i = 4;
+					while(cmd_queue.size()>0 && i>=0) {
+						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-r")) {
+							cmd_queue.remove();		
+							show_running = true;
+							show_notrunning = false;
+						}
+						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-nr")) {
+							cmd_queue.remove();		
+							show_running = false;
+							show_notrunning = true;
+						}
+						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-t")) {
+							cmd_queue.remove();		
+							
+							if(!cmd_queue.isEmpty()) {
+								type = cmd_queue.poll();					
+							} else {
+								throw new Exception("Specify Solver type.");
+							}	
+						}
+						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-s")) {
+							cmd_queue.remove();		
+							
+							if(!cmd_queue.isEmpty()) {
+								try {
+									status = Double.parseDouble(cmd_queue.peek());
+									status_max = status;
+									cmd_queue.remove();
+									if(!cmd_queue.isEmpty()) {
+										try {
+											status_max = Double.parseDouble(cmd_queue.peek());
+											cmd_queue.remove();
+										} catch(Exception e) {}
+									}
+									if(status_max < status) {
+										double m = status;
+										status = status_max;
+										status_max = m;
+									}
+								} catch(Exception e) {}
+							}						
+						}
+						i--;
+					}					
+					return SolverManager.list(show_running, show_notrunning, type, status, status_max);
+					
+				} else {
+					return SolverManager.list();
+				}
+				
+			} else if(cmd_queue.peek().equals("create")) {
+				cmd_queue.remove();		
+				
+				if(!cmd_queue.isEmpty()) {					
+					return SolverManager.create(cmd_queue.poll());					
+				}
+				
+				return SolverManager.create();
+				
+			} else if(cmd_queue.peek().equals("config")) {
+				cmd_queue.remove();		
 
-		} else if(cmd.equals("wis status -p")) {
-			return wis.getPort();	
+				try {
+					
+					int id = -1;					
+					try {
+						id = Integer.parseInt(cmd_queue.peek());
+						cmd_queue.poll();
+					} catch(Exception e) {}
+
+					if(cmd_queue.isEmpty()) throw new Exception("Not enough parameters. You need at least one.");
+					
+					String config = "";
+					while(!cmd_queue.isEmpty()) {	
+						config += cmd_queue.poll()+"/";
+					}
+					if(id > -1) 
+						SolverManager.configure(id, config);
+					else
+						SolverManager.configure(config);
+					return "Solver configured.";
+				} catch(Exception e) {
+					throw e;
+				}
+								
+			} else if(cmd_queue.peek().equals("start")) {
+				cmd_queue.remove();		
+				
+				try {
+					if(!cmd_queue.isEmpty()) {					
+						SolverManager.start(Integer.parseInt(cmd_queue.poll()));		
+					} else {					
+						SolverManager.start();
+					}
+					return "Solver started.";
+				} catch(Exception e) {
+					throw e;
+				}
+				
+			} else if(cmd_queue.peek().equals("term")) {
+				cmd_queue.remove();		
+				
+				try {
+					if(!cmd_queue.isEmpty()) {	
+						if(cmd_queue.peek().contains("-")) {
+							if(cmd_queue.poll().equals("-all")) {
+								SolverManager.terminateAll();
+								return "All Solvers terminated.";
+							}
+						} else {
+							SolverManager.terminate(Integer.parseInt(cmd_queue.poll()));					
+							return "Solver terminated.";	
+						}
+					} else {					
+						SolverManager.terminate();						
+						return "Solver terminated.";
+					}
+				} catch(Exception e) {
+					throw e;
+				}
+				
+			} else if(cmd_queue.peek().equals("status")) {
+				cmd_queue.remove();					
+				
+				if(!cmd_queue.isEmpty()) {		
+					return "Status: "+SolverManager.round(SolverManager.status(Integer.parseInt(cmd_queue.poll())),3);	
+				} else {	
+					return "Status: "+SolverManager.round(SolverManager.status(),3);	
+				}	
+				
+			} else if(cmd_queue.peek().equals("result")) {
+				cmd_queue.remove();					
+				
+				if(!cmd_queue.isEmpty()) {		
+					return "Result is: "+(int)SolverManager.result(Integer.parseInt(cmd_queue.poll()));	
+				} else {	
+					return "Result is: "+(int)SolverManager.result();	
+				}	
+				
+			} else if(cmd_queue.peek().equals("delete")) {
+				cmd_queue.remove();		
+				
+				try {
+					if(!cmd_queue.isEmpty()) {	
+						if(cmd_queue.peek().contains("-")) {
+							if(cmd_queue.poll().equals("-all")) {
+								SolverManager.deleteAll();
+								return "All Solvers deleted.";
+							}
+						} else {
+							SolverManager.delete(Integer.parseInt(cmd_queue.poll()));					
+							return "Solver deleted.";	
+						}
+					} else {					
+						SolverManager.delete();						
+						return "Solver deleted.";
+					}
+				} catch(Exception e) {
+					throw e;
+				}						
+			}
 			
 			
+
+		//om
+		} else if(cmd_queue.peek().equals("om")) {
+			cmd_queue.remove();
+
+			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
+				return     "om - List of commands\r"
+						 + "Not implemented yet.";
+				
+			}	
+			return "Not implemented yet.";
 			
 			
-			
-		} else {
-			throw new Exception("Command unknown ("+cmd+"). Try help for list of commands.");
+
 		}
-		return "ok";		
+
+		throw new Exception("Command unknown ("+cmd+"). Try help for list of commands.");		
 	}
-	
 }
