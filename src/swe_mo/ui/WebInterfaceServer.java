@@ -13,18 +13,35 @@ import com.sun.net.httpserver.*;
 
 
 public class WebInterfaceServer{
-	final static String AUTH = "WIS";
+	private final static String AUTH = "WIS";
+	
+	private boolean running;
+	private boolean running_statechange;
+	private boolean exit = false;
+
 	private HttpServer server;
-	private boolean server_running;
-	private boolean server_running_statechange;
-	private static boolean exit = false;
 	private int port;
 	
+ 	
 	
-	public WebInterfaceServer(int lowbd, int highbd){
-		port = createRandomPort(lowbd, highbd);
-		server_running = false;
-		server_running_statechange = false;
+	
+	
+	
+/*
+ * CONSTRUCTORS (public)
+ *  
+ */	
+	
+	/**
+	 * Create random port between boundaries and set status
+	 * 
+	 * @param lowbd		lower boundary for port
+	 * @param highbd	upper boundary for port
+	 */
+	public WebInterfaceServer(int lowbd, int upbd){
+		port = createRandomPort(lowbd, upbd);
+		running = false;
+		running_statechange = false;
 	}
 	
 	public WebInterfaceServer(int port){
@@ -35,174 +52,229 @@ public class WebInterfaceServer{
 		this(29170,29998);	//largest "unused" port interval
 		
 	}
-
-
-        
+	
+ 	
+	
+	
+	
+	
+/*
+ * SSS FUNCTIONS (public)
+ * 
+ * start
+ * stop
+ * open
+ * status
+ * getPort
+ * statuschange
+ *         
+ */
     
-    public void start() {
+	/**
+	 * Start the WebInterfaceServer
+	 */
+    public void start() throws Exception {
     	if(exit) return;
-    	try {
-    		if(!server_running) {
-	    		server = HttpServer.create(new InetSocketAddress(port), 0);
-	            server.createContext("/", WebInterfaceServer::handleRequest);
-	            server.start(); 
-	            server_running = true;
-	            
-	            clogger.info(AUTH, "start", "WIS started");
-    		} else {
-    			clogger.warn(AUTH, "start", "WIS already started"); 
-    		}
-		}catch(Exception e){
-			clogger.err(AUTH, "start", e);
-		} 	    	
+		if(!running) {
+    		server = HttpServer.create(new InetSocketAddress(port), 0);
+            server.createContext("/", WebInterfaceServer::handleRequest);
+            server.start(); 
+            running = true;
+            
+            clogger.info(AUTH, "start", "WIS started");
+		} else {
+			throw new Exception("WIS already started"); 
+		}	
     }
     
-    public void open(){
+    /**
+     * stop the WebInterfaceServer
+     * 
+     * @param permanently used for disabling WIS at app exit
+     */
+    public void stop(boolean permanently) throws Exception {
+    		if(running) {
+    	    	try {
+		            server.stop(1);  
+		            running = false;
+		            clogger.info(AUTH, "stop", "WIS stopped");
+    			}catch(Exception e){
+    				throw e;
+    			} 	     	
+    		}else {
+    			throw new Exception("WIS already stopped");
+    		}
+    		exit = permanently;
+    }
+    
+    /**
+     * open the URL to this WIS in a Browser
+     * 
+     * @throws Exception 
+     */
+    public void open() throws Exception{
     	try {
-    		if(server_running) {
+    		if(running) {
     			openWebpage(new URL("http://localhost:"+port)); 
     		} else {
-    			clogger.warn(AUTH, "open", "WIS not running");
+    			throw new Exception("WIS not running");
     		}
     	}catch(MalformedURLException e){
-    		clogger.err(AUTH, "open", e);
+    		throw e;
     	}
     }
     
-    public void stop(boolean permanently) {
-    	try {
-    		if(server_running) {
-	            server.stop(1);  
-	            server_running = false;
-	            clogger.info(AUTH, "stop", "WIS stopped");
-    		}else {
-    			clogger.warn(AUTH, "stop", "WIS already stopped");
-    		}
-    		exit = permanently;
-		}catch(Exception e){
-			clogger.err(AUTH, "stop", e);
-		} 	     	
+    /**
+     * returns the status of WIS
+     * 
+     * @return running (true = WIS running, false = WIS not running)
+     */
+    public boolean status() {
+    	return running;    	
     }
     
-    public boolean running() {
-    	return server_running;    	
-    }
-    
-    public boolean statechange() {
-    	boolean sc = (server_running != server_running_statechange);
-    	server_running_statechange = server_running;
-    	return sc;
-    }
-
+    /**
+     * returns the port of WIS
+     * 
+     * @return port
+     */
     public int getPort() {
     	return port;
     }
     
+    /**
+     * state change indicator
+     * 
+     * @return true if status changed since last call
+     */
+    public boolean statechange() {
+    	boolean sc = (running != running_statechange);
+    	running_statechange = running;
+    	return sc;
+    }
+	
+ 	
+	
+	
+	
+	
+/*
+ * HTTP-REQUEST HANDLING (private)
+ * 
+ * handleRequest
+ * sendHttpResponse
+ * readFileString
+ * readFileBytes
+ * getContentType 
+ * 
+ */
     
-    
-    
-    
-    
-    
-    
-    
+    /**
+     * handle the Response to the httpExchange
+     * 
+     * @param httpExchange HttpExchange-Object
+     * @throws IOException
+     */
     private static void handleRequest(HttpExchange httpExchange) throws IOException {
-		httpRequestParameters requestParameters = new httpRequestParameters();
     	try {
-    		requestParameters.resolve(httpExchange);
-			//WI_REQUEST event -> transmit request to main(?) and receive a response
-			
-			/* trigger http response */
-			handleResponse(httpExchange,requestParameters); 
+    		httpRequestParameters requestParameters = new httpRequestParameters(httpExchange);
+    		String responseString = "";
+    		String DIR_ANCH = "/_wisFiles"; //anchor folder   
+
+    	    try {
+    	    	if(requestParameters.getPath().equals("/")) {
+    	    		//redirect to index    		
+    	    	    httpExchange.getResponseHeaders().set("Location", "/index.html");
+    		        sendHttpResponse(httpExchange, 301, null);
+    	    	    
+    	    	} else if(requestParameters.getPath().equals("/xhr")) {
+    	    		//xhr request (sending cmd commands and receiving+send answers via json)
+    	    		//clogger.dbg(AUTH, "handleRequest", requestParameters.toString());
+    		        String r = "{ "; 
+
+    	    		if(requestParameters.getParValue("cmdcnt")!=null) { //count of transmitted cmd
+    	    			for(int i=0; i < Integer.valueOf(requestParameters.getParValue("cmdcnt")); i++) {
+    	    				r += "\"cmd"+i+"\": \"";
+    	    				try {
+    	    					r += UiBackend.cmd(AUTH, requestParameters.getParValue("cmd"+i));
+    	    				} catch(Exception e) {
+    	    					r += "ERR: "+e.getMessage();
+    	    				}
+    	    				r += "\",";
+    	    			}
+    	    		}		
+    		        r += "}"; 
+    	
+    	    	    httpExchange.getResponseHeaders().set("Content-Type", getContentType("json"));
+    		        sendHttpResponse(httpExchange, 200, r.getBytes());
+    				
+    	
+    	    	} else if(requestParameters.getPath().equals("/favicon.ico")){	
+    	    	    httpExchange.getResponseHeaders().set("Content-Type", "text/x-icon");
+    		        sendHttpResponse(httpExchange, 200, readFileBytes(DIR_ANCH+"/img/icon.ico"));	
+    		        
+    			} else if(requestParameters.getPath().equals("/index.html")){
+    		    	responseString = readFileString(DIR_ANCH+"/index.html");
+    		    	
+    		    	//fill server side scripts
+    		    	responseString.replaceAll("<?wis FILL_DATA ?>", ""); 
+    		    	
+    	    	    httpExchange.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
+    		        sendHttpResponse(httpExchange, 200, responseString.getBytes());
+    		        
+    	    	} else {
+    	    		//check dir _wisFiles for requested file
+    	    		String dir = DIR_ANCH;
+    	    		for(String p : requestParameters.getPathSep()) {
+    	    			dir += "/"+p;
+    	    		}
+    	    		if(getContentType(requestParameters.getFileType()) != null) {
+    	    			//append file and try to find it
+    	    			dir += "/"+requestParameters.getFileName()+"."+requestParameters.getFileType();
+
+    		    		try {
+    		    			byte[] bytes = readFileBytes(dir);
+    	    	    	    httpExchange.getResponseHeaders().set("Content-Type", getContentType(requestParameters.getFileType()));
+    	    	        	sendHttpResponse(httpExchange, 200, bytes);  
+    		    		} catch(Exception e) {
+    				        sendHttpResponse(httpExchange, 404, null);	    			
+    		    		}    
+    	    		} else {
+    	    			//try index.html otherwise 403 forbidden
+    	    			if(requestParameters.getFileType() != "") {
+    	    				dir += "/"+requestParameters.getFileName();
+    	    				if(requestParameters.getFileType() != "")
+    	    					dir += "."+requestParameters.getFileType();
+    	    			}
+    	    			if(dir.substring(dir.length()-1).equals(".")) dir = dir.substring(0,dir.length()-1); //foldername must not end with .
+    	    			dir += "/index.html";
+
+    		    		try {
+    		    			byte[] bytes = readFileBytes(dir);
+    	    	    	    httpExchange.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
+    	    	        	sendHttpResponse(httpExchange, 200, bytes);  
+    		    		} catch(Exception e) {
+    				        sendHttpResponse(httpExchange, 403, null);	    			
+    		    		}    
+    	    		}
+    	    				
+    	    	}
+    		} catch(Exception e) {
+    			clogger.err(AUTH, "handleRequest-Response", e);
+    	        sendHttpResponse(httpExchange, 500, null);  
+    		}
     	} catch(Exception e) {
     		clogger.err(AUTH, "handleRequest", e);
     	}
     }
     
-      
-    private static void handleResponse(HttpExchange httpExchange, httpRequestParameters requestParameters) {
-    	handleResponse(httpExchange, requestParameters, "");
-    }    
-    private static void handleResponse(HttpExchange httpExchange, httpRequestParameters requestParameters, String cmdSendData) {
-		//StringBuilder htmlBuilder = new StringBuilder();
-		String responseString = "";
-
-	    try {
-	    	if(requestParameters.getPath().equals("/")) {
-	    		//redirect to index    		
-	    	    httpExchange.getResponseHeaders().set("Location", "/index.html");
-		        sendHttpResponse(httpExchange, 301, null);
-	    	    
-	    	} else if(requestParameters.getPath().equals("/xhr_update")) {
-		        String r = "NEW-DATA_"+createRandomPort(0,70000); 
-	
-	    	    httpExchange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
-		        sendHttpResponse(httpExchange, 200, r.getBytes());
-					
-		        
-	    	} else if(requestParameters.getPath().equals("/xhr_action")) {
-		        String r = "DATA-RECEIVED_"+requestParameters.toString();
-		        
-	    	    httpExchange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
-		        sendHttpResponse(httpExchange, 200, r.getBytes());
-				
-	
-	    	} else if(requestParameters.getPath().equals("/favicon.ico")){	
-	    	    httpExchange.getResponseHeaders().set("Content-Type", "text/x-icon");
-		        sendHttpResponse(httpExchange, 200, readFileBytes("/_wisFiles/img/icon.ico"));	
-		        
-			} else if(requestParameters.getPath().equals("/index.html")){
-		    	responseString = readFileString("/_wisFiles/index.html");
-		    	
-		    	//fill server side scripts
-		    	responseString.replaceAll("<?wis FILL_DATA ?>", ""); 
-		    	
-	    	    httpExchange.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
-		        sendHttpResponse(httpExchange, 200, responseString.getBytes());
-		        
-	    	} else {
-	    		//check dir _wisFiles for requested file
-	    		String dir = "/_wisFiles";
-	    		for(String p : requestParameters.getPathSep()) {
-	    			dir += "/"+p;
-	    		}
-	    		if(getContentType(requestParameters.getFileType()) != null) {
-	    			//append file and try to find it
-	    			dir += "/"+requestParameters.getFileName()+"."+requestParameters.getFileType();
-
-		    		try {
-		    			byte[] bytes = readFileBytes(dir);
-	    	    	    httpExchange.getResponseHeaders().set("Content-Type", getContentType(requestParameters.getFileType()));
-	    	        	sendHttpResponse(httpExchange, 200, bytes);  
-		    		} catch(Exception e) {
-				        sendHttpResponse(httpExchange, 404, null);	    			
-		    		}    
-	    		} else {
-	    			//try index.html otherwise 403 forbidden
-	    			if(requestParameters.getFileType() != "") {
-	    				dir += "/"+requestParameters.getFileName();
-	    				if(requestParameters.getFileType() != "")
-	    					dir += "."+requestParameters.getFileType();
-	    			}
-	    			if(dir.substring(dir.length()-1).equals(".")) dir = dir.substring(0,dir.length()-1); //foldername must not end with .
-	    			dir += "/index.html";
-
-		    		try {
-		    			byte[] bytes = readFileBytes(dir);
-	    	    	    httpExchange.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
-	    	        	sendHttpResponse(httpExchange, 200, bytes);  
-		    		} catch(Exception e) {
-				        sendHttpResponse(httpExchange, 403, null);	    			
-		    		}    
-	    		}
-	    				
-	    	}
-		} catch(Exception e) {
-			clogger.err(AUTH, "handleResponse", e);
-	        sendHttpResponse(httpExchange, 500, null);  
-		}
-    }
-    
+    /**
+     * send a response to the HttpExchange
+     * 
+     * @param httpExchange	is the httpExchange
+     * @param code			is the http response code
+     * @param body			is the bytearray for the to be send data
+     */
     private static void sendHttpResponse(HttpExchange httpExchange, int code, byte[] body) {
 		try {
 	        if(body!=null) {
@@ -218,12 +290,14 @@ public class WebInterfaceServer{
 			clogger.err(AUTH, "sendHttpResponse", e);
 		}
     	
-    }
+    } 
     
-
-        
-    
-    /* read file as string with filepath as relative path to class */
+    /**
+     * read file as string with filepath as relative path to class 
+     * 
+     * @param filepath 
+     * @return file as String
+     */
     static String readFileString(String filepath) throws IOException{
     	InputStream in = WebInterfaceServer.class.getResourceAsStream(filepath);
     	try{
@@ -237,6 +311,13 @@ public class WebInterfaceServer{
     	}
     	
 	}
+    
+    /**
+     * read file as bytes with filepath as relative path to class 
+     * 
+     * @param filepath 
+     * @return file as bytes
+     */
     static byte[] readFileBytes(String filepath) throws IOException{
     	InputStream in = WebInterfaceServer.class.getResourceAsStream(filepath); 
     	try{
@@ -250,9 +331,12 @@ public class WebInterfaceServer{
     	}
 	}
     
-    
-    
-    /* return Content-Type for file ending. returns null if file not supported */
+    /**
+     * return Content-Type for filename extension. 
+     * 
+     * @param filetype String with filename extension 
+     * @return MIME type or null if file not supported 
+     */
     static String getContentType(String filetype) {
     	if(filetype.equals("aac")) {
     		return "audio/aac";
@@ -313,15 +397,34 @@ public class WebInterfaceServer{
     	}
     	return null;
     }
+	
+ 	
+	
+	
+	
+	
+ /*
+  * HELPER FUNCTIONS (private)
+  * 
+  * createRandomPort
+  * openWebpage
+  *     
+  */
     
-    
-    
-    
-     
-    
-    /* create a random number for port in given and absolute boundaries */
+    /**
+     * create a random number for port in given and absolute boundaries 
+     * absolute boundaries are [1024,65535]
+     * 
+     * @param lowerbound lower boundary
+     * @param upperbound upper boundary
+     */
     private static int createRandomPort(int lowerbound, int upperbound) {
     	try {
+    		if(lowerbound > upperbound) {
+    			int m = lowerbound;
+    			lowerbound = upperbound;
+    			upperbound = m;
+    		}
         	if(lowerbound < 1024) lowerbound = 1024;
         	if(upperbound > 65535) upperbound = 65535;
         	
@@ -330,11 +433,16 @@ public class WebInterfaceServer{
         	return new Random().nextInt(upperbound-lowerbound)+lowerbound;    	    		
     	} catch (Exception e) {	
     		clogger.err(AUTH, "createRandomPort", e);
+        	return 8000;
     	}
-    	return 8000;
     }
     
-    /* functions for starting the webpage on default browser */
+    
+    /**
+     * function for starting the webpage (with URI) on default browser 
+     * 
+     * @param uri the URI of the webpage
+     */
 	private boolean openWebpage(URI uri) {
 	  	try {
 	  		Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
@@ -347,36 +455,53 @@ public class WebInterfaceServer{
         }        
         return false;
     }
+	
+	
+    /**
+     * function for starting the webpage (with URL) on default browser 
+     * 
+     * @param url the URL of the webpage
+     */
     private boolean openWebpage(URL url) {
         try {
             return openWebpage(url.toURI());
-        } catch (URISyntaxException e) {
-        	clogger.err(AUTH, "openWebpage_url", e);
         } catch (Exception e) {
         	clogger.err(AUTH, "openWebpage_url", e);        	
         }
         return false;
     }
-    
-    
-    
-    
-    
-    
-    
-    
+	
+ 	
+	
+	
+	
+	
+/*
+ * HELPER CLASS (private)
+ * 
+ * httpRequestParameters 
+ * 
+ */
     private static class httpRequestParameters{
-    	
+    	private HttpExchange httpExchange;
+
+    	private String method;
     	private String path;
     	private Queue<String> pathsep;
     	private String filename;
     	private String filetype;
-    	private String method;
     	private String parstring;
     	private ArrayList<String[]> par;
     	
+
     	
-    	public httpRequestParameters() {
+	/*
+	 * CONSTRUCTORS (public)
+	 *  
+	 */	
+    	
+    	public httpRequestParameters(HttpExchange httpExchange) throws Exception {
+    		this.httpExchange = httpExchange;
     		path = "";
     		filename = "";
     		filetype = "";
@@ -384,48 +509,23 @@ public class WebInterfaceServer{
     		parstring = "";
     		par = new ArrayList<String[]>();
     		
-    	}
-    	
-    	public String getPath() {
-    		return path;
-    	}    	
-    	
-    	@SuppressWarnings("unused")
-		public String getParstring() {
-    		return parstring;
-    	}
-    	
-    	@SuppressWarnings("unused")
-		public ArrayList<String[]> getPar(){
-    		return par;
-    	}
-    	
-    	@SuppressWarnings("unused")
-		public String getParValue(String parameter_name) {
-    		for(int i=0; i < par.size(); i++) {
-    			if(par.get(i)[0].equals(parameter_name)) {
-    				return par.get(i)[1];
-    			}
-    		}
-    		return null;
-    	}
-    	
-    	public Queue<String> getPathSep(){
-    		return pathsep;
-    	}
-    	
-    	public String getFileName() {
-    		return filename;
-    	}
-    	public String getFileType() {
-    		return filetype;
+    		resolve();
     	}
     	
     	
-    	public void resolve(HttpExchange httpExchange) throws Exception {
+    
+    /*
+     * RESOLVER (public)
+     * 
+     * resolve
+     * 
+     */    	
+    	
+    	public void resolve() throws Exception {
     		URI uri = httpExchange.getRequestURI();
     		String method = httpExchange.getRequestMethod();
     		String parstring = "";
+    		
     		
     		//get path and parameterstring (parstring)
     		if("GET".equals(method)) { 
@@ -487,7 +587,7 @@ public class WebInterfaceServer{
     		ArrayList<String[]> par = new ArrayList<String[]>();    		
 			
     		for(String s : parstring.split("&")) {
-    			String[] split = s.split("=",1);
+    			String[] split = s.split("=",2);
 				if(split.length > 1) {
 	    			par.add(new String[]{split[0],split[1]});
 				} else {
@@ -498,10 +598,60 @@ public class WebInterfaceServer{
     	}
     	
     	
+    
+    /*
+     * GETTERS (public)
+     * 
+     * getPath
+     * getPathSep
+     * getFileName
+     * getFileType
+     * getParstring
+     * getPar
+     * getParValue
+     * 
+     * toString
+     * 
+     */    	
+    	
+    	public String getPath() {
+    		return path;
+    	}    	
+    	
+    	public Queue<String> getPathSep(){
+    		return pathsep;
+    	}
+    	
+    	public String getFileName() {
+    		return filename;
+    	}
+    	public String getFileType() {
+    		return filetype;
+    	}
+    	
+    	@SuppressWarnings("unused")
+		public String getParstring() {
+    		return parstring;
+    	}
+    	
+    	@SuppressWarnings("unused")
+		public ArrayList<String[]> getPar(){
+    		return par;
+    	}
+    	
+		public String getParValue(String parameter_name) {
+    		for(int i=0; i < par.size(); i++) {
+    			if(par.get(i)[0].equals(parameter_name)) {
+    				return par.get(i)[1];
+    			}
+    		}
+    		return null;
+    	}
+    	
     	@Override
     	public String toString() {
     		return "method=:"+method+" | path=:"+path+" | parstring=:"+parstring+"";
-    	}
+    	}    	
     
     }
 }

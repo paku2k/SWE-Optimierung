@@ -28,54 +28,64 @@ public class clogger {
 
 	static int unsaved_logs = 0;
 	
+ 	
 	
+	
+	
+	
+/*
+ * SSS FUNCTIONS (public)
+ * 
+ * start
+ * stop
+ * save
+ * 
+ */
+	/**
+	 * start logging
+	 */
 	public static void start() {
 		ExcelWB.createLogFile();
 		clogger.info(AUTH, "start", "Logging started");
 	}
+	
+	/**
+	 * stop logging
+	 */
 	public static void stop() {
 		ExcelWB.save();
 		clogger.info(AUTH, "start", "Logging stopped");
 		ExcelWB.save();
 	}
+	
+	/**
+	 * save logging
+	 */
 	public static void save() {
 		if(unsaved_logs>0)
 			try{ExcelWB.trySave();}catch(Exception e) {}
 	}
 	
+ 	
 	
 	
-	static String logStartupBuffer = "";
-	private static void excecuteLog(LogType type, String AUTH, String sourceMethod, String msg) {
-		Date timeStamp = new Date();
-				
-		if(filterLog(type,"UIlog")) {			
-			UiBackend.writeTo_stLog( colorToUiF("60,60,60")+(new SimpleDateFormat("HH:mm:ss.SSS").format(timeStamp))
-									+colorToUiF(type.getColor())+" | "+type.getName()+" | "
-																+msg
-																/*+"  @ "+AUTH+" <"+sourceMethod+">"*/);
-			
-		}
-		if(filterLog(type,"LogFile")) {
-			ExcelWB.addLine_logData((new SimpleDateFormat("yy.MM.dd HH:mm:ss.SSS").format(timeStamp)), type.getName(), AUTH, sourceMethod, msg);
-		}
-		
-		unsaved_logs++;
-		save();
-	}
-	
-	private static boolean filterLog(LogType type, String outputstream) {
-		if(outputstream.equals("UIlog"))
-			return type.getLevel() >= DEBUG.getLevel();
-		else if(outputstream.equals("LogFile"))
-			return true;
-		else 
-			return true;
-	}
 	
 	
-
-
+/*
+ * CALLER FUNCTIONS (public)
+ * 
+ * dbg
+ * info
+ * cmd
+ * warn
+ * err
+ * ftl
+ * 
+ * executeLog
+ * logFilter
+ * 
+ */
+	
 	public static void dbg(String AUTH, String sourceMethod, String msg) {
 		excecuteLog(DEBUG, AUTH, sourceMethod, msg);
 	}	
@@ -99,18 +109,94 @@ public class clogger {
 	}
 	
 	
+	/**
+	 * fill in log entry (depending on levels) and excel file
+	 * 
+	 * @param type			Logger Type (DBG, WARN, ERR)
+	 * @param AUTH			authenticator
+	 * @param sourceMethod	calling method
+	 * @param msg			message
+	 */
+	private static void excecuteLog(LogType type, String AUTH, String sourceMethod, String msg) {
+		Date timeStamp = new Date();
+				
+		if(logFilter(type,"UIlog")) {			
+			UiBackend.writeTo_stLog( colorToUiF("60,60,60")+(new SimpleDateFormat("HH:mm:ss.SSS").format(timeStamp))
+									+colorToUiF(type.getColor())+" | "+type.getName()+" | "
+																+msg
+																/*+"  @ "+AUTH+" <"+sourceMethod+">"*/);
+		}	
+		if(logFilter(type,"System.out")) {	
+			//for testing
+			System.out.println((new SimpleDateFormat("HH:mm:ss.SSS").format(timeStamp))
+					+" | "+type.getName()+" | "
+					+msg
+					+"  @ "+AUTH+" <"+sourceMethod+">");
+		}
+		if(logFilter(type,"LogFile")) {
+			ExcelWB.addLine_logData((new SimpleDateFormat("yy.MM.dd HH:mm:ss.SSS").format(timeStamp)), type.getName(), AUTH, sourceMethod, msg);
+		}
+		
+		unsaved_logs++;
+		save();
+	}
+	
+	/**
+	 * determine if log level is enough for displaying the log
+	 * 
+	 * @param type			Logger Type (DBG, WARN, ERR)
+	 * @param outputstream	where to print message (UIlog, System.out, LogFile
+	 * @return true=show logger, false=dont show logger
+	 */
+	private static boolean logFilter(LogType type, String outputstream) {
+		if(outputstream.equals("UIlog"))
+			return type.getLevel() >= DEBUG.getLevel();
+			else if(outputstream.equals("LogFile"))
+				return true;
+			else if(outputstream.equals("System.out"))
+				return true;
+		else 
+			return true;
+	}
+	
+ 	
 	
 	
 	
 	
+/*
+ * HELPER FUNCTIONS (private)
+ * 
+ * colorToUiF
+ * 
+ */
 	
-	
+	/**
+	 * return color prepared for text insertion
+	 * 
+	 * @param color string with color
+	 * @return prepared string
+	 */
 	private static String colorToUiF(String color) {
 		return "§§"+color+"§";
 	}
 	
+ 	
 	
-
+	
+	
+	
+/*
+ * HELPER CLASS (private)
+ * 
+ * ExcelWB
+ * 
+ */
+	
+	/**
+	 * LogType saves the types (name, level and textcolor)
+	 * @author david	 
+	 */
 	private static class LogType{
 		private static int level_cnt = 0;	
 		
@@ -147,6 +233,11 @@ public class clogger {
 	}
 	
 	
+	
+	/**
+	 * Excel Workbook support for Log Data support	
+	 * @author david
+	 */	
 	public static class ExcelWB{
 		private static String directory = "data/log";
 		private static XSSFWorkbook workbook;
