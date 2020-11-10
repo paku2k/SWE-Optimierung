@@ -1,8 +1,10 @@
-package swe_mo.solver.de;
+package swe_mo.solver;
+
+import swe_mo.solver.de.Particle_DE;
 
 public class FitnessFunction {
 
-	 double calculatef2(Particle_DE vector)	{
+	 public double calculatef2(Particle_DE vector)	{
 		 double sum = 0.0;
 		 double mult =1.0;
 		 for(Double d : vector.position)
@@ -17,7 +19,7 @@ public class FitnessFunction {
 		 return sum+mult;
 	 }
 	 
-	 double calculatef8(Particle_DE vector)	{
+	 public double calculatef8(Particle_DE vector)	{
 		 double sum = 0.0;
 		 for(Double d : vector.position)
 		 {

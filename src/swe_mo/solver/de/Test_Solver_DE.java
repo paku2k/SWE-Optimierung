@@ -1,6 +1,8 @@
 
 package swe_mo.solver.de;
 
+import swe_mo.solver.FitnessFunction;
+
 public class Test_Solver_DE {
 	
 	public static void main(String[] args) {
@@ -9,7 +11,7 @@ public class Test_Solver_DE {
 		int NP = 200;
 		double F = 0.8; //Empfehlung F0.5...1
 		double CR = 0.3; //Empfehlung CR=0.3
-		int maxGenerations = 50000;
+		int maxGenerations = 500000;
 		double upperBound = 5.12;
 		double lowerBound = -5.12;
 		FitnessFunction fF = new FitnessFunction();

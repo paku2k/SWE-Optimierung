@@ -2,6 +2,8 @@ package swe_mo.solver.de;
 
 import java.util.ArrayList;
 
+import swe_mo.solver.FitnessFunction;
+
 public class DErand1 {
 	
 	int N;
