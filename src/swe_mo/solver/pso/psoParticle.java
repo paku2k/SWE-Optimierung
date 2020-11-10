@@ -43,7 +43,11 @@ public class psoParticle extends Particle_DE {
 		double rc=Math.random();
 		double rs=Math.random();
 		for(int i=0; i<velocity.size(); i++) {
-			velocity.set(i, w*velocity.get(i)  +  cc*rc*(personalBestPosition.get(i)-position.get(i))  +  cs*rs*(socialComponent.get(i)-position.get(i)));
+			velocity.set(i, w*velocity.get(i)  
+					+  cc*rc*(personalBestPosition.get(i)
+							-position.get(i))  
+					+  cs*rs*(socialComponent.get(i)
+							-position.get(i)));
 		}
 	}
 		

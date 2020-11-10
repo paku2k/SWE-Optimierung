@@ -7,8 +7,8 @@ public class debug {
 		int dimension = 5;
 		double min = -5.12;
 		double max = 5.12;
-		int particleCount = 200;
-		double w = 0.7;
+		int particleCount = 50;
+		double w = 0.9;
 		double cc = 0.0;
 		double cs = 0.5;
 		double dt = 1;

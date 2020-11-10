@@ -15,7 +15,7 @@ public class psoGlobal {
 	double cc;
 	double cs;
 	double dt;
-	double globalMinimum;
+	double globalMinimum = Double.MAX_VALUE;
 	ArrayList<Double> globalBestPosition = new ArrayList<Double>();
 	debugFitness debugFitter = new debugFitness();
 
@@ -45,7 +45,7 @@ public class psoGlobal {
 					swarm.add(p);
 				}
 				
-				globalMinimum = debugFitter.calcSpehreFunction(dimension, swarm.get(ThreadLocalRandom.current().nextInt(0, particleCount + 1)).position);
+				//globalMinimum = debugFitter.calcSpehreFunction(dimension, swarm.get(ThreadLocalRandom.current().nextInt(0, particleCount + 1)).position);
 				
 				for(int i=0; i<numIter; i++) {
 					for(int j=0; j<particleCount; j++) {
