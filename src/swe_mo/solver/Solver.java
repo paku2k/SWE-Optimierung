@@ -33,24 +33,33 @@ public class Solver {
 	}
 			
 	
-	public void configure(String configString) throws Exception{											
-		
-		
-		
-					//assemble the config class
+	public void configure(String configString) throws Exception{
+		Queue<String> configQueue = new LinkedList<String>();
+		String hyperparameterNotFound = "";
 					
-					
-					Queue<String> config_q = new LinkedList<String>();
-					String[] config_arr = configString.replace("    ","").replace("   ","").replace("  ","").replace(" ","").split("/");
-					for(String s : config_arr) {
-						if(s != "" && s != null)
-							config_q.offer(s);
-					}
-		
-					config.N = Integer.parseInt(config_q.poll());
-				
+		for(String s : configString.replace(","," ").replace("    "," ").replace("   "," ").replace("  "," ").replace("= ","=").replace(" =","=").split(" ")) {
+			if(s != "" && s != null)
+				configQueue.offer(s);
+		}
+
+		for(String s : configQueue) {
+			String[] split = s.split("=");
+			try{
+				config.set(split[0], split[1]);
+			} catch(Exception e) {
+				if(!hyperparameterNotFound.isEmpty()) hyperparameterNotFound += ", ";
+				hyperparameterNotFound += split[0];
+			}
+		}			
 					
 		status = -1;
+		
+		if(!hyperparameterNotFound.isEmpty()) {
+			if(hyperparameterNotFound.contains(","))
+				throw new Exception("Configured without parameters: "+hyperparameterNotFound+" (not found)");
+			else
+				throw new Exception("Configured without parameter: "+hyperparameterNotFound+" (not found)");	
+		}
 	}
 	
 	public void start(){				
@@ -61,13 +70,8 @@ public class Solver {
 					result = SolverConfig.solveMethod(algorithm, id, config);
 					if(status<=100) status = 101;
 				} catch(Exception e) {
-					clogger.err(AUTH, "Runnable_Solver id="+id, e);
+					result.e = e;
 					status = 103;
-				}
-				try {
-					solverThread.join();
-				} catch (InterruptedException e) {
-					clogger.err(AUTH, "Runnable_Solver id="+id, e);					
 				}
 			}
 		});
@@ -91,7 +95,11 @@ public class Solver {
 		return algorithm;
 	}	
 	
-	public SolverResult getResult() throws InterruptedException {														
+	public SolverResult getResult() throws InterruptedException {			
+		try {
+			solverThread.join();
+		} catch (InterruptedException e) {}			
+		
 		return result;
 	}
 	

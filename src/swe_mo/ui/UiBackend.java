@@ -495,11 +495,16 @@ public class UiBackend {
 				cmd_queue.remove();		
 
 				try {
-					
-					int id = -1;					
+
+					int id = -1;	
+					int id_max = -1;					
 					try {
 						id = Integer.parseInt(cmd_queue.peek());
-						cmd_queue.poll();
+						cmd_queue.poll();						
+						try {
+							id_max = Integer.parseInt(cmd_queue.peek());
+							cmd_queue.poll();
+						} catch(Exception e) {}
 					} catch(Exception e) {}
 
 					if(cmd_queue.isEmpty()) throw new Exception("Not enough parameters. You need at least one.");
@@ -508,10 +513,16 @@ public class UiBackend {
 					while(!cmd_queue.isEmpty()) {	
 						config += cmd_queue.poll()+" ";
 					}
-					if(id > -1) 
-						SolverManager.configure(id, config);
-					else
+					if(id > -1) {
+						if(id_max > -1) {
+							SolverManager.configure(id, id_max, config);
+							return "Solvers configured.";
+						} else {
+							SolverManager.configure(id, config);
+						}
+					} else {
 						SolverManager.configure(config);
+					}
 					return "Solver configured.";
 				} catch(Exception e) {
 					throw e;

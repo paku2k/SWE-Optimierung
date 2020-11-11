@@ -15,6 +15,36 @@ public class SolverConfig {
 	
 	
 	
+	public void set(String param, String value) throws Exception {
+		switch(param) {
+			case "ffid":
+				ffid = Integer.parseInt(value);
+				return;
+			case "N":
+				N = Integer.parseInt(value);
+				return;
+			case "NP":
+				NP = Integer.parseInt(value);
+				return;
+			case "F":
+				F = Double.parseDouble(value);
+				return;
+			case "CR":
+				CR = Double.parseDouble(value);
+				return;
+			case "maxGenerations":
+				maxGenerations = Integer.parseInt(value);
+				return;
+			case "upperBound":
+				upperBound = Double.parseDouble(value);
+				return;
+			case "lowerBound":
+				lowerBound = Double.parseDouble(value);
+				return;
+		}
+		throw new Exception("No such hyperparameter ("+param+").");
+	}
+	
 	
 	
 	public static SolverConfig getDefault(String algorithm) throws Exception {

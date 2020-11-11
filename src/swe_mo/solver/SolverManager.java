@@ -34,6 +34,21 @@ public class SolverManager {
 		configure(runningSolvers.size()-1, config);
 	}
 	
+	public static void configure(int id1, int id2, String config) throws Exception {
+		if(id1>id2) {
+			int m = id1;
+			id1 = id2;
+			id2 = m;
+		}
+		if(id1<0) id1=0;
+		if(id2>runningSolvers.size()-1) id2 = runningSolvers.size()-1;
+		
+		for(int i=id1; i<=id2; i++) {
+			if(status(i)<0 && status(i)>-3)
+				configure(i, config);			
+		}		
+	}
+	
 	public static void configure(int id, String config) throws Exception {
 		if(status(id) == -3) {
 			throw new Exception("No Solver with this ID.");
@@ -53,12 +68,7 @@ public class SolverManager {
 			throw new Exception("Solver already running.");						
 		}
 
-		try {
-			runningSolvers.get(id).configure(config);
-						
-		} catch(Exception e) {
-			clogger.err(AUTH, "configure", e);
-		}		
+		runningSolvers.get(id).configure(config);
 	}
 	
 	

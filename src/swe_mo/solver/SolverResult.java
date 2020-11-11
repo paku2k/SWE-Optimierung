@@ -5,6 +5,8 @@ public class SolverResult {
 	//particle
 	//other messages (number of iterations until result, ...)
 	
+	Exception e; //bitte stehen lassen, hier speichere ich die Exception, falls ihr in der solve Methode eine werft
+	
 	
 	
 	
