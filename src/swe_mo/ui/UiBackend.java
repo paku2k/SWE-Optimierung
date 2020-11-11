@@ -70,6 +70,7 @@ public class UiBackend {
 		}
 		
 		SolverManager.terminateAll();
+		SolverManager.joinAllThreads();
 		
 		clogger.info(AUTH, "run", "UiBackend stopped");
 	}

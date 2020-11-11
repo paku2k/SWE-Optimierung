@@ -1,7 +1,5 @@
 package swe_mo.solver;
 
-import swe_mo.ui.clogger;
-
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -82,7 +80,18 @@ public class Solver {
 	public void terminate() {
 		terminated = true;
 		status = 102;
-	}																					
+	}	
+	
+	public void joinThread(int tmax) {		
+		try {
+			solverThread.join(tmax);
+		} catch (InterruptedException e) {}					
+	}	
+	public void joinThread() {		
+		try {
+			solverThread.join();
+		} catch (InterruptedException e) {}					
+	}
 	
 	
 
@@ -95,11 +104,8 @@ public class Solver {
 		return algorithm;
 	}	
 	
-	public SolverResult getResult() throws InterruptedException {			
-		try {
-			solverThread.join();
-		} catch (InterruptedException e) {}			
-		
+	public SolverResult getResult() throws InterruptedException {	
+		joinThread(1000);
 		return result;
 	}
 	

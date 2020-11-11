@@ -168,6 +168,20 @@ public class SolverManager {
 		clogger.info(AUTH, "terminateAll", "Terminated all running Solvers.");
 	}	
 	
+	public static void joinAllThreads() {
+		clogger.info(AUTH, "joinAllThreads", "Joining all solver threads.");
+		
+		for(int i=0; i < runningSolvers.size(); i++) {
+			try {
+				runningSolvers.get(i).joinThread();
+			} catch(Exception e) {
+				clogger.err(AUTH, "joinAllThreads", e);
+			}
+		}	
+		
+		clogger.info(AUTH, "joinAllThreads", "Joined all solver threads.");	
+	}
+	
 	
 	
 
