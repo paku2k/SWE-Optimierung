@@ -85,13 +85,11 @@ public class Solver {
 	
 	public boolean getTerminated() {
 		return terminated;
-	}
-	
+	}	
 	
 	public String getAlgorithm() {
 		return algorithm;
-	}
-	
+	}	
 	
 	public SolverResult getResult() throws InterruptedException {														
 		return result;

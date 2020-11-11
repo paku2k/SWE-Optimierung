@@ -27,15 +27,6 @@ public class SolverManager {
 		return "Solver created ("+algorithm+") with ID "+(runningSolvers.size()-1);
 	}	
 	
-	private static boolean isValidAlgorithm(String algorithm) {
-		try {
-			SolverConfig.getDefault(algorithm);
-			return true;
-		} catch(Exception e) {
-			return false;
-		}
-	}
-	
 	
 	
 
@@ -277,7 +268,7 @@ public class SolverManager {
 	
 	public static String list() throws Exception {
 		try {
-			return list(true, true, "", -5, 105);
+			return list(true, true, "", -5, 105, false);
 			
 		}catch(Exception e) {
 			clogger.ftl(AUTH, "list", "test");
@@ -285,10 +276,12 @@ public class SolverManager {
 		return "";
 	}
 	
-	public static String list(boolean show_running, boolean show_notrunning, String type, double status, double status_max) throws Exception {
+	public static String list(boolean show_running, boolean show_notrunning, String type, double status, double status_max, boolean asJson) throws Exception {
 		if(!type.equals("") && !isValidAlgorithm(type)) throw new Exception("Searching for invalid Algorithm.");
 		
 		String list = "ID\tAlgorithm\t\tStatus\n\n";
+		String json = "{\"solvers\": [";
+		boolean json_comma_first = true;
 		
 		for(int i=0; i<runningSolvers.size(); i++) {
 			//filter
@@ -305,20 +298,48 @@ public class SolverManager {
 			}
 				
 			//write entry
-			list += i + "\t";
-			try {
-				list += runningSolvers.get(i).getAlgorithm() + "\t\t\t";
-				list += round(runningSolvers.get(i).getStatus(),3);	
-			} catch(Exception e) {
-				list += "--------- deleted ---------";
+			if(!asJson) {
+				list += i + "\t";
+				try {
+					list += runningSolvers.get(i).getAlgorithm() + "\t\t\t";
+					list += round(runningSolvers.get(i).getStatus(),3);	
+				} catch(Exception e) {
+					list += "--------- deleted ---------";
+				}
+				list += "\n";
+			} else {
+				if(!json_comma_first) {
+					json += ",";	
+				} else {
+					json_comma_first = false;
+				}
+				json += "{\"id\": "+i+",";
+				try {
+					json += "\"algorithm\": \""+runningSolvers.get(i).getAlgorithm()+"\","; 
+					json += "\"status\": "+runningSolvers.get(i).getStatus(); 					
+				} catch(Exception e) {
+					json += "\"deleted\": true";					
+				}
+				json += "}";			
 			}
-			list += "\n";
 		}
 		
-		
-		return list;
+		if(!asJson) {
+			return list;
+		} else {
+			json += "]}";
+			return json;
+		}
 	}
 	
+	private static boolean isValidAlgorithm(String algorithm) {
+		try {
+			SolverConfig.getDefault(algorithm);
+			return true;
+		} catch(Exception e) {
+			return false;
+		}
+	}
 	
 	
 	

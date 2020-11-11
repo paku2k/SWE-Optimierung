@@ -425,8 +425,9 @@ public class UiBackend {
 					String type = "";
 					double status = -5;
 					double status_max = 105;
+					boolean json = false;
 					
-					int i = 4;
+					int i = 5;
 					while(cmd_queue.size()>0 && i>=0) {
 						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-r")) {
 							cmd_queue.remove();		
@@ -437,6 +438,10 @@ public class UiBackend {
 							cmd_queue.remove();		
 							show_running = false;
 							show_notrunning = true;
+						}
+						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {
+							cmd_queue.remove();		
+							json = true;
 						}
 						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-t")) {
 							cmd_queue.remove();		
@@ -471,7 +476,7 @@ public class UiBackend {
 						}
 						i--;
 					}					
-					return SolverManager.list(show_running, show_notrunning, type, status, status_max);
+					return SolverManager.list(show_running, show_notrunning, type, status, status_max,json);
 					
 				} else {
 					return SolverManager.list();
@@ -571,13 +576,26 @@ public class UiBackend {
 				}	
 				
 			} else if(cmd_queue.peek().equals("result")) {
-				cmd_queue.remove();					
+				cmd_queue.remove();	
+
+				int id = -1;					
+				try {
+					id = Integer.parseInt(cmd_queue.peek());
+					cmd_queue.poll();
+				} catch(Exception e) {}
+						
+				if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {	
+					if(id>-1)
+						return SolverManager.result(id).toJSON();
+					else
+						return SolverManager.result().toJSON();
+				} else {
+					if(id>-1)
+						return "Result: "+SolverManager.result(id);
+					else
+						return "Result: "+SolverManager.result();
+				}
 				
-				if(!cmd_queue.isEmpty()) {		
-					return "Result: "+SolverManager.result(Integer.parseInt(cmd_queue.poll()));	
-				} else {	
-					return "Result: "+SolverManager.result();	
-				}	
 				
 			} else if(cmd_queue.peek().equals("delete")) {
 				cmd_queue.remove();		

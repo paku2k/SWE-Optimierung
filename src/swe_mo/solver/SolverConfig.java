@@ -3,6 +3,7 @@ package swe_mo.solver;
 import swe_mo.solver.de.DErand1;
 
 public class SolverConfig {
+	int ffid;
 	int N;
 	int NP;
 	double F;
@@ -39,13 +40,13 @@ public class SolverConfig {
 			case "DErand1":
 				SolverResult sr = new SolverResult();
 				sr.value = new DErand1(config.N,
-						 config.NP,
-						 config.F,
-						 config.CR,
-						 config.maxGenerations,
-						 config.upperBound,
-						 config.lowerBound,
-						 new FitnessFunction()).solve();	
+										 config.NP,
+										 config.F,
+										 config.CR,
+										 config.maxGenerations,
+										 config.upperBound,
+										 config.lowerBound,
+										 new FitnessFunction()).solve();	//later just the ff_id
 				return sr;
 			/*"DEbest1"
 			"DEbest2"
