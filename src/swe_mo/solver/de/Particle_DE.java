@@ -4,6 +4,7 @@ import java.util.ArrayList;
 public class Particle_DE {
 
 	public ArrayList<Double> position = new ArrayList<Double>(); 
+	public double ffValueOld;
 	
 	
 	public Particle_DE(int dimension, double max, double min) {
