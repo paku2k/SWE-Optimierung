@@ -3,8 +3,6 @@ package swe_mo.solver;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
 
 import swe_mo.ui.clogger;
 
@@ -19,29 +17,23 @@ public class SolverManager {
 	
 	
 
-	public static String create(){
+	public static String create() throws Exception{
 		runningSolvers.add(new Solver(runningSolvers.size()));	
 		return "Solver created (default) with ID "+(runningSolvers.size()-1);
 	}
 
 	public static String create(String algorithm) throws Exception {
-		if(!isValidAlgorithm(algorithm)) return "Algorithm not supported. Switched to default.\n"+create();		
-		
 		runningSolvers.add(new Solver(runningSolvers.size(), algorithm));
 		return "Solver created ("+algorithm+") with ID "+(runningSolvers.size()-1);
 	}	
 	
-	private static boolean isValidAlgorithm(String algo) {
-		if(algo.equals("default") ||
-		   algo.equals("DErand1") ||
-		   algo.equals("DEbest1") ||
-		   algo.equals("DEbest2") ||
-		   algo.equals("DErtb1") ||
-		   algo.equals("PSOgsc") ||
-		   algo.equals("PSOnsc")) {
+	private static boolean isValidAlgorithm(String algorithm) {
+		try {
+			SolverConfig.getDefault(algorithm);
 			return true;
+		} catch(Exception e) {
+			return false;
 		}
-		return false;
 	}
 	
 	
@@ -69,19 +61,9 @@ public class SolverManager {
 		} else if(status(id) >= 0 && status(id) < 100) {
 			throw new Exception("Solver already running.");						
 		}
-		
-					//assemble the config class
-					
-					
-					Queue<String> config_q = new LinkedList<String>();
-					String[] config_arr = config.replace("    ","").replace("   ","").replace("  ","").replace(" ","").split("/");
-					for(String s : config_arr) {
-						if(s != "" && s != null)
-							config_q.offer(s);
-					}
-		
+
 		try {
-			runningSolvers.get(id).configure("max", Integer.parseInt(config_q.poll()));
+			runningSolvers.get(id).configure(config);
 						
 		} catch(Exception e) {
 			clogger.err(AUTH, "configure", e);
@@ -205,7 +187,7 @@ public class SolverManager {
 			return -3;			
 		} else {
 			try {
-				return runningSolvers.get(id).status();
+				return runningSolvers.get(id).getStatus();
 			} catch(Exception e) {
 				return 104;	//Solver Object not accessible anymore -> deleted		
 			}
@@ -215,11 +197,11 @@ public class SolverManager {
 	
 	
 
-	public static double result() throws Exception {
+	public static SolverResult result() throws Exception {
 		return result(runningSolvers.size()-1);
 	}
 	
-	public static double result(int id) throws Exception {
+	public static SolverResult result(int id) throws Exception {
 		if(status(id) == -3) {
 			throw new Exception("No Solver with this ID.");
 		} else if(status(id) == -2) {
@@ -311,10 +293,10 @@ public class SolverManager {
 		for(int i=0; i<runningSolvers.size(); i++) {
 			//filter
 			try {
-				if(show_running && !show_notrunning && (runningSolvers.get(i).status() < 0 || runningSolvers.get(i).status() > 100)) continue;
-				if(show_notrunning && !show_running && (runningSolvers.get(i).status() >= 0 && runningSolvers.get(i).status() <= 100)) continue;
+				if(show_running && !show_notrunning && (runningSolvers.get(i).getStatus() < 0 || runningSolvers.get(i).getStatus() > 100)) continue;
+				if(show_notrunning && !show_running && (runningSolvers.get(i).getStatus() >= 0 && runningSolvers.get(i).getStatus() <= 100)) continue;
 				if(!type.equals("") && !type.equals(runningSolvers.get(i).getAlgorithm())) continue;
-				if(runningSolvers.get(i).status() < status || runningSolvers.get(i).status() > status_max) continue;
+				if(runningSolvers.get(i).getStatus() < status || runningSolvers.get(i).getStatus() > status_max) continue;
 							
 			} catch(Exception e) {
 				if(!show_notrunning ||
@@ -326,7 +308,7 @@ public class SolverManager {
 			list += i + "\t";
 			try {
 				list += runningSolvers.get(i).getAlgorithm() + "\t\t\t";
-				list += round(runningSolvers.get(i).status(),3);	
+				list += round(runningSolvers.get(i).getStatus(),3);	
 			} catch(Exception e) {
 				list += "--------- deleted ---------";
 			}
