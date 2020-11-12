@@ -16,6 +16,11 @@ public class Particle_DE {
 	    }
 	  }
 	
+	public Particle_DE(Particle_DE clone) {
+		this.position=new ArrayList<Double>(clone.position);
+		this.ffValueOld=clone.ffValueOld;
+	}
+	
 	public Particle_DE(int dimension) {
 		//This constructor creates a particle with the given dimension and initializes all dimensions with zero
 	    for(int i = dimension; i>0; i--) {
