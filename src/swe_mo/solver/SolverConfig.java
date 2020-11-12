@@ -11,10 +11,26 @@ public class SolverConfig {
 	int maxGenerations;
 	double upperBound;
 	double lowerBound;
+
 	
+	public SolverConfig() {};
+
 	
-	
-	
+	public SolverConfig(int ffid, int n, int nP, double f, double cR, int maxGenerations, double upperBound,
+			double lowerBound) {
+		super();
+		this.ffid = ffid;
+		N = n;
+		NP = nP;
+		F = f;
+		CR = cR;
+		this.maxGenerations = maxGenerations;
+		this.upperBound = upperBound;
+		this.lowerBound = lowerBound;
+	}
+
+
+
 	public void set(String param, String value) throws Exception {
 		switch(param) {
 			case "ffid":
@@ -52,7 +68,7 @@ public class SolverConfig {
 			case "default":
 				return test_david.defaultConfig();
 			case "DErand1":
-				return test_david.defaultDErand1Config(); //replace
+				return DErand1.defaultConfig();
 			/*"DEbest1"
 			"DEbest2"
 			"DErtb1"
@@ -76,7 +92,7 @@ public class SolverConfig {
 										 config.maxGenerations,
 										 config.upperBound,
 										 config.lowerBound,
-										 new FitnessFunction()).solve();	//later just the ff_id
+										 config.ffid, id).solve();	//later just the ff_id
 				return sr;
 			/*"DEbest1"
 			"DEbest2"
