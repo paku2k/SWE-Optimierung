@@ -173,7 +173,8 @@ public class SolverManager {
 		
 		for(int i=0; i < runningSolvers.size(); i++) {
 			try {
-				runningSolvers.get(i).joinThread();
+				if(status(i) >= 0)
+					runningSolvers.get(i).joinThread();
 			} catch(Exception e) {
 				clogger.err(AUTH, "joinAllThreads", e);
 			}

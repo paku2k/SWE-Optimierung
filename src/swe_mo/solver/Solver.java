@@ -65,6 +65,7 @@ public class Solver {
 			@Override
 			public void run() {
 				try {
+					status = 0;
 					result = SolverConfig.solveMethod(algorithm, id, config);
 					if(status<=100) status = 101;
 				} catch(Exception e) {
@@ -74,7 +75,6 @@ public class Solver {
 			}
 		});
 		solverThread.start();
-		status = 0;
 	}
 	
 	public void terminate() {
