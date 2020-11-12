@@ -33,6 +33,7 @@ public class Test_Solver_DE {
 		System.out.println("Found new best result: "+rand1.best+" with Particle "+rand1.bestParticle);
 
 
+		
 /*		
 		for(int i = 0; i<stepsF; i++) {
 			double curF=((double)i/(double)stepsF)*(maxF-minF)+minF;
