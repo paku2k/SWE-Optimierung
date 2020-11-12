@@ -17,6 +17,33 @@ public class DEbest1 extends DErand1{
 		// TODO Auto-generated constructor stub
 	}
 	
+	@Override
+	public Particle_DE calculateV(int index) {
+		//calculates the Vector V for current generation
+		Particle_DE p=this.calculateRandomDifference(index);
+		p.multiply(this.F);
+		p.add(bestParticle);
+
+	
+		for (int i = 0; i < p.position.size(); i++) {
+			if(p.position.get(i)>this.upperBound) {
+				p.position.set(i, this.upperBound);
+			}
+			if(p.position.get(i)<this.lowerBound) {
+				p.position.set(i, this.lowerBound);
+			}
+		}
+		
+		//System.out.println("new particle v: "+p);
+
+		//System.out.println("v: "+p);
+		//System.out.println("x: "+xPop.get(index));
+
+
+		
+		return p;
+	}
+	
 	
 	
 
