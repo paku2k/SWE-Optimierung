@@ -53,7 +53,7 @@ public class psoParticle extends Particle_DE {
 		
 	
 	public void updatePersonalBestPosition() {
-		double minimum = debugFitter.calculatef8(this);
+		double minimum = debugFitter.calculatef1(this);
 		if(minimum<personalMinimum) {
 			personalMinimum = minimum;
 			personalBestPosition = new ArrayList<Double>(position);
