@@ -292,7 +292,7 @@ public class SolverManager {
 	
 	public static String list() throws Exception {
 		try {
-			return list(true, true, "", -5, 105, false);
+			return list(true, true, "", -5, 105, 0, Integer.MAX_VALUE, false);
 			
 		}catch(Exception e) {
 			clogger.ftl(AUTH, "list", "test");
@@ -300,7 +300,7 @@ public class SolverManager {
 		return "";
 	}
 	
-	public static String list(boolean show_running, boolean show_notrunning, String type, double status, double status_max, boolean asJson) throws Exception {
+	public static String list(boolean show_running, boolean show_notrunning, String type, double status, double status_max, int id, int id_max, boolean asJson) throws Exception {
 		if(!type.equals("") && !isValidAlgorithm(type)) throw new Exception("Searching for invalid Algorithm.");
 		
 		String list = "ID\tAlgorithm\t\tStatus\n\n";
@@ -314,6 +314,7 @@ public class SolverManager {
 				if(show_notrunning && !show_running && (runningSolvers.get(i).getStatus() >= 0 && runningSolvers.get(i).getStatus() <= 100)) continue;
 				if(!type.equals("") && !type.equals(runningSolvers.get(i).getAlgorithm())) continue;
 				if(runningSolvers.get(i).getStatus() < status || runningSolvers.get(i).getStatus() > status_max) continue;
+				if(i < id || i > id_max) continue;
 							
 			} catch(Exception e) {
 				if(!show_notrunning ||

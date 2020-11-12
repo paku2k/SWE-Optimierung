@@ -1,3 +1,36 @@
+function onload(){    
+    document.getElementById('file_input').addEventListener('change', readSingleFile, false);    
+}
+
+
+
+
+
+
+
+
+
+function cmdInputExecute(){
+    var cmd_string = document.getElementById("cmd_input").value;
+    cmd_string = cmd_string.trim(); //leerzeichen am anfang und ende entfernen
+    var cmd_strings = cmd_string.replace(/\r/,"\n").split(/\n/);
+    
+    var datastring = "";
+    var datacnt = 0;
+    
+    for(i=0; i<cmd_strings.length; i++){
+        if(cmd_strings[i] != ""){
+            datastring += "&cmd"+datacnt+"="+cmd_strings[i];
+            datacnt++;
+        }
+    }
+    
+    if(datacnt > 0){
+        var data = "cmdcnt="+datacnt+datastring;
+        loadFile(data, 2000, showMessage, "Return Data:\n\n")
+    }
+}
+
 function loadFile(data, timeout, callback) {
     var args = Array.prototype.slice.call(arguments, 3);
     var xhr = new XMLHttpRequest();
@@ -29,23 +62,26 @@ function showMessage (message) {
 
 
 
-function cmdInputExecute(){
-    var cmd_string = document.getElementById("cmd_input").value;
-    cmd_string = cmd_string.trim(); //leerzeichen am anfang und ende entfernen
-    var cmd_strings = cmd_string.replace(/\r/,"\n").split(/\n/);
-    
-    var datastring = "";
-    var datacnt = 0;
-    
-    for(i=0; i<cmd_strings.length; i++){
-        if(cmd_strings[i] != ""){
-            datastring += "&cmd"+datacnt+"="+cmd_strings[i];
-            datacnt++;
-        }
-    }
-    
-    if(datacnt > 0){
-        var data = "cmdcnt="+datacnt+datastring;
-        loadFile(data, 2000, showMessage, "Return Data:\n\n")
-    }
+
+
+
+
+
+
+function readSingleFile(e) {
+     var file = e.target.files[0];
+     if (!file) {
+       return;
+     }
+     var reader = new FileReader();
+     reader.onload = function(e) {
+       var contents = e.target.result;
+       pushContentsToCmdInput(contents);
+     };
+     reader.readAsText(file);
+}
+
+function  pushContentsToCmdInput(contents) {
+     var element = document.getElementById('cmd_input');
+     element.textContent = contents;
 }

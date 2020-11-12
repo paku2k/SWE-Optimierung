@@ -423,10 +423,12 @@ public class UiBackend {
 				if(!cmd_queue.isEmpty()) {
 					boolean show_running = true;
 					boolean show_notrunning = true;
+					boolean json = false;
 					String type = "";
 					double status = -5;
 					double status_max = 105;
-					boolean json = false;
+					int id = 0;
+					int id_max = Integer.MAX_VALUE;
 					
 					int i = 5;
 					while(cmd_queue.size()>0 && i>=0) {
@@ -475,9 +477,31 @@ public class UiBackend {
 								} catch(Exception e) {}
 							}						
 						}
+						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-id")) {
+							cmd_queue.remove();		
+							
+							if(!cmd_queue.isEmpty()) {
+								try {
+									id = Integer.parseInt(cmd_queue.peek());
+									id_max = id;
+									cmd_queue.remove();
+									if(!cmd_queue.isEmpty()) {
+										try {
+											id_max = Integer.parseInt(cmd_queue.peek());
+											cmd_queue.remove();
+										} catch(Exception e) {}
+									}
+									if(id_max < id) {
+										int m = id;
+										id = id_max;
+										id_max = m;
+									}
+								} catch(Exception e) {}
+							}						
+						}
 						i--;
 					}					
-					return SolverManager.list(show_running, show_notrunning, type, status, status_max,json);
+					return SolverManager.list(show_running, show_notrunning, type, status, status_max, id, id_max, json);
 					
 				} else {
 					return SolverManager.list();
