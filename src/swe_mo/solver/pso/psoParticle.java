@@ -2,9 +2,9 @@
 package swe_mo.solver.pso;
 
 import java.util.ArrayList;
-import swe_mo.solver.de.Particle_DE;
-import swe_mo.solver.pso.debugFitness;
 
+import swe_mo.solver.FitnessFunction;
+import swe_mo.solver.de.Particle_DE;
 
 public class psoParticle extends Particle_DE {
 	
@@ -14,7 +14,7 @@ public class psoParticle extends Particle_DE {
 	double personalMinimum;
 	double w, cc, cs, dt;
 	int dimension;
-	debugFitness debugFitter = new debugFitness();
+	FitnessFunction debugFitter = new FitnessFunction();
 	
 	
 	public psoParticle(int dimension, double max, double min, double w, double cc, double cs, double dt) {
@@ -53,7 +53,7 @@ public class psoParticle extends Particle_DE {
 		
 	
 	public void updatePersonalBestPosition() {
-		double minimum = debugFitter.calcSpehreFunction(dimension, position);
+		double minimum = debugFitter.calculatef1(this);
 		if(minimum<personalMinimum) {
 			personalMinimum = minimum;
 			personalBestPosition = new ArrayList<Double>(position);

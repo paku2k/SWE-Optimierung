@@ -1,8 +1,7 @@
 package swe_mo.solver.pso;
 
+import swe_mo.solver.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class psoGlobal {
 
@@ -17,7 +16,7 @@ public class psoGlobal {
 	double dt;
 	double globalMinimum = Double.MAX_VALUE;
 	ArrayList<Double> globalBestPosition = new ArrayList<Double>();
-	debugFitness debugFitter = new debugFitness();
+	FitnessFunction debugFitter = new FitnessFunction();
 
 	
 		public psoGlobal(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter) {
@@ -35,7 +34,7 @@ public class psoGlobal {
 		}
 	
 		
-			public void solve() {
+			public ArrayList<Double> solve() {
 			// This method is the engine of the solver, that creates the swarm and updates / finds the globalBestPosition
 				
 				ArrayList<psoParticle> swarm = new ArrayList<psoParticle>();
@@ -45,28 +44,29 @@ public class psoGlobal {
 					swarm.add(p);
 				}
 				
-				//globalMinimum = debugFitter.calcSpehreFunction(dimension, swarm.get(ThreadLocalRandom.current().nextInt(0, particleCount + 1)).position);
 				
 				for(int i=0; i<numIter; i++) {
 					for(int j=0; j<particleCount; j++) {
-						updateGlobalBestPosition(dimension, swarm.get(j).position);
+						updateGlobalBestPosition(swarm.get(j));
 						swarm.get(j).updateVelocity(globalBestPosition);
 						swarm.get(j).updatePosition();
 						swarm.get(j).updatePersonalBestPosition();
 					}
-					System.out.println("Minimum in Iteration "+i+": "+globalMinimum);
-					System.out.println("Beste Position in Iteration "+i+": "+Arrays.toString(swarm.toArray()));
 				}
+				ArrayList<Double> ret = new ArrayList<Double>();
+				ret.add(globalMinimum);
+				ret.addAll(globalBestPosition);
+				return ret;
 			}
 			
 			
-			public void updateGlobalBestPosition(int dimension, ArrayList<Double> position) {
+			public void updateGlobalBestPosition(psoParticle particle) {
 			// This method updates the globalBestPosition through calculating the corresponding value for a given position
 				
-				double minimum = debugFitter.calcSpehreFunction(dimension, position);
+				double minimum = debugFitter.calculatef1(particle);
 				if(minimum<globalMinimum) {
 					globalMinimum = minimum;
-					globalBestPosition = new ArrayList<Double>(position);
+					globalBestPosition = new ArrayList<Double>(particle.position);
 				}
 			}
 			

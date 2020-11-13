@@ -30,7 +30,7 @@ public class FitnessFunction {
 	 }
 	 
 	 
-	 double calculatef1(Particle_DE vector)	{
+	 public double calculatef1(Particle_DE vector)	{
 		 double sum = 0.0;
 		 for(Double d : vector.position)
 		 {
