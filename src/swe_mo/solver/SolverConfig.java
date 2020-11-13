@@ -1,6 +1,8 @@
 package swe_mo.solver;
 
 import swe_mo.solver.de.DErand1;
+import swe_mo.solver.de.DEbest1;
+
 
 public class SolverConfig {
 	int ffid;
@@ -83,7 +85,9 @@ public class SolverConfig {
 				return test_david.defaultConfig();
 			case "DErand1":
 				return DErand1.defaultConfig();
-			/*"DEbest1"
+			case "DEbest1":
+				return DEbest1.defaultConfig();
+				/*
 			"DEbest2"
 			"DErtb1"
 			"PSOgsc"
@@ -93,21 +97,34 @@ public class SolverConfig {
 	}
 	
 	public static SolverResult solveMethod(String algorithm, int id, SolverConfig config) throws Exception {
+		SolverResult sr = new SolverResult();
+
 		switch(algorithm) {
 			case "default":
 				return new test_david(id,
 									  config.N).calc();		
 			case "DErand1":
-				SolverResult sr = new SolverResult();
-				sr.value = new DErand1(config.N,
+				sr = new DErand1(config.N,
 										 config.NP,
 										 config.F,
 										 config.CR,
 										 config.maxGenerations,
 										 config.upperBound,
 										 config.lowerBound,
-										 config.ffid, id).solve();	//later just the ff_id
+										 config.ffid, id).solve();	
 				return sr;
+				
+			case "DEbest1":
+				sr = new DEbest1(config.N,
+										 config.NP,
+										 config.F,
+										 config.CR,
+										 config.maxGenerations,
+										 config.upperBound,
+										 config.lowerBound,
+										 config.ffid, id).solve();	
+				return sr;
+				
 			/*"DEbest1"
 			"DEbest2"
 			"DErtb1"
