@@ -14,7 +14,6 @@ public class psoParticle extends Particle_DE {
 	double personalMinimum;
 	double w, cc, cs, dt;
 	int dimension;
-	FitnessFunction debugFitter = new FitnessFunction();
 	
 	
 	public psoParticle(int dimension, double max, double min, double w, double cc, double cs, double dt) {
@@ -52,8 +51,8 @@ public class psoParticle extends Particle_DE {
 	}
 		
 	
-	public void updatePersonalBestPosition() {
-		double minimum = debugFitter.calculatef1(this);
+	public void updatePersonalBestPosition(int ffID) {
+		double minimum = FitnessFunction.solve(ffID, this);
 		if(minimum<personalMinimum) {
 			personalMinimum = minimum;
 			personalBestPosition = new ArrayList<Double>(position);
