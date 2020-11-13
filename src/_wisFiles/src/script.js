@@ -54,8 +54,8 @@ function cmdInputExecute(){
     
     if(datacnt > 0){
         var data = "cmdcnt="+datacnt+datastring;
-        window.alert(data);
-        loadFile(data, 2000, showMessage, "Return Data:\n\n")
+        console.log(data);
+        loadFile(data, 5000, showMessage, "Return Data:\n\n")
     }
 }
 
@@ -83,7 +83,7 @@ function loadFile(data, timeout, callback) {
 
 
 function showMessage (message) {
-    window.alert(message + this.responseText);
+    console.log(this.responseText);
 }
 
 
