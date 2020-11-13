@@ -28,8 +28,8 @@
 	        <img id="img_logo" src="img/icon.png">
             <h1>Metaheuristic Optimization</h1>
 	    </div>
-	    
-	    <p onclick='loadFile("xhr_update", 2000, showMessage, "Freshly Loaded Data:\n\n");'>Asynchronous Data Loading (click here)<p>
-	    <p onclick='loadFile("xhr_action?testpar=thisIsATest", 2000, showMessage, "Freshly Loaded Data:\n\n");'>Asynchronous Data Sending (click here)<p>
+	    	    
+	    <textarea id="cmd_input"></textarea><br>
+	    <button id="cmd_send" onclick="cmdInputExecute();">Execute</button>
 	</body>
 </html>

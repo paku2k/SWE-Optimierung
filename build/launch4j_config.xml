@@ -24,12 +24,12 @@
     <runtimeBits>64/32</runtimeBits>
   </jre>
   <versionInfo>
-    <fileVersion>0.0.1.1</fileVersion>
-    <txtFileVersion>0.0.1.1</txtFileVersion>
+    <fileVersion>0.0.1.2</fileVersion>
+    <txtFileVersion>0.0.1.2</txtFileVersion>
     <fileDescription>mOptimizer </fileDescription>
     <copyright>HSH SWE T3</copyright>
-    <productVersion>0.0.1.1</productVersion>
-    <txtProductVersion>0.0.1.1</txtProductVersion>
+    <productVersion>0.0.1.2</productVersion>
+    <txtProductVersion>0.0.1.2</txtProductVersion>
     <productName>mOptimizer</productName>
     <companyName></companyName>
     <internalName>moptimizer</internalName>
