@@ -1,4 +1,7 @@
 package swe_mo.solver.de;
+import swe_mo.solver.SolverManager;
+import swe_mo.solver.SolverConfig;
+
 
 import java.util.ArrayList;
 
@@ -14,15 +17,21 @@ public class DErand1 {
 	private int generation;
 	double upperBound;
 	double lowerBound;
+	int fitCount;
+	int solverID;
 	double best;
-	Particle_DE bestParicle;
-	FitnessFunction fF;
+	Particle_DE bestParticle;
+	int ffIndex;
+	ArrayList<Double> lastResult;
 	ArrayList<Particle_DE> xPop;
 	
-	public DErand1(int N, int NP, double F, double CR, int maxGenerations, double upperBound, double lowerBound, FitnessFunction fF) {
+	public DErand1(int N, int NP, double F, double CR, int maxGenerations, double upperBound, double lowerBound, int ffIndex, int solverID) {
 		//With this constructor the population will be created with random set particles within the provided bounds. 
 		
-		this.bestParicle  = new Particle_DE(N);
+		this.solverID=solverID;
+		
+		this.fitCount=0;
+		this.bestParticle  = new Particle_DE(N);
 		this.best = Double.MAX_VALUE;
 		this.N=N;
 		this.NP=NP;
@@ -31,21 +40,31 @@ public class DErand1 {
 		this.upperBound= upperBound;
 		this.lowerBound=lowerBound;
 		this.maxGenerations=maxGenerations;
-		this.fF=fF;
+		this.ffIndex=ffIndex;
+		
+		lastResult = new ArrayList<Double>();
 
 		this.xPop = new ArrayList<Particle_DE>();
 
 		this.generation=0;
 		
 
-				for(int i = NP; i>0; i--) {
-					Particle_DE part = new Particle_DE(N, upperBound, lowerBound);
-			    	xPop.add(part);
-			    }
+		for(int i = 0; i<NP; i++) {
+			Particle_DE part = new Particle_DE(N, upperBound, lowerBound);
+	    	xPop.add(part);
+	    }
+		
+		for(int i = 0; i<NP; i++) {
+	    	lastResult.add(-1.0);
+	    }
 	
 	}
 	
-	public DErand1(int N, int NP, double F, double CR, int maxGenerations, FitnessFunction fF) {
+	public static SolverConfig defaultConfig() {		
+		return new SolverConfig(1,5,50,0.7,0.3,1000,5.14,-5.14);
+	}
+	
+	public DErand1(int N, int NP, double F, double CR, int maxGenerations, int ffIndex, int solverID) {
 		//If, for whatever reason, the population should be populated manually, this constructor can be used
 		// it will initialize all NP particles with all dimensions to be zero
 		
@@ -54,14 +73,19 @@ public class DErand1 {
 		this.upperBound=Double.MAX_VALUE;
 		this.lowerBound=-Double.MAX_VALUE;
 		
+		this.fitCount=0;
+		this.solverID=solverID;
 
-		this.bestParicle  = new Particle_DE(N);
+
+		this.bestParticle  = new Particle_DE(N);
 		this.best = Double.MAX_VALUE;
 		this.N=N;
 		this.NP=NP;
 		this.F=F;
 		this.CR=CR;
-		this.fF=fF;
+		this.ffIndex=ffIndex;
+		
+		lastResult = new ArrayList<Double>();
 
 		this.xPop = new ArrayList<Particle_DE>();
 
@@ -70,21 +94,34 @@ public class DErand1 {
 
 		this.maxGenerations=maxGenerations;
 		
-				for(int i = NP; i>0; i--) {
-					Particle_DE part = new Particle_DE(N);
-			    	xPop.add(part);
-			    }
-	
+
+		for(int i = 0; i<NP; i++) {
+			Particle_DE part = new Particle_DE(N, upperBound, lowerBound);
+	    	xPop.add(part);
+	    }
+		
+		for(int i = 0; i<NP; i++) {
+	    	lastResult.add(-1.0);
+	    }
 	}
 	
 	public double solve() {
+		
+		SolverManager.updateStatus(solverID, 0.0);
+		
 
 		// Solver
 		for(this.generation=0; generation<this.maxGenerations; generation++) {
+			//SolverManager.updateStatus(solverID, (((double)generation)/((double)this.maxGenerations)));
+			//if(SolverManager.checkTerminated(solverID)) {
+			//	break;
+			//}
+
+
 			
 			for(int i=0; i<NP; i++) {
 
-				xPop.set(i, compare(xPop.get(i), crossOver(xPop.get(i), calculateV(i))));
+				xPop.set(i, compare(i, crossOver(xPop.get(i), calculateV(i))));
 
 				
 			}
@@ -147,16 +184,26 @@ public class DErand1 {
 			
 		}
 
-		//System.out.println("u: "+u);
+		//System.out.println("u: "+u)
 
 		
 		return u;
 	}
 	
-	public Particle_DE compare(Particle_DE vectorX, Particle_DE vectorU) {
+	public Particle_DE compare(int xIndex, Particle_DE vectorU) {
+		
 		//Compares vectorX and vectorU and returns the better one. If both give the same result, vectorU is returned
-		double xRes=fF.calculatef2(vectorX);
-		double uRes=fF.calculatef2(vectorU);
+		double xRes;
+		if(lastResult.get(xIndex)==-1.0) {
+			 xRes=FitnessFunction.solve(ffIndex, xPop.get(xIndex));
+			fitCount+=1;
+
+		}
+		else {
+			xRes=lastResult.get(xIndex);
+		}
+		double uRes=FitnessFunction.solve(ffIndex, vectorU);
+		fitCount+=1;
 		//System.out.println("current best: "+best);
 		//System.out.println("xRes: "+xRes);
 		//System.out.println("uRes: "+uRes);
@@ -165,32 +212,32 @@ public class DErand1 {
 		if(xRes<uRes) {
 			if(xRes<this.best) {
 				this.best = xRes;
-				bestParicle = vectorX;
+				bestParticle = new Particle_DE(xPop.get(xIndex));
 				System.out.println("Best Value:"+ best);
 				System.out.println("In generation: "+ generation);
 
 
-				//System.out.println("BestX: "+vectorX);
+				System.out.println("BestX: "+bestParticle);
 
 			}
 			
 
-			return vectorX;
+			return new Particle_DE(xPop.get(xIndex));
 		}
 		else
 		{
 			if(uRes<this.best) {
 				this.best = uRes;
-				bestParicle = vectorU;
+				bestParticle = new Particle_DE(vectorU);
 				System.out.println("Best Value:"+ best);
 				System.out.println("In generation: "+ generation);
 
-				//System.out.println("BestU: "+vectorU);
+				System.out.println("BestU: "+vectorU);
 
 
 			}
 
-			
+			lastResult.set(xIndex, uRes);
 			return vectorU;
 		}
 		
@@ -213,8 +260,11 @@ public class DErand1 {
 		}
 		while (index2 == skip || index2 == index1);
 		
-		newP = xPop.get(index1);
+		newP = new Particle_DE(xPop.get(index1));
+		//System.out.println("Test vor subtraktion: "+xPop.get(index1).toString());
 		newP.substract(xPop.get(index2));
+		//System.out.println("Test nach subtraktion: "+xPop.get(index1).toString());
+
 		
 		
 		return newP;

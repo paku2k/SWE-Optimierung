@@ -1,20 +1,39 @@
 package swe_mo.solver.pso;
 
+//import java.io.File;
+import java.io.IOException;
+//import java.util.Arrays;
+
 public class debug {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
-		int dimension = 5;
+		// Test a new implementation here:
+		int dimension = 10;
 		double min = -5.12;
 		double max = 5.12;
 		int particleCount = 50;
 		double w = 0.9;
-		double cc = 0.0;
+		double cc = 0;
 		double cs = 0.5;
 		double dt = 1;
 		int numIter = 5000;
 		
-		psoGlobal psoSolver = new psoGlobal(dimension, min, max, particleCount, w, cc, cs, dt, numIter);
-		psoSolver.solve();
+		// psoGlobal psoGlobalSolver = new psoGlobal(dimension, min, max, particleCount, w, cc, cs, dt, numIter);
+		// System.out.println("Ergebnis: " + Arrays.toString(psoGlobalSolver.solve().toArray()));
+		
+		// Run the Optimizer here:
+		double w_upper = 0.9;
+		double w_lower = 0.1;
+		double cc_upper = 0.9;
+		double cc_lower = 0.1;
+		double cs_upper = 0.9;
+		double cs_lower = 0.1;
+		int resolution = 10;
+		String filename = new String("psoOptimizerTest1");
+
+		psoOptimizer testOpti = new psoOptimizer(filename, dimension, min, max, particleCount, dt, numIter);
+		testOpti.psoGlobalLinear3DimensionalGridSearch(resolution, w_upper, w_lower, cc_upper, cc_lower, cs_upper, cs_lower);
+		
 	}
 }

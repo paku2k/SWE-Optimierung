@@ -189,18 +189,20 @@ public class WebInterfaceServer{
     	    	    
     	    	} else if(requestParameters.getPath().equals("/xhr")) {
     	    		//xhr request (sending cmd commands and receiving+send answers via json)
-    	    		//clogger.dbg(AUTH, "handleRequest", requestParameters.toString());
     		        String r = "{ "; 
 
     	    		if(requestParameters.getParValue("cmdcnt")!=null) { //count of transmitted cmd
     	    			for(int i=0; i < Integer.valueOf(requestParameters.getParValue("cmdcnt")); i++) {
-    	    				r += "\"cmd"+i+"\": \"";
+    	    				r += "\"cmd"+i+"\": ";
     	    				try {
-    	    					r += UiBackend.cmd(AUTH, requestParameters.getParValue("cmd"+i));
+    	    					String rv = (String) UiBackend.cmd(AUTH, requestParameters.getParValue("cmd"+i));
+    	    					if(!requestParameters.getParValue("cmd"+i).contains("-json")) r += "\"";
+    	    					r += rv;
+    	    					if(!requestParameters.getParValue("cmd"+i).contains("-json")) r += "\"";
     	    				} catch(Exception e) {
-    	    					r += "ERR: "+e.getMessage();
+    	    					r += "\"ERR: "+e.getMessage()+"\"";
     	    				}
-    	    				r += "\",";
+    	    				if(i+1 < Integer.valueOf(requestParameters.getParValue("cmdcnt"))) r += ",";
     	    			}
     	    		}		
     		        r += "}"; 
