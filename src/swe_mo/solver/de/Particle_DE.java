@@ -4,6 +4,7 @@ import java.util.ArrayList;
 public class Particle_DE {
 
 	public ArrayList<Double> position = new ArrayList<Double>(); 
+	public double ffValueOld;
 	
 	
 	public Particle_DE(int dimension, double max, double min) {
@@ -14,6 +15,11 @@ public class Particle_DE {
 	    	position.add(CRN.rn(max, min));
 	    }
 	  }
+	
+	public Particle_DE(Particle_DE clone) {
+		this.position=new ArrayList<Double>(clone.position);
+		this.ffValueOld=clone.ffValueOld;
+	}
 	
 	public Particle_DE(int dimension) {
 		//This constructor creates a particle with the given dimension and initializes all dimensions with zero

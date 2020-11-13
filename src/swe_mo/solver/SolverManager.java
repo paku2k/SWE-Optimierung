@@ -3,8 +3,6 @@ package swe_mo.solver;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
 
 import swe_mo.ui.clogger;
 
@@ -19,36 +17,36 @@ public class SolverManager {
 	
 	
 
-	public static String create(){
+	public static String create() throws Exception{
 		runningSolvers.add(new Solver(runningSolvers.size()));	
 		return "Solver created (default) with ID "+(runningSolvers.size()-1);
 	}
 
 	public static String create(String algorithm) throws Exception {
-		if(!isValidAlgorithm(algorithm)) return "Algorithm not supported. Switched to default.\n"+create();		
-		
 		runningSolvers.add(new Solver(runningSolvers.size(), algorithm));
 		return "Solver created ("+algorithm+") with ID "+(runningSolvers.size()-1);
 	}	
-	
-	private static boolean isValidAlgorithm(String algo) {
-		if(algo.equals("default") ||
-		   algo.equals("DErand1") ||
-		   algo.equals("DEbest1") ||
-		   algo.equals("DEbest2") ||
-		   algo.equals("DErtb1") ||
-		   algo.equals("PSOgsc") ||
-		   algo.equals("PSOnsc")) {
-			return true;
-		}
-		return false;
-	}
 	
 	
 	
 
 	public static void configure(String config) throws Exception {
 		configure(runningSolvers.size()-1, config);
+	}
+	
+	public static void configure(int id1, int id2, String config) throws Exception {
+		if(id1>id2) {
+			int m = id1;
+			id1 = id2;
+			id2 = m;
+		}
+		if(id1<0) id1=0;
+		if(id2>runningSolvers.size()-1) id2 = runningSolvers.size()-1;
+		
+		for(int i=id1; i<=id2; i++) {
+			if(status(i)<0 && status(i)>-3)
+				configure(i, config);			
+		}		
 	}
 	
 	public static void configure(int id, String config) throws Exception {
@@ -69,23 +67,8 @@ public class SolverManager {
 		} else if(status(id) >= 0 && status(id) < 100) {
 			throw new Exception("Solver already running.");						
 		}
-		
-					//assemble the config class
-					
-					
-					Queue<String> config_q = new LinkedList<String>();
-					String[] config_arr = config.replace("    ","").replace("   ","").replace("  ","").replace(" ","").split("/");
-					for(String s : config_arr) {
-						if(s != "" && s != null)
-							config_q.offer(s);
-					}
-		
-		try {
-			runningSolvers.get(id).configure("max", Integer.parseInt(config_q.poll()));
-						
-		} catch(Exception e) {
-			clogger.err(AUTH, "configure", e);
-		}		
+
+		runningSolvers.get(id).configure(config);
 	}
 	
 	
@@ -93,6 +76,21 @@ public class SolverManager {
 
 	public static void start() throws Exception {
 		start(runningSolvers.size()-1);
+	}
+	
+	public static void start(int id1, int id2) throws Exception {
+		if(id1>id2) {
+			int m = id1;
+			id1 = id2;
+			id2 = m;
+		}
+		if(id1<0) id1=0;
+		if(id2>runningSolvers.size()-1) id2 = runningSolvers.size()-1;
+		
+		for(int i=id1; i<=id2; i++) {
+			if(status(i)<0 && status(i)>-3)
+				start(i);			
+		}		
 	}
 	
 	public static void start(int id) throws Exception {
@@ -121,6 +119,21 @@ public class SolverManager {
 
 	public static void terminate() throws Exception{
 		terminate(runningSolvers.size()-1);
+	}
+	
+	public static void terminate(int id1, int id2) throws Exception {
+		if(id1>id2) {
+			int m = id1;
+			id1 = id2;
+			id2 = m;
+		}
+		if(id1<0) id1=0;
+		if(id2>runningSolvers.size()-1) id2 = runningSolvers.size()-1;
+		
+		for(int i=id1; i<=id2; i++) {
+			if(status(i)>=0 && status(i)<100)
+				terminate(i);			
+		}		
 	}
 	
 	public static void terminate(int id) throws Exception{
@@ -155,6 +168,20 @@ public class SolverManager {
 		clogger.info(AUTH, "terminateAll", "Terminated all running Solvers.");
 	}	
 	
+	public static void joinAllThreads() {
+		clogger.info(AUTH, "joinAllThreads", "Joining all solver threads.");
+		
+		for(int i=0; i < runningSolvers.size(); i++) {
+			try {
+				runningSolvers.get(i).joinThread();
+			} catch(Exception e) {
+				clogger.err(AUTH, "joinAllThreads", e);
+			}
+		}	
+		
+		clogger.info(AUTH, "joinAllThreads", "Joined all solver threads.");	
+	}
+	
 	
 	
 
@@ -171,11 +198,11 @@ public class SolverManager {
 		//102 		terminated
 		//103 		error
 		//104 		deleted
-		if(id >= runningSolvers.size()) {
+		if(id >= runningSolvers.size() || id < 0) {
 			return -3;			
 		} else {
 			try {
-				return runningSolvers.get(id).status();
+				return runningSolvers.get(id).getStatus();
 			} catch(Exception e) {
 				return 104;	//Solver Object not accessible anymore -> deleted		
 			}
@@ -185,11 +212,11 @@ public class SolverManager {
 	
 	
 
-	public static int result() throws Exception {
+	public static SolverResult result() throws Exception {
 		return result(runningSolvers.size()-1);
 	}
 	
-	public static int result(int id) throws Exception {
+	public static SolverResult result(int id) throws Exception {
 		if(status(id) == -3) {
 			throw new Exception("No Solver with this ID.");
 		} else if(status(id) == -2) {
@@ -216,6 +243,21 @@ public class SolverManager {
 
 	public static void delete() throws Exception {
 		delete(runningSolvers.size()-1);
+	}
+	
+	public static void delete(int id1, int id2) throws Exception {
+		if(id1>id2) {
+			int m = id1;
+			id1 = id2;
+			id2 = m;
+		}
+		if(id1<0) id1=0;
+		if(id2>runningSolvers.size()-1) id2 = runningSolvers.size()-1;
+		
+		for(int i=id1; i<=id2; i++) {
+			if(status(i) == -3 || status(i) == 104 || (status(i) >= 0 && status(i) < 100)) continue;	
+			delete(i);			
+		}		
 	}
 	
 	public static void delete(int id) throws Exception {
@@ -250,7 +292,7 @@ public class SolverManager {
 	
 	public static String list() throws Exception {
 		try {
-			return list(true, true, "", -5, 105);
+			return list(true, true, "", -5, 105, false);
 			
 		}catch(Exception e) {
 			clogger.ftl(AUTH, "list", "test");
@@ -258,18 +300,20 @@ public class SolverManager {
 		return "";
 	}
 	
-	public static String list(boolean show_running, boolean show_notrunning, String type, double status, double status_max) throws Exception {
+	public static String list(boolean show_running, boolean show_notrunning, String type, double status, double status_max, boolean asJson) throws Exception {
 		if(!type.equals("") && !isValidAlgorithm(type)) throw new Exception("Searching for invalid Algorithm.");
 		
 		String list = "ID\tAlgorithm\t\tStatus\n\n";
+		String json = "{\"solvers\": [";
+		boolean json_comma_first = true;
 		
 		for(int i=0; i<runningSolvers.size(); i++) {
 			//filter
 			try {
-				if(show_running && !show_notrunning && (runningSolvers.get(i).status() < 0 || runningSolvers.get(i).status() > 100)) continue;
-				if(show_notrunning && !show_running && (runningSolvers.get(i).status() >= 0 && runningSolvers.get(i).status() <= 100)) continue;
+				if(show_running && !show_notrunning && (runningSolvers.get(i).getStatus() < 0 || runningSolvers.get(i).getStatus() > 100)) continue;
+				if(show_notrunning && !show_running && (runningSolvers.get(i).getStatus() >= 0 && runningSolvers.get(i).getStatus() <= 100)) continue;
 				if(!type.equals("") && !type.equals(runningSolvers.get(i).getAlgorithm())) continue;
-				if(runningSolvers.get(i).status() < status || runningSolvers.get(i).status() > status_max) continue;
+				if(runningSolvers.get(i).getStatus() < status || runningSolvers.get(i).getStatus() > status_max) continue;
 							
 			} catch(Exception e) {
 				if(!show_notrunning ||
@@ -278,20 +322,48 @@ public class SolverManager {
 			}
 				
 			//write entry
-			list += i + "\t";
-			try {
-				list += runningSolvers.get(i).getAlgorithm() + "\t\t\t";
-				list += round(runningSolvers.get(i).status(),3);	
-			} catch(Exception e) {
-				list += "--------- deleted ---------";
+			if(!asJson) {
+				list += i + "\t";
+				try {
+					list += runningSolvers.get(i).getAlgorithm() + "\t\t\t";
+					list += round(runningSolvers.get(i).getStatus(),3);	
+				} catch(Exception e) {
+					list += "--------- deleted ---------";
+				}
+				list += "\n";
+			} else {
+				if(!json_comma_first) {
+					json += ",";	
+				} else {
+					json_comma_first = false;
+				}
+				json += "{\"id\": "+i+",";
+				try {
+					json += "\"algorithm\": \""+runningSolvers.get(i).getAlgorithm()+"\","; 
+					json += "\"status\": "+runningSolvers.get(i).getStatus(); 					
+				} catch(Exception e) {
+					json += "\"deleted\": true";					
+				}
+				json += "}";			
 			}
-			list += "\n";
 		}
 		
-		
-		return list;
+		if(!asJson) {
+			return list;
+		} else {
+			json += "]}";
+			return json;
+		}
 	}
 	
+	private static boolean isValidAlgorithm(String algorithm) {
+		try {
+			SolverConfig.getDefault(algorithm);
+			return true;
+		} catch(Exception e) {
+			return false;
+		}
+	}
 	
 	
 	
