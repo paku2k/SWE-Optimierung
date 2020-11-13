@@ -70,6 +70,107 @@ public class SolverManager {
 
 		runningSolvers.get(id).configure(config);
 	}
+
+	
+	public static String getConfig(boolean json) throws Exception {
+		return getConfig(runningSolvers.size()-1, json);
+	}
+	
+	public static String getConfig(int id, boolean json) throws Exception {
+		if(status(id) == -3) {
+			throw new Exception("No Solver with this ID.");		
+		} else if(status(id) == 104) {
+			throw new Exception("Solver not found (deleted).");					
+		}
+
+		return runningSolvers.get(id).getConfig(json);
+	}
+
+
+	public static void resetConfig() throws Exception {
+		resetConfig(runningSolvers.size()-1);
+	}
+	
+	public static void resetConfig(int id1, int id2) throws Exception {
+		if(id1>id2) {
+			int m = id1;
+			id1 = id2;
+			id2 = m;
+		}
+		if(id1<0) id1=0;
+		if(id2>runningSolvers.size()-1) id2 = runningSolvers.size()-1;
+		
+		for(int i=id1; i<=id2; i++) {
+			if(status(i)<0 && status(i)>-3)
+				resetConfig(i);			
+		}		
+	}
+	
+	public static void resetConfig(int id) throws Exception {
+		if(status(id) == -3) {
+			throw new Exception("No Solver with this ID.");
+		} else if(status(id) == 100) {
+			throw new Exception("Solving finished, preparing Results.");	
+		} else if(status(id) == 101) {
+			throw new Exception("Solving finished, Results already available.");	
+		} else if(status(id) == 102) {
+			throw new Exception("Solving terminated.");	
+		} else if(status(id) == 103) {
+			throw new Exception("Solving terminated with failure.");		
+		} else if(status(id) == 104) {
+			throw new Exception("Solver not found (deleted).");			
+		} else if(status(id) >= 0 && status(id) < 100) {
+			throw new Exception("Solver already running.");						
+		}
+
+		runningSolvers.get(id).resetConfig();
+	}
+	
+
+	
+	public static void cloneConfig(int cloneId) throws Exception {
+		cloneConfig(runningSolvers.size()-1, cloneId);
+	}
+	
+	public static void cloneConfig(int id1, int id2, int cloneId) throws Exception {
+		if(id1>id2) {
+			int m = id1;
+			id1 = id2;
+			id2 = m;
+		}
+		if(id1<0) id1=0;
+		if(id2>runningSolvers.size()-1) id2 = runningSolvers.size()-1;
+		
+		for(int i=id1; i<=id2; i++) {
+			if(status(i)<0 && status(i)>-3)
+				cloneConfig(i, cloneId);			
+		}		
+	}
+	
+	public static void cloneConfig(int id, int cloneId) throws Exception {
+		if(status(cloneId)<=-3 || status(cloneId)>=104) 
+			throw new Exception("Solver with clone id not found.");
+				
+		if(status(id) == -3) {
+			throw new Exception("No Solver with this ID.");
+		} else if(status(id) == 100) {
+			throw new Exception("Solving finished, preparing Results.");	
+		} else if(status(id) == 101) {
+			throw new Exception("Solving finished, Results already available.");	
+		} else if(status(id) == 102) {
+			throw new Exception("Solving terminated.");	
+		} else if(status(id) == 103) {
+			throw new Exception("Solving terminated with failure.");		
+		} else if(status(id) == 104) {
+			throw new Exception("Solver not found (deleted).");			
+		} else if(status(id) >= 0 && status(id) < 100) {
+			throw new Exception("Solver already running.");						
+		}
+
+		runningSolvers.get(id).setConfig(runningSolvers.get(cloneId).getConfig());
+	}
+	
+	
 	
 	
 	
