@@ -13,5 +13,7 @@ public class Main {
 			
 			Settings.save("/config.json");
 			clogger.stop();
+			
     }
+	
 }
