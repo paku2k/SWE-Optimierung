@@ -61,6 +61,20 @@ public class SolverConfig {
 		throw new Exception("No such hyperparameter ("+param+").");
 	}
 	
+
+	
+	
+	@Override
+	public String toString() {
+		return "ERR: not implemented";
+	}
+	
+	public String toJSON() {
+		return "{\"error\":\"not implemented\"}";
+	}
+	
+	
+	
 	
 	
 	public static SolverConfig getDefault(String algorithm) throws Exception {

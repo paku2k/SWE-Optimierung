@@ -411,22 +411,24 @@ public class UiBackend {
 						 + "\t" + "list \t\tList all Solvers\r"
 						 + "\t" + "create \t\tCreate new Solver-Instance\r"
 						 + "\t" + "config \t\tConfigure Solver\r"
-						 + "\t" + "start \t\tStart Solving\r"
+						 + "\t" + "solve \t\tStart Solving\r"
 						 + "\t" + "term \t\tTerminate Solver\r"
 						 + "\t" + "status \t\tGet Status of Solver(-Manager)\r"
 						 + "\t" + "result \t\tGet Result\r"
 						 + "\t" + "delete \t\tDelete Solver-Instance\r";
 								
-			} else if(cmd_queue.peek().equals("list")) {
+			} else if(cmd_queue.peek().equals("list") || cmd_queue.peek().equals("lsit")) {
 				cmd_queue.remove();		
 				
 				if(!cmd_queue.isEmpty()) {
 					boolean show_running = true;
 					boolean show_notrunning = true;
+					boolean json = false;
 					String type = "";
 					double status = -5;
 					double status_max = 105;
-					boolean json = false;
+					int id = 0;
+					int id_max = Integer.MAX_VALUE;
 					
 					int i = 5;
 					while(cmd_queue.size()>0 && i>=0) {
@@ -475,9 +477,31 @@ public class UiBackend {
 								} catch(Exception e) {}
 							}						
 						}
+						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-id")) {
+							cmd_queue.remove();		
+							
+							if(!cmd_queue.isEmpty()) {
+								try {
+									id = Integer.parseInt(cmd_queue.peek());
+									id_max = id;
+									cmd_queue.remove();
+									if(!cmd_queue.isEmpty()) {
+										try {
+											id_max = Integer.parseInt(cmd_queue.peek());
+											cmd_queue.remove();
+										} catch(Exception e) {}
+									}
+									if(id_max < id) {
+										int m = id;
+										id = id_max;
+										id_max = m;
+									}
+								} catch(Exception e) {}
+							}						
+						}
 						i--;
 					}					
-					return SolverManager.list(show_running, show_notrunning, type, status, status_max,json);
+					return SolverManager.list(show_running, show_notrunning, type, status, status_max, id, id_max, json);
 					
 				} else {
 					return SolverManager.list();
@@ -509,6 +533,59 @@ public class UiBackend {
 					} catch(Exception e) {}
 
 					if(cmd_queue.isEmpty()) throw new Exception("Not enough parameters. You need at least one.");
+
+							
+					if(cmd_queue.peek().equals("-get")) {
+						cmd_queue.poll();
+						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {	
+							if(id>-1)
+								return SolverManager.getConfig(id, true);
+							else
+								return SolverManager.getConfig(true);
+						} else {	
+							if(id>-1)
+								return SolverManager.getConfig(id, false);
+							else
+								return SolverManager.getConfig(false);						
+						}
+					} else if(cmd_queue.peek().equals("-reset")) {
+						if(id>-1) {
+							if(id_max>-1) {
+								SolverManager.resetConfig(id, id_max);		
+								return "Solvers reset.";
+							} else {
+								SolverManager.resetConfig(id);
+							}
+						} else {
+							SolverManager.resetConfig();		
+						}
+						return "Solver reset.";
+					} else if(cmd_queue.peek().equals("-clone")) {	
+						cmd_queue.poll();
+						
+						if(!cmd_queue.isEmpty()) {	
+							int cloneId = -1;
+							
+							try {
+								cloneId = Integer.parseInt(cmd_queue.poll());
+								
+								if(id>-1) {
+									if(id_max>-1) {
+										SolverManager.cloneConfig(id, id_max, cloneId);	
+									} else {
+										SolverManager.cloneConfig(id, cloneId);
+									}
+								} else {
+									SolverManager.cloneConfig(cloneId);		
+								}	
+								return "Configuration cloned from "+cloneId+".";
+							} catch(Exception e) {}
+						}
+						
+						throw new Exception("No valied clone id given.");
+					}
+					
+					
 					
 					String config = "";
 					while(!cmd_queue.isEmpty()) {	

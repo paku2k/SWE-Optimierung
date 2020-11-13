@@ -21,7 +21,7 @@
         
         <script language="javascript" type="text/javascript" src="src/script.js"></script>
     </header>
-    <body>
+    <body onload="onload();">
         
 	    
 	    <div>
@@ -31,5 +31,7 @@
 	    	    
 	    <textarea id="cmd_input"></textarea><br>
 	    <button id="cmd_send" onclick="cmdInputExecute();">Execute</button>
+	    <button id="cmd_save" onclick="saveAsMoclFile();" disabled>Save</button>
+	    <input type="file" id="file_input" />
 	</body>
 </html>
