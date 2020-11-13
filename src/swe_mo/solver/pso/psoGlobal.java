@@ -3,7 +3,7 @@ package swe_mo.solver.pso;
 import swe_mo.solver.*;
 import java.util.ArrayList;
 
-public class psoGlobal extends psoSolver{
+public class psoGlobal {
 
 	int dimension;
 	int numIter;
@@ -34,7 +34,6 @@ public class psoGlobal extends psoSolver{
 		}
 	
 		
-			@Override
 			public ArrayList<Double> solve() {
 			// This method is the engine of the solver, that creates the swarm and updates / finds the globalBestPosition
 				
