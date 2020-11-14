@@ -3,6 +3,10 @@ package swe_mo.solver;
 import swe_mo.solver.de.DErand1;
 import swe_mo.solver.de.DEbest1;
 
+import org.json.simple.JSONObject;
+
+
+
 
 public class SolverConfig {
 	int ffid;
@@ -81,8 +85,21 @@ public class SolverConfig {
 		return "ERR: not implemented (N="+N+")";
 	}
 	
+	@SuppressWarnings("unchecked")
 	public String toJSON() {
-		return "{\"error\":\"not implemented\"}";
+		JSONObject json = new JSONObject();
+
+		json.put("error", "not implemented");
+		json.put("ffid", ffid);
+		json.put("N", N);
+		json.put("NP", NP);
+		json.put("F", F);
+		json.put("CR", CR);
+		json.put("maxGenerations", maxGenerations);
+		json.put("lowerBound", lowerBound);
+		json.put("upperBound", upperBound);
+		
+		return json.toJSONString();
 	}
 	
 	

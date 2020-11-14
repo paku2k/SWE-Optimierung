@@ -1,5 +1,9 @@
 package swe_mo.solver;
+
+
 import swe_mo.solver.de.Particle_DE;
+
+import org.json.simple.JSONObject;
 
 
 public class SolverResult {
@@ -31,6 +35,12 @@ public class SolverResult {
 	}
 	
 	public String toJSON() {
-		return "{\"value\":"+value+",\"ffCounter\":"+ffCounter+" ,\"particle\": "+particle.toString()+"}";
+		JSONObject json = new JSONObject();
+
+		json.put("value", value);
+		json.put("ffCounter", ffCounter);
+		json.put("particle", particle.toString());
+		
+		return json.toJSONString();
 	}
 }

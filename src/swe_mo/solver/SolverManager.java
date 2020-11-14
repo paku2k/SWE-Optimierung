@@ -1,10 +1,13 @@
 package swe_mo.solver;
 
+import swe_mo.ui.clogger;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 
-import swe_mo.ui.clogger;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 
 
@@ -424,12 +427,12 @@ public class SolverManager {
 		return "";
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static String list(boolean show_running, boolean show_notrunning, String type, double status, double status_max, int id, int id_max, boolean asJson) throws Exception {
 		if(!type.equals("") && !isValidAlgorithm(type)) throw new Exception("Searching for invalid Algorithm.");
 		
 		String list = "ID\tAlgorithm\t\tStatus\n\n";
-		String json = "{\"solvers\": [";
-		boolean json_comma_first = true;
+		JSONArray jsonarr = new JSONArray();	
 		
 		for(int i=0; i<runningSolvers.size(); i++) {
 			//filter
@@ -457,27 +460,25 @@ public class SolverManager {
 				}
 				list += "\n";
 			} else {
-				if(!json_comma_first) {
-					json += ",";	
-				} else {
-					json_comma_first = false;
-				}
-				json += "{\"id\": "+i+",";
-				try {
-					json += "\"algorithm\": \""+runningSolvers.get(i).getAlgorithm()+"\","; 
-					json += "\"status\": "+runningSolvers.get(i).getStatus(); 					
+					JSONObject jsonobj = new JSONObject();
+					jsonobj.put("id", i);
+				try {		
+					jsonobj.put("algorithm", runningSolvers.get(i).getAlgorithm());
+					jsonobj.put("status", runningSolvers.get(i).getStatus());
+					jsonobj.put("deleted", false);
 				} catch(Exception e) {
-					json += "\"deleted\": true";					
+					jsonobj.put("deleted", true);				
 				}
-				json += "}";			
+				jsonarr.add(jsonobj);
 			}
 		}
 		
 		if(!asJson) {
 			return list;
 		} else {
-			json += "]}";
-			return json;
+			JSONObject listjson = new JSONObject();
+			listjson.put("solvers", jsonarr);
+			return listjson.toJSONString();
 		}
 	}
 	

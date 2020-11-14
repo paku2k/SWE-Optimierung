@@ -39,7 +39,7 @@ public class Settings {
             for(String key : settings.keySet()) {            	
             	listOfSettings.put(key, settings.get(key));	
             }    		
-    		return listOfSettings.toString();
+    		return listOfSettings.toJSONString();
         	
         } else {
             String s = "List of application settings\n";
