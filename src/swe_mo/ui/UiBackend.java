@@ -3,6 +3,8 @@ package swe_mo.ui;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import swe_mo.Main;
+import swe_mo.Settings;
 import swe_mo.solver.SolverManager;
 
 
@@ -206,8 +208,8 @@ public class UiBackend {
 			
 			if(cmd_queue.isEmpty()) {
 				return     "List of modules\r"
-						 + "\t" + "app \t\tApplication Control\r"
-						 + "\t" + "cfg \t\tApplication Configuration\r"
+						 + "\t" + "app \t\tApplication control\r"
+						 + "\t" + "cfg \t\tApplication configuration\r"
 						 + "\t" + "uif \t\tUiFrontend\r"
 						 + "\t" + "wis \t\tWebInterfaceServer\r"
 						 + "\t" + "sm  \t\tSolverManager\r"
@@ -224,7 +226,8 @@ public class UiBackend {
 			
 			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
 				return     "app - List of commands\r"
-						 + "\t" + "exit \t\tStop and exit Application";		
+						 + "\t" + "exit \t\tStop and exit application"
+						 + "\t" + "info \t\tApplication version information";		
 				
 			} else if(cmd_queue.peek().equals("exit")) {
 				cmd_queue.remove();
@@ -232,7 +235,15 @@ public class UiBackend {
 				if(wis.status()) wis.stop(true);
 				UiFrontend.stop(true);
 				UiBackend.stop(true);
-				return "Exiting application.";
+				return "Exiting application.";	
+				
+			} else if(cmd_queue.peek().equals("info")) {
+				cmd_queue.remove();
+
+				return 	  "METAHEURISTIC OPTIMIZATION"+"\n\n"
+					 	+ "VERSION: "+Main.APPVERSION+"\n"
+					 	+ "DATE: "+Main.DATE+"\n"
+					 	+ "AUTHORS:\n"+Main.AUTHORS+"\n";
 			}
 			
 			
@@ -243,11 +254,33 @@ public class UiBackend {
 
 			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
 				return     "cfg - List of commands\r"
-						 + "Not implemented yet.";
+						 + "\t" + "<key>       \tGet value of setting <key>\r"
+						 + "\t" + "<key> <val> \tSet setting <key> to value <v>\r"
+						 + "\t" + "-reset      \tSet settings to default\r"
+						 + "\t" + "-all        \tList all settings\r";
 				
-			}	
-			return "Not implemented yet.";
-			
+			} else if(cmd_queue.peek().equals("-reset")) {
+				Settings.factorySettings();
+				return "Settings set to default.";
+				
+			} else if(cmd_queue.peek().equals("-list")) {
+				cmd_queue.remove();
+				
+				if(!cmd_queue.isEmpty() && cmd_queue.poll().equals("-json")) {
+					return Settings.listAll(true);
+				} else {
+					return Settings.listAll(false);
+				}
+				
+			} else if(!cmd_queue.isEmpty()) {
+				String key = cmd_queue.poll();
+				if(!cmd_queue.isEmpty()) {
+					Settings.set(key, cmd_queue.poll());
+					return "New value set.";
+				} else {
+					return Settings.get(key);
+				}
+			}
 			
 
 		// uif	
@@ -257,9 +290,9 @@ public class UiBackend {
 			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
 				return     "uif - List of commands\r"
 						 + "\t" + "start \t\tStart UiFrontend\r"
-						 + "\t" + "min   \t\tMinimize Window\r"
-						 + "\t" + "show  \t\tShow Window\r"
-						 + "\t" + "status\t\tGet Status of UiFrontend";	
+						 + "\t" + "min   \t\tMinimize window\r"
+						 + "\t" + "show  \t\tShow window\r"
+						 + "\t" + "status\t\tGet status of UiFrontend";	
 				
 			} else if(cmd_queue.peek().equals("start")) {
 				cmd_queue.remove();				
@@ -322,7 +355,7 @@ public class UiBackend {
 						 + "\t" + "start \t\tStart WebInterfaceServer\r"
 						 + "\t" + "stop  \t\tStop WebInterfaceServer\r"
 						 + "\t" + "open  \t\tOpen WebGUI in Browser\r"
-						 + "\t" + "status\t\tGet Status of WebInterfaceServer";
+						 + "\t" + "status\t\tGet status of WebInterfaceServer";
 				
 			} else if(cmd_queue.peek().equals("start")) {
 				cmd_queue.remove();		
@@ -408,14 +441,15 @@ public class UiBackend {
 
 			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
 				return     "sm - List of commands\r"
-						 + "\t" + "list \t\tList all Solvers\r"
-						 + "\t" + "create \t\tCreate new Solver-Instance\r"
-						 + "\t" + "config \t\tConfigure Solver\r"
-						 + "\t" + "solve \t\tStart Solving\r"
-						 + "\t" + "term \t\tTerminate Solver\r"
-						 + "\t" + "status \t\tGet Status of Solver(-Manager)\r"
-						 + "\t" + "result \t\tGet Result\r"
-						 + "\t" + "delete \t\tDelete Solver-Instance\r";
+						 + "\t" + "list \t\tList all solvers\r"
+						 + "\t" + "create \t\tCreate new solver-instance\r"
+						 + "\t" + "clone \t\tCreate new solver-instance with cloned properties\r"
+						 + "\t" + "config \t\tConfigure solver\r"
+						 + "\t" + "solve \t\tStart solving\r"
+						 + "\t" + "term \t\tTerminate solver\r"
+						 + "\t" + "status \t\tGet status of solver)\r"
+						 + "\t" + "result \t\tGet result\r"
+						 + "\t" + "delete \t\tDelete solver-instance\r";
 								
 			} else if(cmd_queue.peek().equals("list") || cmd_queue.peek().equals("lsit")) {
 				cmd_queue.remove();		

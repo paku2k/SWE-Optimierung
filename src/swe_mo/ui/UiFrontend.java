@@ -1,5 +1,8 @@
 package swe_mo.ui;
 
+import swe_mo.Settings;
+
+
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.util.ArrayList;
@@ -12,6 +15,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.wb.swt.SWTResourceManager;
+
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ShellEvent;
@@ -365,7 +369,10 @@ public class UiFrontend {
 			if(last_click + DOUBLECLICK_THRESHOLD > System.currentTimeMillis()) return;
 			
 			try {
-				UiBackend.cmd(AUTH, "wis open -m");
+				if((boolean) Settings.get("minUifOnWebguiOpen")) 
+					UiBackend.cmd(AUTH, "wis open -m");
+				else
+					UiBackend.cmd(AUTH, "wis open");
 			} catch(Exception ex) {
 				clogger.err(AUTH, "mouseadapter_btnOpenPage", ex);
 			}
@@ -379,7 +386,6 @@ public class UiFrontend {
 
 		@Override
 		public void shellClosed(ShellEvent e) {
-			// TODO Auto-generated method stub
 	        MessageBox messageBox = new MessageBox(shell, SWT.APPLICATION_MODAL | SWT.YES | SWT.NO);
 	        messageBox.setText("Warning");
 	        messageBox.setMessage("You are about to stop and close the application. Continue?");

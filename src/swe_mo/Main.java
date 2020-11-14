@@ -5,13 +5,19 @@ import swe_mo.ui.*;
 
 
 public class Main {	
+	public final static String APPVERSION = "0.0.1.2";
+	public final static String AUTHORS = "Jonas Dückmann\nDaniel Bätjer\nElias Niepötter\nSimon Pauka\nDavid Messow";
+	public final static String DATE = "2020-11-14";
+	
 	public static void main(String[] args) {
+		
 			clogger.start();
-			Settings.load("/config.json");
+			Settings.factorySettings();
+			Settings.load("swe_mo.cfg");
 			
 			UiBackend.start();
 			
-			Settings.save("/config.json");
+			Settings.save("swe_mo.cfg");
 			clogger.stop();
     }
 }
