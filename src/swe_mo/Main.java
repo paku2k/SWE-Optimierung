@@ -13,11 +13,11 @@ public class Main {
 		
 			clogger.start();
 			Settings.factorySettings();
-			Settings.load("swe_mo.cfg");
+			Settings.load();
 			
 			UiBackend.start();
 			
-			Settings.save("swe_mo.cfg");
+			Settings.save();
 			clogger.stop();
     }
 }

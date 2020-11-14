@@ -256,8 +256,13 @@ public class UiBackend {
 				return     "cfg - List of commands\r"
 						 + "\t" + "<key>       \tGet value of setting <key>\r"
 						 + "\t" + "<key> <val> \tSet setting <key> to value <v>\r"
+						 + "\t" + "-save       \tSave settings\r"
 						 + "\t" + "-reset      \tReset all settings to default\r"
-						 + "\t" + "-all        \tList all settings\r";
+						 + "\t" + "-list       \tList all settings\r";
+				
+			} else if(cmd_queue.peek().equals("-save")) {
+				Settings.save();
+				return "Settings saved.";
 				
 			} else if(cmd_queue.peek().equals("-reset")) {
 				Settings.factorySettings();

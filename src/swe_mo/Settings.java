@@ -1,5 +1,6 @@
 package swe_mo;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -17,6 +18,8 @@ import swe_mo.ui.clogger;
 
 public class Settings {
 	final static String AUTH = "SET";
+	private static String directory = "data/cfg";
+	private static String filename = "swe_mo.mocfg";
 
 	private static Map<String, Object> settings = new HashMap<String, Object>();
 	
@@ -132,10 +135,10 @@ public class Settings {
 	
 	
 
-	public static void load(String file) {
+	public static void load() {		
 		try {
 			//JSON parser object to parse read file	         
-	        FileReader f = new FileReader(file);
+	        FileReader f = new FileReader(directory+"/"+filename);
 	        		
             //Read JSON file
 	        JSONObject listOfParameters = (JSONObject) new JSONParser().parse(f);      
@@ -149,16 +152,16 @@ public class Settings {
 	    			clogger.err(AUTH, "load", e);}
 	        }
 			
-			clogger.info(AUTH, "load", "Settings loaded ("+file+")");
+			clogger.info(AUTH, "load", "Settings loaded");
 		} catch(FileNotFoundException e) {
-			clogger.warn(AUTH, "load", "No settings file "+file+" found.");
+			clogger.warn(AUTH, "load", "No settings file found. Used default.");
 		} catch(Exception e) {
 			clogger.err(AUTH, "load", e);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void save(String file) {
+	public static void save() {
 		try {
 			//assemble json object			
 	        JSONObject listOfSettings = new JSONObject();	        
@@ -167,15 +170,21 @@ public class Settings {
 	        	listOfSettings.put(key, settings.get(key));	                
 			
 	        //write json to file
-	        FileWriter f = new FileWriter(file);
+        	FileWriter f;
+	        try {
+	        	f = new FileWriter(directory+"/"+filename);
+	        } catch(FileNotFoundException e) {
+	        	new File(directory).mkdir();
+	        	f = new FileWriter(directory+"/"+filename);
+	        }
 	 
 	        f.write(listOfSettings.toString());
 	        f.flush();	        
-	        f.close();	        
+	        f.close();	      
 	        
-			clogger.info(AUTH, "save", "Settings saved ("+file+")");
+			clogger.info(AUTH, "save", "Settings saved");
 		} catch(Exception e) {
 			clogger.err(AUTH, "save", e);
 		}
-	}	
+	}
 }
