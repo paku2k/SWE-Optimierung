@@ -49,7 +49,20 @@ public class psoParticle extends Particle_DE {
 							-position.get(i)));
 		}
 	}
-		
+	
+	
+	public void updateVelocityDecay(ArrayList<Double> socialComponent, int numIter , int Iter) {
+		double rc=Math.random();
+		double rs=Math.random();
+		w=(-0.5/numIter)*Iter+0.9;
+		for(int i=0; i<velocity.size(); i++) {
+			velocity.set(i, w*velocity.get(i)  
+					+  cc*rc*(personalBestPosition.get(i)
+							-position.get(i))  
+					+  cs*rs*(socialComponent.get(i)
+							-position.get(i)));
+		}
+	}
 	
 	public void updatePersonalBestPosition(int ffID) {
 		double minimum = FitnessFunction.solve(ffID, this);

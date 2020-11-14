@@ -25,17 +25,17 @@ public class debug {
 		// System.out.println("Ergebnis: " + Arrays.toString(psoGlobalSolver.solve().toArray()));
 		
 		// Run the Optimizer here:
-		double w_upper = 0.9;
-		double w_lower = 0.1;
-		double cc_upper = 0.9;
-		double cc_lower = 0.1;
-		double cs_upper = 0.9;
-		double cs_lower = 0.1;
-		int resolution = 10;
-		String filename = new String("psoOptimizerTest1");
+		//double w_upper = 0.9;
+		//double w_lower = 0.1;
+		//double cc_upper = 0.9;
+		//double cc_lower = 0.1;
+		//double cs_upper = 0.9;
+		//double cs_lower = 0.1;
+		//int resolution = 10;
+		//String filename = new String("psoOptimizerTest1");
 
-		psoOptimizer testOpti = new psoOptimizer(filename, dimension, min, max, particleCount, dt, numIter, ffID, solverID);
-		testOpti.psoGlobalLinear3DimensionalGridSearch(resolution, w_upper, w_lower, cc_upper, cc_lower, cs_upper, cs_lower);
+		//psoOptimizer testOpti = new psoOptimizer(filename, dimension, min, max, particleCount, dt, numIter, ffID, solverID);
+		//testOpti.psoGlobalLinear3DimensionalGridSearch(resolution, w_upper, w_lower, cc_upper, cc_lower, cs_upper, cs_lower);
 		
 	}
 }

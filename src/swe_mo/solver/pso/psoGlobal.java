@@ -53,7 +53,8 @@ public class psoGlobal {
 				for(int i=0; i<numIter; i++) {
 					for(int j=0; j<particleCount; j++) {
 						updateGlobalBestPosition(swarm.get(j));
-						swarm.get(j).updateVelocity(globalBestPosition);
+						//swarm.get(j).updateVelocity(globalBestPosition);
+						swarm.get(j).updateVelocityDecay(globalBestPosition, numIter, i);
 						swarm.get(j).updatePosition();
 						swarm.get(j).updatePersonalBestPosition(ffID);
 					}
