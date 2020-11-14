@@ -8,6 +8,8 @@ public class psoGlobal {
 	int dimension;
 	int numIter;
 	int particleCount;
+	int solverID;
+	int ffID;
 	double min;
 	double max;
 	double w;
@@ -16,11 +18,13 @@ public class psoGlobal {
 	double dt;
 	double globalMinimum = Double.MAX_VALUE;
 	ArrayList<Double> globalBestPosition = new ArrayList<Double>();
-	FitnessFunction debugFitter = new FitnessFunction();
 
 	
-		public psoGlobal(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter) {
+		public psoGlobal(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, int solverID) {
 		// This constructor creates and  initializes a psoGlobal-Solver for classical Particle Swarm Optimization.
+			
+			this.solverID = solverID;
+			this.ffID = ffID;
 			
 			this.dimension = dimension;
 			this.numIter = numIter;
@@ -45,12 +49,13 @@ public class psoGlobal {
 				}
 				
 				
+				//for(int i=0; i<numIter && SolverManager.checkTerminated(solverID); i++) {
 				for(int i=0; i<numIter; i++) {
 					for(int j=0; j<particleCount; j++) {
 						updateGlobalBestPosition(swarm.get(j));
 						swarm.get(j).updateVelocity(globalBestPosition);
 						swarm.get(j).updatePosition();
-						swarm.get(j).updatePersonalBestPosition();
+						swarm.get(j).updatePersonalBestPosition(ffID);
 					}
 				}
 				ArrayList<Double> ret = new ArrayList<Double>();
@@ -63,7 +68,7 @@ public class psoGlobal {
 			public void updateGlobalBestPosition(psoParticle particle) {
 			// This method updates the globalBestPosition through calculating the corresponding value for a given position
 				
-				double minimum = debugFitter.calculatef1(particle);
+				double minimum = FitnessFunction.solve(ffID, particle);
 				if(minimum<globalMinimum) {
 					globalMinimum = minimum;
 					globalBestPosition = new ArrayList<Double>(particle.position);

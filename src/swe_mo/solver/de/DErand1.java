@@ -1,5 +1,13 @@
 package swe_mo.solver.de;
 import swe_mo.solver.SolverManager;
+import swe_mo.solver.SolverResult;
+import swe_mo.solver.SolverConfig;
+
+
+import java.util.ArrayList;
+
+import swe_mo.solver.FitnessFunction;
+
 import swe_mo.solver.SolverConfig;
 
 
@@ -105,17 +113,17 @@ public class DErand1 {
 	    }
 	}
 	
-	public double solve() {
+	public SolverResult solve() {
 		
 		SolverManager.updateStatus(solverID, 0.0);
 		
 
 		// Solver
 		for(this.generation=0; generation<this.maxGenerations; generation++) {
-			//SolverManager.updateStatus(solverID, (((double)generation)/((double)this.maxGenerations)));
-			//if(SolverManager.checkTerminated(solverID)) {
-			//	break;
-			//}
+			SolverManager.updateStatus(solverID, (100*((double)generation)/((double)this.maxGenerations)));
+			if(SolverManager.checkTerminated(solverID)) {
+				break;
+			}
 
 
 			
@@ -129,7 +137,7 @@ public class DErand1 {
 
 		}
 
-		return best;
+		return new SolverResult(best, bestParticle, fitCount);
 	}
 	
 	public Particle_DE calculateV(int index) {
@@ -213,11 +221,11 @@ public class DErand1 {
 			if(xRes<this.best) {
 				this.best = xRes;
 				bestParticle = new Particle_DE(xPop.get(xIndex));
-				System.out.println("Best Value:"+ best);
-				System.out.println("In generation: "+ generation);
+				//System.out.println("Best Value:"+ best);
+				//System.out.println("In generation: "+ generation);
 
 
-				System.out.println("BestX: "+bestParticle);
+				//System.out.println("BestX: "+bestParticle);
 
 			}
 			
@@ -229,10 +237,10 @@ public class DErand1 {
 			if(uRes<this.best) {
 				this.best = uRes;
 				bestParticle = new Particle_DE(vectorU);
-				System.out.println("Best Value:"+ best);
-				System.out.println("In generation: "+ generation);
+				//System.out.println("Best Value:"+ best);
+				//System.out.println("In generation: "+ generation);
 
-				System.out.println("BestU: "+vectorU);
+				//System.out.println("BestU: "+vectorU);
 
 
 			}

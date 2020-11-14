@@ -54,17 +54,31 @@ public class Solver {
 		
 		if(!hyperparameterNotFound.isEmpty()) {
 			if(hyperparameterNotFound.contains(","))
-				throw new Exception("Configured without parameters: "+hyperparameterNotFound+" (not found)");
+				throw new Exception("Configured without parameters: "+hyperparameterNotFound+" (not found or no valid value given)");
 			else
-				throw new Exception("Configured without parameter: "+hyperparameterNotFound+" (not found)");	
+				throw new Exception("Configured without parameter: "+hyperparameterNotFound+" (not found or no valid value given)");	
 		}
 	}
+	
+	public void resetConfig() throws Exception {
+		config = SolverConfig.getDefault(algorithm);
+	}
+	
+	public void setConfig(SolverConfig sc) throws Exception {
+		config = sc;
+	}
+	
+	public SolverConfig getConfig() throws Exception {
+		return config;
+	}
+	
 	
 	public void start(){				
 		solverThread = new Thread(new Runnable() {	
 			@Override
 			public void run() {
 				try {
+					status = 0;
 					result = SolverConfig.solveMethod(algorithm, id, config);
 					if(status<=100) status = 101;
 				} catch(Exception e) {
@@ -74,7 +88,6 @@ public class Solver {
 			}
 		});
 		solverThread.start();
-		status = 0;
 	}
 	
 	public void terminate() {
@@ -102,6 +115,14 @@ public class Solver {
 	
 	public String getAlgorithm() {
 		return algorithm;
+	}
+	
+	public String getConfig(boolean json) {
+		if(!json) {
+			return config.toString();		
+		} else {
+			return config.toJSON();
+		}
 	}	
 	
 	public SolverResult getResult() throws InterruptedException {	

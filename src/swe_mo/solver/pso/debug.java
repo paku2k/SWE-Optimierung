@@ -18,6 +18,8 @@ public class debug {
 		double cs = 0.5;
 		double dt = 1;
 		int numIter = 5000;
+		int solverID = 1;
+		int ffID = 1;
 		
 		// psoGlobal psoGlobalSolver = new psoGlobal(dimension, min, max, particleCount, w, cc, cs, dt, numIter);
 		// System.out.println("Ergebnis: " + Arrays.toString(psoGlobalSolver.solve().toArray()));
@@ -32,7 +34,7 @@ public class debug {
 		int resolution = 10;
 		String filename = new String("psoOptimizerTest1");
 
-		psoOptimizer testOpti = new psoOptimizer(filename, dimension, min, max, particleCount, dt, numIter);
+		psoOptimizer testOpti = new psoOptimizer(filename, dimension, min, max, particleCount, dt, numIter, ffID, solverID);
 		testOpti.psoGlobalLinear3DimensionalGridSearch(resolution, w_upper, w_lower, cc_upper, cc_lower, cs_upper, cs_lower);
 		
 	}
