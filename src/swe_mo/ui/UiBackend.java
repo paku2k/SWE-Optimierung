@@ -516,6 +516,25 @@ public class UiBackend {
 				
 				return SolverManager.create();
 				
+			} else if(cmd_queue.peek().equals("clone")) {
+				cmd_queue.remove();		
+				
+				int id = -1;
+				
+				if(!cmd_queue.isEmpty()) {	
+					try {
+						id = Integer.parseInt(cmd_queue.poll());		
+					} catch(Exception e) {						
+						throw new Exception("No valied clone id given.");
+					}
+				}
+				
+				if(id > -1) {
+					return SolverManager.cloneSolver(id);
+				} else {
+					return SolverManager.cloneSolver();
+				}
+				
 			} else if(cmd_queue.peek().equals("config")) {
 				cmd_queue.remove();		
 

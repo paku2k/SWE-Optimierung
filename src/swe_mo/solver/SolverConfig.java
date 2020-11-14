@@ -12,12 +12,22 @@ public class SolverConfig {
 	double upperBound;
 	double lowerBound;
 
-	
-	public SolverConfig() {};
 
+	public SolverConfig() {};
 	
-	public SolverConfig(int ffid, int n, int nP, double f, double cR, int maxGenerations, double upperBound,
-			double lowerBound) {
+	//for cloning
+	public SolverConfig(SolverConfig s) {
+		this.ffid = s.ffid;
+		this.N = s.N;
+		this.NP = s.NP;
+		this.F = s.F;
+		this.CR = s.CR;
+		this.maxGenerations = s.maxGenerations;
+		this.upperBound = s.upperBound;
+		this.lowerBound = s.lowerBound;
+	};
+	
+	public SolverConfig(int ffid, int n, int nP, double f, double cR, int maxGenerations, double upperBound, double lowerBound) {
 		super();
 		this.ffid = ffid;
 		N = n;
@@ -66,7 +76,7 @@ public class SolverConfig {
 	
 	@Override
 	public String toString() {
-		return "ERR: not implemented";
+		return "ERR: not implemented (N="+N+")";
 	}
 	
 	public String toJSON() {

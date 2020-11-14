@@ -28,8 +28,10 @@ public class Solver {
 	}
 	public Solver(int id) throws Exception {
 		this(id, "default");
-	}
-			
+	}																						
+	
+	
+
 	
 	public void configure(String configString) throws Exception{
 		Queue<String> configQueue = new LinkedList<String>();
@@ -62,16 +64,19 @@ public class Solver {
 	
 	public void resetConfig() throws Exception {
 		config = SolverConfig.getDefault(algorithm);
+		status = -2;
 	}
 	
 	public void setConfig(SolverConfig sc) throws Exception {
-		config = sc;
+		config = new SolverConfig(sc);
 	}
 	
 	public SolverConfig getConfig() throws Exception {
 		return config;
-	}
+	}																						
 	
+	
+
 	
 	public void start(){				
 		solverThread = new Thread(new Runnable() {	
@@ -104,7 +109,7 @@ public class Solver {
 		try {
 			solverThread.join();
 		} catch (InterruptedException e) {}					
-	}
+	}																						
 	
 	
 
@@ -132,7 +137,7 @@ public class Solver {
 	
 	public double getStatus() {
 		return status;
-	}																					
+	}																							
 	
 	
 

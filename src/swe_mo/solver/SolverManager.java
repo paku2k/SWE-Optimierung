@@ -12,11 +12,11 @@ import swe_mo.ui.clogger;
 public class SolverManager {
 	final static String AUTH = "SM";
 	
-	private static ArrayList<Solver> runningSolvers = new ArrayList<Solver>();
-	
+	private static ArrayList<Solver> runningSolvers = new ArrayList<Solver>();																						
 	
 	
 
+	
 	public static String create() throws Exception{
 		runningSolvers.add(new Solver(runningSolvers.size()));	
 		return "Solver created (default) with ID "+(runningSolvers.size()-1);
@@ -25,11 +25,31 @@ public class SolverManager {
 	public static String create(String algorithm) throws Exception {
 		runningSolvers.add(new Solver(runningSolvers.size(), algorithm));
 		return "Solver created ("+algorithm+") with ID "+(runningSolvers.size()-1);
-	}	
-	
+	}																						
 	
 	
 
+	
+	public static String cloneSolver() throws Exception {
+		if(runningSolvers.size()==0)
+			throw new Exception("No Solver created yet.");
+		
+		return cloneSolver(runningSolvers.size()-1);		
+	}
+	
+	public static String cloneSolver(int cloneId) throws Exception {
+		if(status(cloneId)<=-3 || status(cloneId)>=104) 
+			throw new Exception("Solver with clone id not found.");
+		
+		create(runningSolvers.get(cloneId).getAlgorithm());
+		cloneConfig(cloneId);		
+		
+		return "Solver "+cloneId+" cloned";
+	}																						
+	
+	
+
+	
 	public static void configure(String config) throws Exception {
 		configure(runningSolvers.size()-1, config);
 	}
@@ -69,7 +89,9 @@ public class SolverManager {
 		}
 
 		runningSolvers.get(id).configure(config);
-	}
+	}																						
+	
+	
 
 	
 	public static String getConfig(boolean json) throws Exception {
@@ -84,9 +106,11 @@ public class SolverManager {
 		}
 
 		return runningSolvers.get(id).getConfig(json);
-	}
+	}																						
+	
+	
 
-
+	
 	public static void resetConfig() throws Exception {
 		resetConfig(runningSolvers.size()-1);
 	}
@@ -124,7 +148,8 @@ public class SolverManager {
 		}
 
 		runningSolvers.get(id).resetConfig();
-	}
+	}																						
+	
 	
 
 	
@@ -143,7 +168,7 @@ public class SolverManager {
 		
 		for(int i=id1; i<=id2; i++) {
 			if(status(i)<0 && status(i)>-3)
-				cloneConfig(i, cloneId);			
+				cloneConfig(i, cloneId);	
 		}		
 	}
 	
@@ -168,13 +193,13 @@ public class SolverManager {
 		}
 
 		runningSolvers.get(id).setConfig(runningSolvers.get(cloneId).getConfig());
-	}
-	
-	
-	
+		if(status(cloneId) > -2)
+			runningSolvers.get(id).updateStatus(-1);
+	}																						
 	
 	
 
+	
 	public static void start() throws Exception {
 		start(runningSolvers.size()-1);
 	}
@@ -213,11 +238,11 @@ public class SolverManager {
 			throw new Exception("Solver already running.");						
 		}
 		runningSolvers.get(id).start();
-	}
-	
+	}																						
 	
 	
 
+	
 	public static void terminate() throws Exception{
 		terminate(runningSolvers.size()-1);
 	}
@@ -282,11 +307,11 @@ public class SolverManager {
 		}	
 		
 		clogger.info(AUTH, "joinAllThreads", "Joined all solver threads.");	
-	}
-	
+	}																						
 	
 	
 
+	
 	public static double status() {
 		return status(runningSolvers.size()-1);
 	}
@@ -309,11 +334,11 @@ public class SolverManager {
 				return 104;	//Solver Object not accessible anymore -> deleted		
 			}
 		}
-	}
-	
+	}																						
 	
 	
 
+	
 	public static SolverResult result() throws Exception {
 		return result(runningSolvers.size()-1);
 	}
@@ -338,11 +363,11 @@ public class SolverManager {
 			throw new Exception("Solver running.");						
 		}
 		return runningSolvers.get(id).getResult();
-	}
-	
+	}																						
 	
 	
 
+	
 	public static void delete() throws Exception {
 		delete(runningSolvers.size()-1);
 	}
@@ -384,13 +409,10 @@ public class SolverManager {
 			}
 		}
 		clogger.info(AUTH, "deleteAll", "Deleted all Solvers.");
-	}
+	}																						
 	
 	
-	
-	
-	
-	
+
 	
 	public static String list() throws Exception {
 		try {
@@ -459,15 +481,6 @@ public class SolverManager {
 		}
 	}
 	
-	private static boolean isValidAlgorithm(String algorithm) {
-		try {
-			SolverConfig.getDefault(algorithm);
-			return true;
-		} catch(Exception e) {
-			return false;
-		}
-	}
-	
 	
 	
 	
@@ -509,6 +522,18 @@ public class SolverManager {
 		
 		if(status(id) >= 0 && status(id) <= 100)
 			runningSolvers.get(id).updateStatus(status);
+	}
+	
+	
+
+	
+	private static boolean isValidAlgorithm(String algorithm) {
+		try {
+			SolverConfig.getDefault(algorithm);
+			return true;
+		} catch(Exception e) {
+			return false;
+		}
 	}
 	
 	
