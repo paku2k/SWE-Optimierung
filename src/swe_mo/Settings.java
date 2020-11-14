@@ -24,7 +24,9 @@ public class Settings {
 	
 
 	public static void factorySettings() {		
+		//define all application settings here
 		settings.put("minUifOnWebguiOpen", true);
+		
 	}
 	
 	
