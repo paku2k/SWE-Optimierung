@@ -1,6 +1,103 @@
+/* ONLOAD */
+
 function onload(){    
-    document.getElementById('file_input').addEventListener('change', readSingleFile, false);    
+    document.getElementById('file_input').addEventListener('change', readSingleFile, false);   
+    document.getElementById('tab_defaultOpen').click();
 }
+
+
+
+
+
+
+
+
+/* INFO BANNER */
+
+function openInfo(type, text){
+    if(document.getElementById("info").style.display!="none"){
+        closeInfo();
+        setTimeout(function(){ openInfo(type,text) }, 200);
+        return;
+    }
+    
+    setInfoColor(type);
+    document.getElementById("info_text").innerHTML = text;
+    document.getElementById("info").style.animationName = "fadeInfoIn";
+    document.getElementById("info").style.animationDuration = "0.2s";
+    document.getElementById("info").style.display = "block";   
+}
+
+function closeInfo(){
+    document.getElementById("info").style.animationName = "fadeInfoOut";
+    document.getElementById("info").style.animationDuration = "0.2s";
+    
+    var elem = document.getElementById("info");
+    elem.parentNode.replaceChild(elem.cloneNode(true), elem);
+    
+    setTimeout(function(){ document.getElementById("info").style.display = "none"; }, 150);        
+}
+
+function setInfoColor(type){
+    if(type=="suc" || type=="warn" || type=="err"){
+        document.getElementById("info").className = type;
+        document.getElementById("info_close_x").className = "white";
+        if(type=="warn"){            
+            document.getElementById("info_close_x").className = "grey";
+        }
+    } else {
+        document.getElementById("info").className = "err";        
+    }    
+}
+
+
+
+
+
+
+
+
+/* TAB SWITCHING */
+
+function tab(e, tabname) {
+    var i, tabcontent, tablinks;
+
+    //get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+
+    //get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    //show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(tabname).style.display = "block";
+    e.currentTarget.className += " active";
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -113,3 +210,4 @@ function  pushContentsToCmdInput(contents) {
      var element = document.getElementById('cmd_input');
      element.textContent = contents;
 }
+
