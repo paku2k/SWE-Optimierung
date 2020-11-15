@@ -3,7 +3,7 @@ package swe_mo.solver.pso;
 import swe_mo.solver.*;
 import java.util.ArrayList;
 
-public class psoGlobal {
+public class PSOgsc {
 
 	int dimension;
 	int numIter;
@@ -20,7 +20,7 @@ public class psoGlobal {
 	ArrayList<Double> globalBestPosition = new ArrayList<Double>();
 
 	
-		public psoGlobal(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, int solverID) {
+		public PSOgsc(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, int solverID) {
 		// This constructor creates and  initializes a psoGlobal-Solver for classical Particle Swarm Optimization.
 			
 			this.solverID = solverID;
@@ -41,10 +41,10 @@ public class psoGlobal {
 			public ArrayList<Double> solve() {
 			// This method is the engine of the solver, that creates the swarm and updates / finds the globalBestPosition
 				
-				ArrayList<psoParticle> swarm = new ArrayList<psoParticle>();
+				ArrayList<PSOparticle> swarm = new ArrayList<PSOparticle>();
 					
 				for(int i=0; i<particleCount; i++) {
-					psoParticle p = new psoParticle(dimension, max, min, w, cc, cs, dt);
+					PSOparticle p = new PSOparticle(dimension, max, min, w, cc, cs, dt);
 					swarm.add(p);
 				}
 				
@@ -65,7 +65,7 @@ public class psoGlobal {
 			}
 			
 			
-			public void updateGlobalBestPosition(psoParticle particle) {
+			public void updateGlobalBestPosition(PSOparticle particle) {
 			// This method updates the globalBestPosition through calculating the corresponding value for a given position
 				
 				double minimum = FitnessFunction.solve(ffID, particle);

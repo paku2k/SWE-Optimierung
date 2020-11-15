@@ -1,6 +1,6 @@
 package swe_mo.solver.pso;
 
-public class psoNeighborhood {
+public class PSOnsc {
 
 	
 	

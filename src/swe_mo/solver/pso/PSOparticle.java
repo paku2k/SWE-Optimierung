@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import swe_mo.solver.FitnessFunction;
 import swe_mo.solver.de.Particle_DE;
 
-public class psoParticle extends Particle_DE {
+public class PSOparticle extends Particle_DE {
 	
 	
 	ArrayList<Double> velocity = new ArrayList<Double>();
@@ -16,7 +16,7 @@ public class psoParticle extends Particle_DE {
 	int dimension;
 	
 	
-	public psoParticle(int dimension, double max, double min, double w, double cc, double cs, double dt) {
+	public PSOparticle(int dimension, double max, double min, double w, double cc, double cs, double dt) {
 			//This constructor creates a particle with the given dimension 
 			//and initializes all dimensions with a random number within the given bounds
 		super(dimension, max, min);
@@ -30,7 +30,7 @@ public class psoParticle extends Particle_DE {
 	}
 		
 	
-	public psoParticle(int dimension) {
+	public PSOparticle(int dimension) {
 		//This constructor creates a particle with the given dimension and initializes all dimensions with zero
 		super(dimension);
 		velocity = new ArrayList<Double>(position);

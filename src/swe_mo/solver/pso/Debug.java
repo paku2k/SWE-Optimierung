@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class debug {
+public class Debug {
 
 	public static void main(String[] args) throws IOException {
 
@@ -23,7 +23,7 @@ public class debug {
 		double decayStart = 0.8;
 		double decayEnd = 0.1;
 		
-		psoGlobalDecay psoGlobalSolver = new psoGlobalDecay(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID, decayStart, decayEnd);
+		PSOgscDecay psoGlobalSolver = new PSOgscDecay(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID, decayStart, decayEnd);
 		System.out.println("Ergebnis: " + Arrays.toString(psoGlobalSolver.solve().toArray()));
 		
 		// Run the Optimizer here:
