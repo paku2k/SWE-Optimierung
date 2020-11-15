@@ -243,7 +243,7 @@ public class UiBackend {
 				return 	  "METAHEURISTIC OPTIMIZATION"+"\n\n"
 					 	+ "VERSION: "+Main.APPVERSION+"\n"
 					 	+ "DATE: "+Main.DATE+"\n"
-					 	+ "AUTHORS:\n"+Main.AUTHORS+"\n";
+					 	+ "DEVELOPERS:\n"+Main.DEVELOPERS+"\n";
 			}
 			
 			

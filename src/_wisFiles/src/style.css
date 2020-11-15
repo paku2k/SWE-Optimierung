@@ -1,6 +1,8 @@
-/* Global */
+/* GLOBAL */
+
 body{
-    padding: 0;
+    margin: 0px;
+    
     font-family: "Tw Cen MT", sans-serif;
     
     -moz-hyphens: auto;
@@ -11,7 +13,12 @@ body{
     
     word-wrap:break-word;
     
-    background-color: #fff;
+    min-width: 700px;
+}
+
+.tbi {
+   /* color: red;
+    border: 1px solid red;*/
 }
 
 
@@ -21,23 +28,207 @@ body{
 
 
 
+/* INFO BANNER */
+
+#info {
+    position: fixed;
+    top: 0;
+    width: 100%;    
+    min-width: 700px;
+    padding: 0.1rem 1rem;
+    box-shadow: 0 0 0.5rem 0.2rem grey;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: bolder;
+    clear: both;
+}
+
+@keyframes fadeInfoIn {
+    from {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+    to {
+        opacity: 1; 
+        transform: translateY(0%);
+    }
+}
+
+@keyframes fadeInfoOut {
+    from {
+        opacity: 1;
+        transform: translateY(0%);
+    }
+    to {
+        opacity: 0; 
+        transform: translateY(-100%);
+    }
+}
+
+.suc {
+    background-color: rgb(122,215,80);    
+}
+
+.warn {
+    background-color: rgb(255,200,66);    
+}
+
+.err {
+    background-color: rgb(190,0,0);   
+}
+
+#info_text {
+    width: 80%;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+#info_close_x{
+    float: right;
+    margin-right: 2.3rem;
+}
+
+.grey {
+    color: grey;    
+}
+
+.white {
+    color: white;    
+}
 
 
 
 
 
-h1 {
+
+
+
+/* HEADER */
+
+#header {
+    padding: 1rem;
+    text-align: center;
+    
+    background-color: #ddd;
+}
+
+#header h1 {
     color: rgb(100,0,0);
 }
 
-#img_logo {
+#header img {
     width: 30px;
-    padding-right: 20px;
+    height: 30px;
 }
 
 
+
+
+
+
+
+
+/* TAB */
+
+#tab {
+    overflow: hidden;
+    background-color: #ddd;
+}
+
+#tab button {
+    font-size: 1.1rem;    
+    font-family: "Tw Cen MT", sans-serif;
+    background-color: inherit;
+    float: left;
+    border: 1px solid #aaa;
+    border-bottom: none;
+    border-radius: 0.3rem 0.3rem 0 0;
+    outline: none;
+    cursor: pointer;    
+    padding: 0.5rem 2rem;
+    transition: 0.3s;
+    min-width: 20%;
+}
+
+#tab button:hover {
+    background-color: #888;
+}
+
+#tab button.active:hover {
+    background-color: white;
+    cursor: default;   
+}
+
+#tab button.active {
+    color: rgb(100,0,0);
+    background-color: white;
+    font-weight: bold;
+    border-bottom: none;
+}
+
+.tabcontent {
+    display: none;
+    padding: 1rem;
+    background-color: white;
+    animation: fadetab 0.3s;
+}
+
+@keyframes fadetab {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+
+
+
+
+
+
+
+/* TAB_CMD */
 
 #cmd_input {
-    width: 700px;
-    height: 600px;
+    max-width: 100%;
+    min-width: 100%;
+    height: 50%;
 }
+
+
+
+
+
+
+
+
+/* TAB_SETTINGS */
+
+#settings_credentials {
+    text-align: center;
+    width: 50%;    
+    border: 1px solid grey;
+    margin: 0 auto;
+}
+
+#settings_credentials table {
+    width: 100%;
+}
+
+#settings_credentials td {
+    width: 50%;
+    padding: 0.4rem 0.7rem;
+}
+
+#settings_credentials tr > td:first-of-type {
+    text-align: right;
+}
+
+
+
+
+
+
+
+
+
+
+
