@@ -24,7 +24,7 @@
     <body onload="onload();">
         
         <div id="info" style="display: none;">
-            <p id="info_close_x" onclick="closeInfo();">&#x2715</p>
+            <div><p id="info_close_x" onclick="closeInfo();">&#x2715</p></div>
             <p id="info_text" class="tbi"></p>
         </div>
 	    
@@ -44,40 +44,38 @@
         
         
         <div id="tab_solver" class="tabcontent">
-            <h2 contextmenu="to be implemented">TBI</h2>
+            <h2 contextmenu="to be implemented" class="tbi">TBI</h2>
             
         </div>
         
         
         <div id="tab_optimizer" class="tabcontent">
-            <h2 contextmenu="to be implemented" >TBI</h2>
+            <h2 contextmenu="to be implemented" class="tbi">TBI</h2>
             
         </div>   
         
         
         <div id="tab_functions" class="tabcontent">
-            <h2 contextmenu="to be implemented" >TBI</h2>
+            <h2 contextmenu="to be implemented" class="tbi">TBI</h2>
             
         </div>        
         
         
-        <div id="tab_cmd" class="tabcontent">	    	    
+        <div id="tab_cmd" class="tabcontent">	   
+            <h2 contextmenu="to be implemented" onclick='openInfo("warn", "Test Banner WARN");'  class="tbi">TBI</h2>
+            
+             	     	    
             <textarea id="cmd_input"></textarea><br>
             <button id="cmd_send" onclick="cmdInputExecute();">Execute</button>
             <button id="cmd_save" onclick="saveAsMoclFile();" disabled>Save</button>
             <input type="file" id="file_input" />   
             
-            <br>
-            
-            <p onclick='openInfo("suc", "Test Banner SUC");'>Test SUC</p>
-            <p onclick='openInfo("warn", "Test Banner WARN");'>Test WARN</p>
-            <p onclick='openInfo("err", "Test Banner ERR");'>Test ERR</p>
-                                                                  
+                                                                              
         </div>
         
         
         <div id="tab_settings" class="tabcontent">
-            <h2 contextmenu="to be implemented">TBI</h2>
+            <h2 contextmenu="to be implemented" class="tbi">TBI</h2>
             
             
             <br>

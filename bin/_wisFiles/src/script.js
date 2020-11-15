@@ -3,6 +3,8 @@
 function onload(){    
     document.getElementById('file_input').addEventListener('change', readSingleFile, false);   
     document.getElementById('tab_defaultOpen').click();
+    openInfoNWcon("Connected.");
+    checkConnection();
 }
 
 
@@ -35,7 +37,10 @@ function closeInfo(){
     var elem = document.getElementById("info");
     elem.parentNode.replaceChild(elem.cloneNode(true), elem);
     
-    setTimeout(function(){ document.getElementById("info").style.display = "none"; }, 150);        
+    setTimeout(function(){ document.getElementById("info").style.display = "none"; }, 150);    
+    
+    infonwerr_open = false;
+    infonwcon_open = false;
 }
 
 function setInfoColor(type){
@@ -51,6 +56,47 @@ function setInfoColor(type){
 }
 
 
+
+
+
+
+
+/* CHECK CONNECTION TO WIS */
+
+function checkConnection(){
+    loadFile("con", "", 1000, closeInfoNWerr);
+    setTimeout(checkConnection, 3000);
+}
+
+var infonwerr_open = false;
+function openInfoNWerr(text){
+    if(infonwerr_open == false){
+        openInfo("err", text);
+        infonwerr_open = true;  
+    }
+}
+
+function closeInfoNWerr(){
+    if(infonwerr_open){
+        closeInfo();
+        openInfoNWcon("Connection reestablished.")        
+    }
+}
+
+
+var infonwcon_open = false;
+function openInfoNWcon(text){
+    if(!infonwcon_open){
+        openInfo("suc", text);
+        infonwcon_open = true;
+        setTimeout(function(){closeInfoNWcon();},2000)
+    }
+}
+
+function closeInfoNWcon(){
+    if(infonwcon_open)
+        closeInfo();
+}
 
 
 
@@ -78,6 +124,7 @@ function tab(e, tabname) {
     document.getElementById(tabname).style.display = "block";
     e.currentTarget.className += " active";
 }
+
 
 
 
@@ -152,26 +199,29 @@ function cmdInputExecute(){
     if(datacnt > 0){
         var data = "cmdcnt="+datacnt+datastring;
         console.log(data);
-        loadFile(data, 5000, showMessage, "Return Data:\n\n")
+        loadFile("xhr", data, 2000, showMessage)
     }
 }
 
-function loadFile(data, timeout, callback) {
-    var args = Array.prototype.slice.call(arguments, 3);
+function loadFile(adr, data, timeout, callback) {
     var xhr = new XMLHttpRequest();
     xhr.ontimeout = function () {
-        console.error("The request for " + url + " timed out.");
+        openInfoNWerr("The connection timed out. Check if WIS is active.");
     };
+    xhr.onerror = function () {
+        openInfoNWerr("Connection lost. Check if WIS is active and reload WebGUI.");        
+    }
     xhr.onload = function() {
         if (xhr.readyState === 4) {
             if (xhr.status === 200) {
-                callback.apply(xhr, args);
+                closeInfoNWerr();
+                if(adr=="xhr") callback.apply(xhr);
             } else {
-                console.error(xhr.statusText);
+                openInfoNWerr("Connection lost. Check if WIS is active and reload WebGUI.");      
             }
         }
     };
-    xhr.open("POST", "xhr", true);
+    xhr.open("POST", adr, true);
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xhr.timeout = timeout;
     xhr.send(data);
@@ -179,7 +229,7 @@ function loadFile(data, timeout, callback) {
     
 
 
-function showMessage (message) {
+function showMessage () {
     console.log(this.responseText);
 }
 
