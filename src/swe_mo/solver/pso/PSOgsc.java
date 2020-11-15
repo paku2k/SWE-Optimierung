@@ -36,8 +36,13 @@ public class PSOgsc {
 			this.cs = cs;
 			this.dt = dt;
 		}
-	
 		
+			/*public static SolverConfig defaultConfig() {
+				return new SolverConfig();
+			}*/
+			
+	
+			
 			public ArrayList<Double> solve() {
 			// This method is the engine of the solver, that creates the swarm and updates / finds the globalBestPosition
 				
