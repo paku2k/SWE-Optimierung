@@ -1,15 +1,15 @@
 package swe_mo.solver.pso;
 
-//import java.io.File;
+import java.io.File;
 import java.io.IOException;
-//import java.util.Arrays;
+import java.util.Arrays;
 
 public class debug {
 
 	public static void main(String[] args) throws IOException {
 
 		// Test a new implementation here:
-		int dimension = 10;
+		int dimension = 30;
 		double min = -5.12;
 		double max = 5.12;
 		int particleCount = 50;
@@ -17,12 +17,14 @@ public class debug {
 		double cc = 0;
 		double cs = 0.5;
 		double dt = 1;
-		int numIter = 5000;
+		int numIter = 500000;
 		int solverID = 1;
 		int ffID = 1;
+		double decayStart = 0.8;
+		double decayEnd = 0.1;
 		
-		// psoGlobal psoGlobalSolver = new psoGlobal(dimension, min, max, particleCount, w, cc, cs, dt, numIter);
-		// System.out.println("Ergebnis: " + Arrays.toString(psoGlobalSolver.solve().toArray()));
+		psoGlobalDecay psoGlobalSolver = new psoGlobalDecay(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID, decayStart, decayEnd);
+		System.out.println("Ergebnis: " + Arrays.toString(psoGlobalSolver.solve().toArray()));
 		
 		// Run the Optimizer here:
 		//double w_upper = 0.9;

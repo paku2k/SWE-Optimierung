@@ -51,10 +51,10 @@ public class psoParticle extends Particle_DE {
 	}
 	
 	
-	public void updateVelocityDecay(ArrayList<Double> socialComponent, int numIter , int Iter) {
+	public void updateVelocityDecay(ArrayList<Double> socialComponent, int numIter , int Iter, double decayStart, double decayEnd) {
 		double rc=Math.random();
 		double rs=Math.random();
-		w=(-0.5/numIter)*Iter+0.9;
+		w=((decayEnd-decayStart)/numIter)*Iter+decayStart;
 		for(int i=0; i<velocity.size(); i++) {
 			velocity.set(i, w*velocity.get(i)  
 					+  cc*rc*(personalBestPosition.get(i)
