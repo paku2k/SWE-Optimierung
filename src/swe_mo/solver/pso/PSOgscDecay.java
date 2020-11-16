@@ -55,7 +55,6 @@ public class PSOgscDecay extends PSOgsc{
 			for(int i=0; i<numIter; i++) {
 				for(int j=0; j<particleCount; j++) {
 					updateGlobalBestPosition(swarm.get(j));
-					counter++;
 					swarm.get(j).updateVelocityDecay(globalBestPosition, numIter, i, decayStart, decayEnd);
 					swarm.get(j).updatePosition();
 					swarm.get(j).updatePersonalBestPosition(ffID);

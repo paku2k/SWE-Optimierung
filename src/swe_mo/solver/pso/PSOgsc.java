@@ -92,7 +92,6 @@ public class PSOgsc {
 				if(particle.personalMinimum<globalMinimum) {
 					globalMinimum = particle.personalMinimum;
 					globalBestPosition = new ArrayList<Double>(particle.position);
-					System.out.println(globalMinimum);
 					
 				}
 			}

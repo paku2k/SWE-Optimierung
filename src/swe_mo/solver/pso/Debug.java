@@ -14,12 +14,12 @@ public class Debug {
 		int dimension = 30;
 		double min = -500;
 		double max = 500;
-		int particleCount = 500;
+		int particleCount = 2000;
 		double w = 0.9;
-		double cc = 0.9;
-		double cs = 0.1;
-		double dt = 1;
-		int numIter = 1000;
+		double cc = 0.82;
+		double cs = 0.025;
+		double dt = 1.9;
+		int numIter = 5000;
 		int solverID = 1;
 		int ffID = 8;
 		double decayStart = 0.9;
@@ -31,7 +31,7 @@ public class Debug {
 		System.out.println(sr.toString());
 		
 		// Run the Optimizer here:
-		double w_upper = 0.9;
+		/*double w_upper = 0.9;
 		double w_lower = 0.1;
 		double cc_upper = 0.9;
 		double cc_lower = 0.1;
@@ -42,6 +42,6 @@ public class Debug {
 
 		PSOoptimizer testOpti = new PSOoptimizer(filename, dimension, min, max, particleCount, dt, numIter, ffID, solverID);
 		testOpti.psoGlobalLinear3DimensionalGridSearch(resolution, w_upper, w_lower, cc_upper, cc_lower, cs_upper, cs_lower);
-		
+		*/
 	}
 }
