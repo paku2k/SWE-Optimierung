@@ -43,7 +43,7 @@ public class PSOoptimizer {
 				for(int k=0; k<resolution; k++) {
 					
 					PSOgsc psoGlobalSolver = new PSOgsc(dimension, min, max, particleCount, (w_lower+i*w_step), (cc_lower+j*cc_step), (cs_lower+k*cs_step), dt, numIter, ffID, solverID);	
-					author.write("Ergebnis[w="+(w_lower+i*w_step)+"; cc="+(cc_lower+j*cc_step)+"; cs="+(cs_lower+k*cs_step)+"]"+": "+Arrays.toString(psoGlobalSolver.solve().returnPosition.toArray())+"\n");
+					author.write("Ergebnis[w="+(w_lower+i*w_step)+"; cc="+(cc_lower+j*cc_step)+"; cs="+(cs_lower+k*cs_step)+"]"+": "+psoGlobalSolver.solve().toJSON()+"\n");
 
 				}
 			}
