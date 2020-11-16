@@ -4,6 +4,7 @@ package swe_mo.solver.pso;
 import java.util.ArrayList;
 
 import swe_mo.solver.FitnessFunction;
+import swe_mo.solver.de.CRN;
 import swe_mo.solver.de.Particle_DE;
 
 public class PSOparticle extends Particle_DE {
@@ -12,9 +13,8 @@ public class PSOparticle extends Particle_DE {
 	ArrayList<Double> velocity = new ArrayList<Double>();
 	ArrayList<Double> personalBestPosition = new ArrayList<Double>();
 	double personalMinimum;
-	double w, cc, cs, dt;
+	double w, cc, cs, dt,  min, max;
 	int dimension;
-	
 	
 	public PSOparticle(int dimension, double max, double min, double w, double cc, double cs, double dt) {
 			//This constructor creates a particle with the given dimension 
@@ -25,8 +25,11 @@ public class PSOparticle extends Particle_DE {
 		this.cc=cc; 
 		this.cs=cs;
 		this.dt=dt;
+		this.min=min;
+		this.max=max;
 		velocity = new ArrayList<Double>(position);
 		personalBestPosition = new ArrayList<Double>(position);
+
 	}
 		
 	
@@ -48,6 +51,7 @@ public class PSOparticle extends Particle_DE {
 					+  cs*rs*(socialComponent.get(i)
 							-position.get(i)));
 		}
+		
 	}
 	
 	
@@ -75,7 +79,12 @@ public class PSOparticle extends Particle_DE {
 	
 	public void updatePosition() {
 		for(int i=0; i<position.size(); i++) {
-			position.set(i, position.get(i)+velocity.get(i)*dt);
+			position.set(i, position.get(i) + velocity.get(i)*dt);
+			if(position.get(i) < min) {
+				position.set(i, (Math.random()*(max-min))+min);
+			}else if(position.get(i) > max) {
+				position.set(i, (Math.random()*(max-min))+min);
+			}
 		}
 	}
 	
