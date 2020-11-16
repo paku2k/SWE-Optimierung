@@ -15,6 +15,7 @@ public class Debug {
 		double min = -500;
 		double max = 500;
 		int particleCount = 2000;
+		int particleCount = 500;
 		double w = 0.9;
 		double cc = 0.82;
 		double cs = 0.025;
