@@ -19,5 +19,7 @@ public class Main {
 			
 			Settings.save();
 			clogger.stop();
+			
     }
+	
 }
