@@ -1,19 +1,29 @@
 package swe_mo.solver;
 
 import swe_mo.solver.de.DErand1;
+import swe_mo.solver.pso.PSOgsc;
+import swe_mo.solver.pso.PSOgscDecay;
 import swe_mo.solver.de.DEbest1;
 
 
 public class SolverConfig {
-	int ffid;
-	int N;
-	int NP;
-	double F;
-	double CR;
-	int maxGenerations;
-	double upperBound;
-	double lowerBound;
-
+	public int ffid;
+	public int N; //dimension
+	public int NP; //particleCount
+	public double F;
+	public double CR;
+	public int maxGenerations; //numIter
+	public double upperBound; //max
+	public double lowerBound; //min
+	//PSOgsc atributes
+	public double w;
+	public double cc;
+	public double cs;
+	public double dt;
+	//PSOgscDecay atributes
+	public double decayStart;
+	public double decayEnd;
+	
 	
 	public SolverConfig() {};
 
@@ -59,6 +69,24 @@ public class SolverConfig {
 			case "lowerBound":
 				lowerBound = Double.parseDouble(value);
 				return;
+			case "w":
+				w = Double.parseDouble(value);
+				return;
+			case "cc":
+				cc = Double.parseDouble(value);
+				return;
+			case "cs":
+				cs = Double.parseDouble(value);
+				return;
+			case "dt":
+				dt = Double.parseDouble(value);
+				return;
+			case "decayStart":
+				decayStart = Double.parseDouble(value);
+				return;
+			case "decayEnd":
+				decayEnd = Double.parseDouble(value);
+				return;
 		}
 		throw new Exception("No such hyperparameter ("+param+").");
 	}
@@ -87,11 +115,10 @@ public class SolverConfig {
 				return DErand1.defaultConfig();
 			case "DEbest1":
 				return DEbest1.defaultConfig();
-				/*
-			"DEbest2"
-			"DErtb1"
-			"PSOgsc"
-			"PSOnsc"*/
+			case "PSOgsc":
+				return PSOgsc.defaultConfig();
+			case "PSOgscDecay":
+				return PSOgscDecay.defaultConfig();
 		}	
 		throw new Exception("Algorithm not specified.");
 	}
@@ -125,11 +152,35 @@ public class SolverConfig {
 										 config.ffid, id).solve();	
 				return sr;
 				
-			/*"DEbest1"
-			"DEbest2"
-			"DErtb1"
-			"PSOgsc"
-			"PSOnsc"*/
+			case "PSOgsc":
+				sr = new PSOgsc(config.N,
+										 config.lowerBound,
+										 config.upperBound,
+										 config.NP,
+										 config.w,
+										 config.cc,
+										 config.cs,
+										 config.dt,
+										 config.maxGenerations,
+										 config.ffid, id).solve();	
+				return sr;
+				
+			case "PSOgscDecay":
+				sr = new PSOgscDecay(config.N,
+										 config.lowerBound,
+										 config.upperBound,
+										 config.NP,
+										 config.w,
+										 config.cc,
+										 config.cs,
+										 config.dt,
+										 config.maxGenerations,
+										 config.ffid, 
+										 id,
+										 config.decayStart,
+										 config.decayEnd).solve();	
+				return sr;
+
 		}
 		throw new Exception("Algorithm not specified or no solver method.");
 	}

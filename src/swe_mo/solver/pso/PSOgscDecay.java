@@ -2,6 +2,10 @@ package swe_mo.solver.pso;
 
 import java.util.ArrayList;
 
+import swe_mo.solver.SolverConfig;
+import swe_mo.solver.SolverManager;
+import swe_mo.solver.SolverResult;
+
 public class PSOgscDecay extends PSOgsc{
 	
 	double decayStart;
@@ -14,8 +18,28 @@ public class PSOgscDecay extends PSOgsc{
 		this.decayEnd = decayEnd;
 	}
 
+	
+	public static SolverConfig defaultConfig() {
+		SolverConfig conf = new SolverConfig();
+		conf.ffid = 1;
+		conf.N = 1;
+		conf.NP = 10;
+		conf.maxGenerations = 100;
+		conf.lowerBound = -5;
+		conf.upperBound = 5;
+		conf.w = 0.9;
+		conf.cc = 0.5;
+		conf.cs = 0.5;
+		conf.dt = 1;
+		conf.decayStart = 0.9;
+		conf.decayEnd = 0.4;
+		
+		return conf;
+	}
+	
+	
 	@Override
-	public ArrayList<Double> solve() {
+	public SolverResult solve() {
 		// This method is the engine of the solver, that creates the swarm and updates / finds the globalBestPosition
 			
 			ArrayList<PSOparticle> swarm = new ArrayList<PSOparticle>();
@@ -34,10 +58,11 @@ public class PSOgscDecay extends PSOgsc{
 					swarm.get(j).updatePosition();
 					swarm.get(j).updatePersonalBestPosition(ffID);
 				}
+				SolverManager.updateStatus(solverID, (100*((double)i)/((double)numIter)));
 			}
 			ArrayList<Double> ret = new ArrayList<Double>();
-			ret.add(globalMinimum);
+			double val = (globalMinimum);
 			ret.addAll(globalBestPosition);
-			return ret;
+			return new SolverResult(val, ret, 0);
 		}
 }

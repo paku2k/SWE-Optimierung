@@ -1,10 +1,13 @@
 package swe_mo.solver;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import swe_mo.solver.de.Particle_DE;
 
 
 public class SolverResult {
 	public double value;
-	public Particle_DE particle;
+	public ArrayList<Double> returnPosition;
 	public int ffCounter;
 	//other messages (number of iterations until result, ...)
 	
@@ -15,9 +18,9 @@ public class SolverResult {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public SolverResult(double value, Particle_DE particle, int ffCounter) {
+	public SolverResult(double value, ArrayList<Double> position, int ffCounter) {
 		this.value = value;
-		this.particle = particle;
+		this.returnPosition = position;
 		this.ffCounter=ffCounter;
 		// TODO Auto-generated constructor stub
 	}
@@ -27,10 +30,10 @@ public class SolverResult {
 
 	@Override
 	public String toString() {
-		return "Value: "+value+"\n Particle: "+particle.toString()+"\nFitness functions run: "+ffCounter;
+		return "Value: "+value+"\n Particle: "+Arrays.toString(returnPosition.toArray())+"\nFitness functions run: "+ffCounter;
 	}
 	
 	public String toJSON() {
-		return "{\"value\":"+value+",\"ffCounter\":"+ffCounter+" ,\"particle\": "+particle.toString()+"}";
+		return "{\"value\":"+value+",\"ffCounter\":"+ffCounter+" ,\"particle\": "+Arrays.toString(returnPosition.toArray())+"}";
 	}
 }
