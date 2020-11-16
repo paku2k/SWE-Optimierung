@@ -152,14 +152,13 @@ public class SolverConfig {
 	}
 	
 	public static SolverResult solveMethod(String algorithm, int id, SolverConfig config) throws Exception {
-		SolverResult sr = new SolverResult();
 
 		switch(algorithm) {
 			case "default":
 				return new test_david(id,
 									  config.N).calc();		
 			case "DErand1":
-				sr = new DErand1(config.N,
+				return new DErand1(config.N,
 										 config.NP,
 										 config.F,
 										 config.CR,
@@ -167,10 +166,9 @@ public class SolverConfig {
 										 config.upperBound,
 										 config.lowerBound,
 										 config.ffid, id).solve();	
-				return sr;
 				
 			case "DEbest1":
-				sr = new DEbest1(config.N,
+				return new DEbest1(config.N,
 										 config.NP,
 										 config.F,
 										 config.CR,
@@ -178,10 +176,9 @@ public class SolverConfig {
 										 config.upperBound,
 										 config.lowerBound,
 										 config.ffid, id).solve();	
-				return sr;
-				
+					
 			case "PSOgsc":
-				sr = new PSOgsc(config.N,
+				return new PSOgsc(config.N,
 										 config.lowerBound,
 										 config.upperBound,
 										 config.NP,
@@ -191,10 +188,9 @@ public class SolverConfig {
 										 config.dt,
 										 config.maxGenerations,
 										 config.ffid, id).solve();	
-				return sr;
 				
 			case "PSOgscDecay":
-				sr = new PSOgscDecay(config.N,
+				return new PSOgscDecay(config.N,
 										 config.lowerBound,
 										 config.upperBound,
 										 config.NP,
@@ -207,7 +203,6 @@ public class SolverConfig {
 										 id,
 										 config.decayStart,
 										 config.decayEnd).solve();	
-				return sr;
 
 		}
 		throw new Exception("Algorithm not specified or no solver method.");

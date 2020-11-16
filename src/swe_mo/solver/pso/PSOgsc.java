@@ -59,6 +59,7 @@ public class PSOgsc {
 			// This method is the engine of the solver, that creates the swarm and updates / finds the globalBestPosition
 				
 				ArrayList<PSOparticle> swarm = new ArrayList<PSOparticle>();
+				int counter = 0;
 					
 				for(int i=0; i<particleCount; i++) {
 					PSOparticle p = new PSOparticle(dimension, max, min, w, cc, cs, dt);
@@ -71,15 +72,17 @@ public class PSOgsc {
 					for(int j=0; j<particleCount; j++) {
 						updateGlobalBestPosition(swarm.get(j));
 						swarm.get(j).updateVelocity(globalBestPosition);
+						counter++;
 						swarm.get(j).updatePosition();
 						swarm.get(j).updatePersonalBestPosition(ffID);
+						counter++;
 					}
 					SolverManager.updateStatus(solverID, (100*((double)i)/((double)numIter)));
 				}
 				ArrayList<Double> ret = new ArrayList<Double>();
 				double val = (globalMinimum);
 				ret.addAll(globalBestPosition);
-				return new SolverResult(val, ret, 0);
+				return new SolverResult(val, ret, counter);
 			}
 			
 			
