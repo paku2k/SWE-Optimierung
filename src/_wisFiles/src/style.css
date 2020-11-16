@@ -13,7 +13,7 @@ body{
     
     word-wrap: break-word;
     
-    min-width: 700px;
+    min-width: 750px;
 }
 
 .tbi {
@@ -197,10 +197,67 @@ body{
 
 /* TAB_CMD */
 
+#tab_cmd > div{
+    
+}
+
+#tab_cmd > div > h2 {
+    margin: 0;
+    float: left;
+    padding-top: 0.8rem;
+}
+
+#cmd_file {
+    display: none;
+}
+
+.cmd_editor_buttons {
+    border: 1px solid black;
+    border-radius: 0.3rem;
+    display: inline-block;
+    padding: 0.3rem 0.7rem;
+    margin: 0.5rem 0 0.5rem 0.5rem;
+    min-width: 1rem;
+    cursor: pointer;
+    text-align: center;
+    transition: 0.3s;
+    float: right;
+}
+
+.cmd_editor_buttons:hover{
+    background-color: #ddd;
+}
+
+
+
+
 #cmd_input {
+    border-radius: 0.3rem;
     max-width: 100%;
     min-width: 100%;
     height: 50%;
+}
+
+.ondragover {
+    color: rgb(142,160,178);
+    border: 2px solid rgb(102,178,255);
+    background-color: rgb(204,229,255);
+}
+
+.ondragleave {
+    color: black;
+    border: 1px solid black;
+    background-color: white;
+}
+
+
+#cmd_send {
+    padding: 0.5rem 1rem;
+    background-color: rgb(122,215,80);
+}
+
+#cmd_send:hover {
+    background-color: rgb(85,160,50);
 }
 
 
