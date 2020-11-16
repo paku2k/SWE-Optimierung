@@ -8,12 +8,7 @@ import java.util.ArrayList;
 
 import swe_mo.solver.FitnessFunction;
 
-import swe_mo.solver.SolverConfig;
 
-
-import java.util.ArrayList;
-
-import swe_mo.solver.FitnessFunction;
 
 public class DErand1 {
 	
@@ -63,13 +58,13 @@ public class DErand1 {
 	    }
 		
 		for(int i = 0; i<NP; i++) {
-	    	lastResult.add(-1.0);
+	    	lastResult.add(Double.MAX_VALUE);
 	    }
 	
 	}
 	
 	public static SolverConfig defaultConfig() {		
-		return new SolverConfig(1,5,50,0.7,0.3,1000,5.14,-5.14);
+		return new SolverConfig(1,5,50,0.3,0.3,1000,5.14,-5.14);
 	}
 	
 	public DErand1(int N, int NP, double F, double CR, int maxGenerations, int ffIndex, int solverID) {
@@ -109,7 +104,7 @@ public class DErand1 {
 	    }
 		
 		for(int i = 0; i<NP; i++) {
-	    	lastResult.add(-1.0);
+	    	lastResult.add(Double.MAX_VALUE);
 	    }
 	}
 	
@@ -200,9 +195,11 @@ public class DErand1 {
 	
 	public Particle_DE compare(int xIndex, Particle_DE vectorU) {
 		
+		//TODO: find origin of FF calls
+		
 		//Compares vectorX and vectorU and returns the better one. If both give the same result, vectorU is returned
 		double xRes;
-		if(lastResult.get(xIndex)==-1.0) {
+		if(lastResult.get(xIndex)==Double.MAX_VALUE) {
 			 xRes=FitnessFunction.solve(ffIndex, xPop.get(xIndex));
 			fitCount+=1;
 
