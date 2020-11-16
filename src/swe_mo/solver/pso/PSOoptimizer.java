@@ -3,7 +3,7 @@ package swe_mo.solver.pso;
 import java.io.*;
 import java.util.Arrays;
 
-public class psoOptimizer {
+public class PSOoptimizer {
 	
 	int dimension;
 	int numIter;
@@ -15,7 +15,7 @@ public class psoOptimizer {
 	double dt;
 	String filename;
 	
-	public psoOptimizer(String filename, int dimension, double min, double max, int particleCount, double dt, int numIter, int ffID, int solverID) {
+	public PSOoptimizer(String filename, int dimension, double min, double max, int particleCount, double dt, int numIter, int ffID, int solverID) {
 		
 		this.ffID = ffID;
 		this.solverID = solverID;
@@ -42,8 +42,8 @@ public class psoOptimizer {
 			for(int j=0; j<resolution; j++) {
 				for(int k=0; k<resolution; k++) {
 					
-					psoGlobal psoGlobalSolver = new psoGlobal(dimension, min, max, particleCount, (w_lower+i*w_step), (cc_lower+j*cc_step), (cs_lower+k*cs_step), dt, numIter, ffID, solverID);	
-					author.write("Ergebnis[w="+(w_lower+i*w_step)+"; cc="+(cc_lower+j*cc_step)+"; cs="+(cs_lower+k*cs_step)+"]"+": "+Arrays.toString(psoGlobalSolver.solve().toArray())+"\n");
+					PSOgsc psoGlobalSolver = new PSOgsc(dimension, min, max, particleCount, (w_lower+i*w_step), (cc_lower+j*cc_step), (cs_lower+k*cs_step), dt, numIter, ffID, solverID);	
+					author.write("Ergebnis[w="+(w_lower+i*w_step)+"; cc="+(cc_lower+j*cc_step)+"; cs="+(cs_lower+k*cs_step)+"]"+": "+Arrays.toString(psoGlobalSolver.solve().returnPosition.toArray())+"\n");
 
 				}
 			}
