@@ -137,7 +137,7 @@ public class DErand1 {
 
 		}
 
-		return new SolverResult(best, bestParticle, fitCount);
+		return new SolverResult(best, bestParticle.position, fitCount);
 	}
 	
 	public Particle_DE calculateV(int index) {
