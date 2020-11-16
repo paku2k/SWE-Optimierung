@@ -24,6 +24,7 @@ public class DEbest1 extends DErand1{
 		p.multiply(this.F);
 		p.add(bestParticle);
 
+		
 	
 		for (int i = 0; i < p.position.size(); i++) {
 			if(p.position.get(i)>this.upperBound) {
