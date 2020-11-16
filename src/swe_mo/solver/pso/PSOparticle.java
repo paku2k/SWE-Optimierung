@@ -79,11 +79,13 @@ public class PSOparticle extends Particle_DE {
 	
 	public void updatePosition() {
 		for(int i=0; i<position.size(); i++) {
+			//position.set(i, position.get(i) + velocity.get(i)*dt);
+			if((position.get(i) + velocity.get(i)*dt) < min) {
+				//position.set(i, (Math.random()*(max-min))+min);
+			}else if((position.get(i) + velocity.get(i)*dt) > max) {
+				//position.set(i, (Math.random()*(max-min))+min);
+			}else {
 			position.set(i, position.get(i) + velocity.get(i)*dt);
-			if(position.get(i) < min) {
-				position.set(i, (Math.random()*(max-min))+min);
-			}else if(position.get(i) > max) {
-				position.set(i, (Math.random()*(max-min))+min);
 			}
 		}
 	}

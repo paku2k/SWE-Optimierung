@@ -14,10 +14,10 @@ public class Debug {
 		double max = 500;
 		int particleCount = 50;
 		double w = 0.9;
-		double cc = 0.0;
+		double cc = 0.8;
 		double cs = 0.5;
 		double dt = 1;
-		int numIter = 50000;
+		int numIter = 100000;
 		int solverID = 1;
 		int ffID = 8;
 		double decayStart = 0.8;
