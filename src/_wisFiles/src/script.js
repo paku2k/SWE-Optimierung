@@ -2,6 +2,7 @@
 
 function onload(){    
     document.getElementById('cmd_file').addEventListener('change', readFileSystemdialogue, false);   
+    document.addEventListener("keydown", cmd_keylistener, false);
     document.getElementById('tab_defaultOpen').click();
     openInfoNWcon("Connected.");
     checkConnection();
@@ -104,6 +105,7 @@ function closeInfoNWcon(){
 
 
 /* TAB SWITCHING */
+var current_tab = "";
 
 function tab(e, tabname) {
     var i, tabcontent, tablinks;
@@ -123,6 +125,8 @@ function tab(e, tabname) {
     //show the current tab, and add an "active" class to the button that opened the tab
     document.getElementById(tabname).style.display = "block";
     e.currentTarget.className += " active";
+    
+    current_tab = tabname;
 }
 
 
@@ -216,11 +220,30 @@ function  addToCmdInput(contents) {
 
 
 
+function cmd_keylistener(e) {
+    if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)  && e.keyCode == 83) {
+        e.preventDefault();
+        
+        if(current_tab == "tab_cmd"){
+            saveAsMoclFile();
+        }
+    }
+}
+
+
 
 function saveAsMoclFile(){    
     var textData = document.getElementById('cmd_input').value; 
     
     if(textData.trim() == "") return;
+                
+    document.getElementById("cmd_input").style.transition = "0.1s";
+    document.getElementById("cmd_input").className = "onsave";
+
+    setTimeout(function(){
+        document.getElementById("cmd_input").className = "ondragleave";
+        setTimeout(function(){document.getElementById("cmd_input").style.transition = "0s";},100);                
+    },100);
     
     var date = new Date();
     var filename = "mocmdlist_"+date.getFullYear()+(date.getMonth()+1)+date.getDate()+"_"+(date.getHours() < 10 ? "0" : "")+date.getHours()+(date.getMinutes() < 10 ? "0" : "")+date.getMinutes()+".mocl";
