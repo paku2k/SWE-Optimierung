@@ -12,12 +12,12 @@ public class Debug {
 		int dimension = 30;
 		double min = -500;
 		double max = 500;
-		int particleCount = 50;
+		int particleCount = 100;
 		double w = 0.9;
-		double cc = 0.8;
-		double cs = 0.5;
+		double cc = 0.9;
+		double cs = 0.1;
 		double dt = 1;
-		int numIter = 100000;
+		int numIter = 2000;
 		int solverID = 1;
 		int ffID = 8;
 		double decayStart = 0.8;
