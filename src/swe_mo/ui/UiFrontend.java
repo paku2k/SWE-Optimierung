@@ -133,11 +133,11 @@ public class UiFrontend {
 		btnStartWis.getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				if(state) {
-					btnStartWis.setText("Stop WebGUI");
+					btnStartWis.setText("Stop WIS");
 					lblWisStatusContent.setForeground(SWTResourceManager.getColor(0, 204, 0));
 					lblWisStatusContent.setText("Running at: localhost:"+port+"/");
 				} else {
-					btnStartWis.setText("Start WebGUI");		
+					btnStartWis.setText("Start WIS");		
 					lblWisStatusContent.setForeground(SWTResourceManager.getColor(255, 0, 0));			
 					lblWisStatusContent.setText("Not Started");
 				}
@@ -611,7 +611,7 @@ public class UiFrontend {
 		btnStartWis.setForeground(SWTResourceManager.getColor(34, 139, 34));
 		btnStartWis.setBounds(448, 21, 110, 23);
 		btnStartWis.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
-		btnStartWis.setText("Start WebGUI");
+		btnStartWis.setText("Start WIS");
 		btnStartWis.addKeyListener(keyadapter_fnkeys);
 		btnStartWis.addMouseListener(mouseadapter_btnStartWis);		
 		

@@ -1,8 +1,10 @@
 /* ONLOAD */
 
 function onload(){    
-    document.getElementById('file_input').addEventListener('change', readSingleFile, false);   
+    document.getElementById('cmd_file').addEventListener('change', readFileSystemdialogue, false);   
     document.getElementById('tab_defaultOpen').click();
+    openInfoNWcon("Connected.");
+    checkConnection();
 }
 
 
@@ -35,7 +37,10 @@ function closeInfo(){
     var elem = document.getElementById("info");
     elem.parentNode.replaceChild(elem.cloneNode(true), elem);
     
-    setTimeout(function(){ document.getElementById("info").style.display = "none"; }, 150);        
+    setTimeout(function(){ document.getElementById("info").style.display = "none"; }, 150);    
+    
+    infonwerr_open = false;
+    infonwcon_open = false;
 }
 
 function setInfoColor(type){
@@ -51,6 +56,47 @@ function setInfoColor(type){
 }
 
 
+
+
+
+
+
+/* CHECK CONNECTION TO WIS */
+
+function checkConnection(){
+    loadAsync("con", "", 1000, closeInfoNWerr);
+    setTimeout(checkConnection, 3000);
+}
+
+var infonwerr_open = false;
+function openInfoNWerr(text){
+    if(infonwerr_open == false){
+        openInfo("err", text);
+        infonwerr_open = true;  
+    }
+}
+
+function closeInfoNWerr(){
+    if(infonwerr_open){
+        closeInfo();
+        openInfoNWcon("Connection reestablished.")        
+    }
+}
+
+
+var infonwcon_open = false;
+function openInfoNWcon(text){
+    if(!infonwcon_open){
+        openInfo("suc", text);
+        infonwcon_open = true;
+        setTimeout(function(){closeInfoNWcon();},2000)
+    }
+}
+
+function closeInfoNWcon(){
+    if(infonwcon_open)
+        closeInfo();
+}
 
 
 
@@ -85,8 +131,103 @@ function tab(e, tabname) {
 
 
 
+/* TAB CMD load and save */
+
+var drag_active = false;
+function cmdInputDragOver(e){
+    e.preventDefault();  
+    if(!drag_active){
+        drag_active = true;
+        document.getElementById("cmd_input").style.transition = "0.1s";
+        document.getElementById("cmd_input").className = "ondragover";
+    }
+}
+
+function cmdInputDragLeave(e){
+    e.preventDefault();  
+    if(drag_active){
+        drag_active = false;
+        document.getElementById("cmd_input").className = "ondragleave";
+        setTimeout(function(){document.getElementById("cmd_input").style.transition = "0s";},100)
+    }
+}
 
 
+function cmdInputDrop(e){
+    if(drag_active){
+        drag_active = false;
+        document.getElementById("cmd_input").className = "ondragleave";
+        setTimeout(function(){document.getElementById("cmd_input").style.transition = "0s";},100)
+    }
+    
+    e.preventDefault();
+    
+    if (e.dataTransfer.items) {
+        // Use DataTransferItemList interface to access the file(s)
+        for (var i = 0; i < e.dataTransfer.items.length; i++) {
+            // If dropped items aren't files, reject them
+            if (e.dataTransfer.items[i].kind === 'file') {
+                fileReaderCmdInput( e.dataTransfer.items[i].getAsFile());
+            }
+        }
+    } else {
+        // Use DataTransfer interface to access the file(s)
+        for (var i = 0; i < e.dataTransfer.files.length; i++) {
+            fileReaderCmdInput( e.dataTransfer.files[i]);
+        }
+    }  
+}
+
+
+function fileReaderCmdInput(file){
+    if(file.name.substr(file.name.length - 5).indexOf(".mocl") > -1 
+    || file.name.substr(file.name.length - 5).indexOf(".MOCL") > -1
+    || file.name.substr(file.name.length - 5).indexOf(".txt") > -1
+    || file.name.substr(file.name.length - 5).indexOf(".TXT") > -1){
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var contents = e.target.result;
+            addToCmdInput("/********************************************** \n FILE: "+file.name+" \n**********************************************/");
+            addToCmdInput(contents);
+        };
+        reader.readAsText(file);        
+    } else {
+        openInfo("warn", "Only .mocl or .txt files as input!");
+    }
+}
+
+
+function readFileSystemdialogue(e) {
+    for (var i = 0; i < e.target.files.length; i++) {
+        if (!e.target.files[i]) {
+           continue;
+        }
+        fileReaderCmdInput( e.target.files[i]);
+    }
+}
+
+function  addToCmdInput(contents) {
+    var element = document.getElementById('cmd_input');
+    if(element.value != ""){
+        element.value += "\n\n";
+    }
+    element.value += contents;
+}
+
+
+
+
+function saveAsMoclFile(){    
+    var textData = document.getElementById('cmd_input').value; 
+    
+    if(textData.trim() == "") return;
+    
+    var date = new Date();
+    var filename = "mocmdlist_"+date.getFullYear()+(date.getMonth()+1)+date.getDate()+"_"+(date.getHours() < 10 ? "0" : "")+date.getHours()+(date.getMinutes() < 10 ? "0" : "")+date.getMinutes()+".mocl";
+        
+    var blob = new Blob([textData], {type: "text/plain;charset=utf-8"});
+    saveAs(blob, filename);
+}
 
 
 
@@ -110,7 +251,7 @@ function tab(e, tabname) {
 function cmdInputExecute(){
     var cmd_string = document.getElementById("cmd_input").value;
     cmd_string = cmd_string.trim(); //leerzeichen am anfang und ende entfernen    
-    cmd_string = cmd_string.replace(/\r/,"\n");
+    cmd_string = cmd_string.replace(/\r/,"\n").replace(/\t/," ");
     cmd_string += "\n";
     
     var string_helper1;
@@ -143,7 +284,8 @@ function cmdInputExecute(){
     
     //build datastring
     for(i=0; i<cmd_strings.length; i++){
-        if(cmd_strings[i] != ""){
+        cmd_strings[i] = cmd_strings[i].trim();
+        if(cmd_strings[i] != "" && cmd_strings[i] != null){
             datastring += "&cmd"+datacnt+"="+cmd_strings[i].trim();
             datacnt++;
         }
@@ -152,26 +294,32 @@ function cmdInputExecute(){
     if(datacnt > 0){
         var data = "cmdcnt="+datacnt+datastring;
         console.log(data);
-        loadFile(data, 5000, showMessage, "Return Data:\n\n")
+        loadAsync("xhr", data, 2000, showMessage)
     }
 }
 
-function loadFile(data, timeout, callback) {
-    var args = Array.prototype.slice.call(arguments, 3);
+
+
+
+function loadAsync(adr, data, timeout, callback) {
     var xhr = new XMLHttpRequest();
     xhr.ontimeout = function () {
-        console.error("The request for " + url + " timed out.");
+        openInfoNWerr("The connection timed out. Check if WIS is active.");
     };
+    xhr.onerror = function () {
+        openInfoNWerr("Connection lost. Check if WIS is active and reload WebGUI.");        
+    }
     xhr.onload = function() {
         if (xhr.readyState === 4) {
             if (xhr.status === 200) {
-                callback.apply(xhr, args);
+                closeInfoNWerr();
+                if(adr=="xhr") callback.apply(xhr);
             } else {
-                console.error(xhr.statusText);
+                openInfoNWerr("Connection lost. Check if WIS is active and reload WebGUI.");      
             }
         }
     };
-    xhr.open("POST", "xhr", true);
+    xhr.open("POST", adr, true);
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xhr.timeout = timeout;
     xhr.send(data);
@@ -179,7 +327,7 @@ function loadFile(data, timeout, callback) {
     
 
 
-function showMessage (message) {
+function showMessage () {
     console.log(this.responseText);
 }
 
@@ -188,26 +336,4 @@ function showMessage (message) {
 
 
 
-
-
-
-
-
-function readSingleFile(e) {
-     var file = e.target.files[0];
-     if (!file) {
-       return;
-     }
-     var reader = new FileReader();
-     reader.onload = function(e) {
-       var contents = e.target.result;
-       pushContentsToCmdInput(contents);
-     };
-     reader.readAsText(file);
-}
-
-function  pushContentsToCmdInput(contents) {
-     var element = document.getElementById('cmd_input');
-     element.textContent = contents;
-}
 

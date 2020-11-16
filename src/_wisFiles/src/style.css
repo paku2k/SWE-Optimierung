@@ -1,7 +1,7 @@
 /* GLOBAL */
 
 body{
-    margin: 0px;
+    margin: 0;
     
     font-family: "Tw Cen MT", sans-serif;
     
@@ -11,9 +11,9 @@ body{
     -ms-hyphens: auto;
     hyphens: auto; 
     
-    word-wrap:break-word;
+    word-wrap: break-word;
     
-    min-width: 700px;
+    min-width: 750px;
 }
 
 .tbi {
@@ -35,9 +35,8 @@ body{
     top: 0;
     width: 100%;    
     min-width: 700px;
-    padding: 0.1rem 1rem;
     box-shadow: 0 0 0.5rem 0.2rem grey;
-    text-align: center;
+    text-align: center;  
     font-size: 1.1rem;
     font-weight: bolder;
     clear: both;
@@ -79,13 +78,24 @@ body{
 
 #info_text {
     width: 80%;
-    margin-right: auto;
-    margin-left: auto;
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+#info > div{
+    float: right;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
 }
 
 #info_close_x{
-    float: right;
-    margin-right: 2.3rem;
+    padding-right: 1.5rem;
+    padding-left: 1rem;
+    font-size: 1rem;  
 }
 
 .grey {
@@ -117,8 +127,8 @@ body{
 }
 
 #header img {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
 }
 
 
@@ -187,10 +197,67 @@ body{
 
 /* TAB_CMD */
 
+#tab_cmd > div{
+    
+}
+
+#tab_cmd > div > h2 {
+    margin: 0;
+    float: left;
+    padding-top: 0.8rem;
+}
+
+#cmd_file {
+    display: none;
+}
+
+.cmd_editor_buttons {
+    border: 1px solid black;
+    border-radius: 0.3rem;
+    display: inline-block;
+    padding: 0.3rem 0.7rem;
+    margin: 0.5rem 0 0.5rem 0.5rem;
+    min-width: 1rem;
+    cursor: pointer;
+    text-align: center;
+    transition: 0.3s;
+    float: right;
+}
+
+.cmd_editor_buttons:hover{
+    background-color: #ddd;
+}
+
+
+
+
 #cmd_input {
+    border-radius: 0.3rem;
     max-width: 100%;
     min-width: 100%;
     height: 50%;
+}
+
+.ondragover {
+    color: rgb(142,160,178);
+    border: 2px solid rgb(102,178,255);
+    background-color: rgb(204,229,255);
+}
+
+.ondragleave {
+    color: black;
+    border: 1px solid black;
+    background-color: white;
+}
+
+
+#cmd_send {
+    padding: 0.5rem 1rem;
+    background-color: rgb(122,215,80);
+}
+
+#cmd_send:hover {
+    background-color: rgb(85,160,50);
 }
 
 

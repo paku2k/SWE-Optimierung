@@ -209,7 +209,11 @@ public class WebInterfaceServer{
     	
     	    	    httpExchange.getResponseHeaders().set("Content-Type", getContentType("json"));
     		        sendHttpResponse(httpExchange, 200, r.getBytes());
-    				
+
+    	    	    
+    	    	} else if(requestParameters.getPath().equals("/con")) {    	
+    	    	    httpExchange.getResponseHeaders().set("Content-Type", getContentType("txt"));
+    		        sendHttpResponse(httpExchange, 200, "ok".getBytes());
     	
     	    	} else if(requestParameters.getPath().equals("/favicon.ico")){	
     	    	    httpExchange.getResponseHeaders().set("Content-Type", "text/x-icon");

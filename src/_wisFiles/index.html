@@ -20,11 +20,12 @@
         <meta name="theme-color" content="#ffffff">
         
         <script language="javascript" type="text/javascript" src="src/script.js"></script>
+        <script language="javascript" type="text/javascript" src="src/filesaver.js"></script>
     </header>
     <body onload="onload();">
         
         <div id="info" style="display: none;">
-            <p id="info_close_x" onclick="closeInfo();">&#x2715</p>
+            <div><p id="info_close_x" onclick="closeInfo();">&#x2715;</p></div>
             <p id="info_text" class="tbi"></p>
         </div>
 	    
@@ -38,46 +39,45 @@
             <button class="tablinks" onclick="tab(event, 'tab_solver')">Solver</button>
             <button class="tablinks" onclick="tab(event, 'tab_optimizer')">Optimizer</button>
             <button class="tablinks" onclick="tab(event, 'tab_functions')">Functions</button>
-            <button class="tablinks" onclick="tab(event, 'tab_cmd')" id="tab_defaultOpen">CMD</button>
+            <button class="tablinks" onclick="tab(event, 'tab_cmd')" id="tab_defaultOpen">CMD Editor</button>
             <button class="tablinks" onclick="tab(event, 'tab_settings')">Settings</button>            
         </div>
         
         
         <div id="tab_solver" class="tabcontent">
-            <h2 contextmenu="to be implemented">TBI</h2>
+            <h2 contextmenu="to be implemented" class="tbi">TBI</h2>
             
         </div>
         
         
         <div id="tab_optimizer" class="tabcontent">
-            <h2 contextmenu="to be implemented" >TBI</h2>
+            <h2 contextmenu="to be implemented" class="tbi">TBI</h2>
             
         </div>   
         
         
         <div id="tab_functions" class="tabcontent">
-            <h2 contextmenu="to be implemented" >TBI</h2>
+            <h2 contextmenu="to be implemented" class="tbi">TBI</h2>
             
         </div>        
         
         
-        <div id="tab_cmd" class="tabcontent">	    	    
-            <textarea id="cmd_input"></textarea><br>
-            <button id="cmd_send" onclick="cmdInputExecute();">Execute</button>
-            <button id="cmd_save" onclick="saveAsMoclFile();" disabled>Save</button>
-            <input type="file" id="file_input" />   
+        <div id="tab_cmd" class="tabcontent">	
+            <div>
+                <h2 contextmenu="to be implemented" class="tbi">CMD Editor</h2>            
+
+                <label class="cmd_editor_buttons" id="cmd_save" onclick="saveAsMoclFile();">&#x1f5ab;</label>
+                <label class="cmd_editor_buttons"><input type="file" id="cmd_file"/>&#x1f5c0;</label>   
+            </div>
+            <textarea id="cmd_input" ondrop="cmdInputDrop(event);" ondragover="cmdInputDragOver(event);" ondragleave="cmdInputDragLeave(event);"></textarea><br>
+            <label id="cmd_send" onclick="cmdInputExecute();" class="cmd_editor_buttons">Execute</label>
             
-            <br>
-            
-            <p onclick='openInfo("suc", "Test Banner SUC");'>Test SUC</p>
-            <p onclick='openInfo("warn", "Test Banner WARN");'>Test WARN</p>
-            <p onclick='openInfo("err", "Test Banner ERR");'>Test ERR</p>
-                                                                  
+                                                                              
         </div>
         
         
         <div id="tab_settings" class="tabcontent">
-            <h2 contextmenu="to be implemented">TBI</h2>
+            <h2 contextmenu="to be implemented" onclick='openInfo("warn", "Test Banner WARN");' class="tbi">TBI</h2>
             
             
             <br>
