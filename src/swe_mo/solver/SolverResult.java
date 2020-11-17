@@ -18,14 +18,14 @@ public class SolverResult {
 	
 	
 	public SolverResult() {
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	public SolverResult(double value, ArrayList<Double> position, int ffCounter) {
 		this.value = value;
 		this.returnPosition = position;
 		this.ffCounter=ffCounter;
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	
