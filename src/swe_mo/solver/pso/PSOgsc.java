@@ -72,7 +72,6 @@ public class PSOgsc {
 					for(int j=0; j<particleCount; j++) {
 						updateGlobalBestPosition(swarm.get(j));
 						swarm.get(j).updateVelocity(globalBestPosition);
-						counter++;
 						swarm.get(j).updatePosition();
 						swarm.get(j).updatePersonalBestPosition(ffID);
 						counter++;
@@ -89,10 +88,11 @@ public class PSOgsc {
 			public void updateGlobalBestPosition(PSOparticle particle) {
 			// This method updates the globalBestPosition through calculating the corresponding value for a given position
 				
-				double minimum = FitnessFunction.solve(ffID, particle);
-				if(minimum<globalMinimum) {
-					globalMinimum = minimum;
+				//double minimum = FitnessFunction.solve(ffID, particle);
+				if(particle.personalMinimum<globalMinimum) {
+					globalMinimum = particle.personalMinimum;
 					globalBestPosition = new ArrayList<Double>(particle.position);
+					
 				}
 			}
 			
