@@ -244,6 +244,18 @@ body{
     background-color: rgb(204,229,255);
 }
 
+.onsave {
+    color: rgb(142,178,146);
+    border: 2px solid rgb(102,255,161);
+    background-color: rgb(204,255,209);
+}
+
+.onclear {
+    color: rgb(178,142,142);
+    border: 2px solid rgb(255,74,74);
+    background-color: rgb(255,150,150);
+}
+
 .ondragleave {
     color: black;
     border: 1px solid black;
