@@ -120,7 +120,6 @@ public class DErand1 {
 				break;
 			}
 
-
 			
 			for(int i=0; i<NP; i++) {
 
@@ -275,5 +274,6 @@ public class DErand1 {
 		return newP;
 	}
 	
+
 
 }
