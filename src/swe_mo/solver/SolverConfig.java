@@ -5,6 +5,8 @@ import swe_mo.solver.pso.PSOgsc;
 import swe_mo.solver.pso.PSOgscDecay;
 import swe_mo.solver.de.DEbest1;
 
+import java.util.ArrayList;
+
 import org.json.simple.JSONObject;
 
 
@@ -206,5 +208,29 @@ public class SolverConfig {
 
 		}
 		throw new Exception("Algorithm not specified or no solver method.");
+	}
+	
+	public static String getAlgorithmList(boolean json) {
+		ArrayList<String> algorithms = new ArrayList<String>();
+		
+		algorithms.add("DErand1");
+		algorithms.add("DEbest1");
+		algorithms.add("PSOgsc");
+		algorithms.add("PSOgscDecay");
+		
+		
+		if(!json) {
+			String l = "List of implemented algorithms:\n";
+			
+			for(String a : algorithms) {
+				l += "\n"+a;
+			}
+			
+			return l;
+		} else {
+			JSONObject jsonobj = new JSONObject();
+			jsonobj.put("algorithms", algorithms);
+			return jsonobj.toJSONString();
+		}
 	}
 }

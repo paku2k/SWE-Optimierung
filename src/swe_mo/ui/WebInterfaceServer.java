@@ -7,6 +7,9 @@ import java.awt.*;
 import java.util.*;
 
 import org.apache.commons.io.IOUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import com.sun.net.httpserver.*;
 
@@ -189,26 +192,35 @@ public class WebInterfaceServer{
     	    	    
     	    	} else if(requestParameters.getPath().equals("/xhr")) {
     	    		//xhr request (sending cmd commands and receiving+send answers via json)
-    		        String r = "{ "; 
+    	    		JSONArray jsonarr = new JSONArray();
+		
 
     	    		if(requestParameters.getParValue("cmdcnt")!=null) { //count of transmitted cmd
     	    			for(int i=0; i < Integer.valueOf(requestParameters.getParValue("cmdcnt")); i++) {
-    	    				r += "\"cmd"+i+"\": ";
+					    	JSONObject jsonobj = new JSONObject();
+							jsonobj.put("id", i);
+							jsonobj.put("cmd", requestParameters.getParValue("cmd"+i));
+
     	    				try {
     	    					String rv = (String) UiBackend.cmd(AUTH, requestParameters.getParValue("cmd"+i));
-    	    					if(!requestParameters.getParValue("cmd"+i).contains("-json")) r += "\"";
-    	    					r += rv;
-    	    					if(!requestParameters.getParValue("cmd"+i).contains("-json")) r += "\"";
+    	    					if(!requestParameters.getParValue("cmd"+i).contains("-json")) {
+    	    						jsonobj.put("ans", rv);
+    	    					} else {    	    						
+    	    						jsonobj.put("ans", (JSONObject) new JSONParser().parse(rv));    	    						
+    	    					}
+
     	    				} catch(Exception e) {
-    	    					r += "\"ERR: "+e.getMessage()+"\"";
+    	    					jsonobj.put("err", e.getMessage());
     	    				}
-    	    				if(i+1 < Integer.valueOf(requestParameters.getParValue("cmdcnt"))) r += ",";
+    	    				jsonarr.add(jsonobj);
     	    			}
     	    		}		
-    		        r += "}"; 
+    	    		
+					JSONObject listjson = new JSONObject();
+					listjson.put("cmd_ans", jsonarr);
     	
     	    	    httpExchange.getResponseHeaders().set("Content-Type", getContentType("json"));
-    		        sendHttpResponse(httpExchange, 200, r.getBytes());
+    		        sendHttpResponse(httpExchange, 200, listjson.toJSONString().getBytes());
 
     	    	    
     	    	} else if(requestParameters.getPath().equals("/con")) {    	

@@ -5,6 +5,7 @@ import java.util.Queue;
 
 import swe_mo.Main;
 import swe_mo.Settings;
+import swe_mo.solver.SolverConfig;
 import swe_mo.solver.SolverManager;
 
 
@@ -446,15 +447,16 @@ public class UiBackend {
 
 			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
 				return     "sm - List of commands\r"
-						 + "\t" + "list \t\tList all solvers\r"
-						 + "\t" + "create \t\tCreate new solver-instance\r"
-						 + "\t" + "clone \t\tCreate new solver-instance with cloned properties\r"
-						 + "\t" + "config \t\tConfigure solver\r"
-						 + "\t" + "solve \t\tStart solving\r"
-						 + "\t" + "term \t\tTerminate solver\r"
-						 + "\t" + "status \t\tGet status of solver)\r"
-						 + "\t" + "result \t\tGet result\r"
-						 + "\t" + "delete \t\tDelete solver-instance\r";
+						 + "\t" + "list    \tList all solvers\r"
+						 + "\t" + "create  \tCreate new solver-instance\r"
+						 + "\t" + "clone   \tCreate new solver-instance with cloned properties\r"
+						 + "\t" + "config  \tConfigure solver\r"
+						 + "\t" + "solve   \tStart solving\r"
+						 + "\t" + "term    \tTerminate solver\r"
+						 + "\t" + "status  \tGet status of solver)\r"
+						 + "\t" + "result  \tGet result\r"
+						 + "\t" + "delete  \tDelete solver-instance\r"
+				 		 + "\t" + "listalgo\tList of implemented algorithms\r";
 								
 			} else if(cmd_queue.peek().equals("list") || cmd_queue.peek().equals("lsit")) {
 				cmd_queue.remove();		
@@ -770,6 +772,15 @@ public class UiBackend {
 					}
 				} catch(Exception e) {
 					throw e;
+				}
+				
+			} else if(cmd_queue.peek().equals("listalgo")) {
+				cmd_queue.remove();	
+						
+				if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {	
+					return SolverConfig.getAlgorithmList(true);
+				} else {
+					return SolverConfig.getAlgorithmList(false);
 				}						
 			}
 			
