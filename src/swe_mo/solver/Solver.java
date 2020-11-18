@@ -3,6 +3,7 @@ package swe_mo.solver;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import swe_mo.Settings;
 import swe_mo.ui.clogger;
 
 
@@ -29,7 +30,7 @@ public class Solver {
 		config = SolverConfig.getDefault(algorithm);
 	}
 	public Solver(int id) throws Exception {
-		this(id, "default");
+		this(id, Settings.get("defaultAlgorithm").toString());
 	}																						
 	
 	
@@ -39,7 +40,7 @@ public class Solver {
 		Queue<String> configQueue = new LinkedList<String>();
 		String hyperparameterNotFound = "";
 					
-		for(String s : configString.replace(","," ").replace("    "," ").replace("   "," ").replace("  "," ").replace("= ","=").replace(" =","=").split(" ")) {
+		for(String s : configString.replace(","," ").replace("\t"," ").replace("    "," ").replace("   "," ").replace("  "," ").replace("= ","=").replace(" =","=").split(" ")) {
 			if(s != "" && s != null)
 				configQueue.offer(s);
 		}

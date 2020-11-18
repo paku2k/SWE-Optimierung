@@ -2,9 +2,6 @@ package swe_mo.solver;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import swe_mo.solver.de.Particle_DE;
-
 import org.json.simple.JSONObject;
 
 
@@ -33,16 +30,38 @@ public class SolverResult {
 
 	@Override
 	public String toString() {
-		return "Value: "+value+"\n Particle: "+Arrays.toString(returnPosition.toArray())+"\nFitness functions run: "+ffCounter;
+		String s = "";
+		
+		if(e == null) {
+			s += "Value: "+value+"\n";
+			if(returnPosition != null) {
+				s += "Particle: "+Arrays.toString(returnPosition.toArray());
+			} else {
+				s += "Particle: null";
+			}
+			s += "\nFitness functions run: "+ffCounter;
+		} else {
+			s += "Exception: "+e.getMessage();
+		}
+		
+		return s;
 	}
 	
 	public String toJSON() {
 		JSONObject json = new JSONObject();
-
-		json.put("value", value);
-		json.put("ffCounter", ffCounter);
-		json.put("particle", Arrays.toString(returnPosition.toArray()));
 		
+		if(e == null) {
+			json.put("value", value);
+			json.put("ffCounter", ffCounter);
+			if(returnPosition != null) {
+				json.put("particle", Arrays.toString(returnPosition.toArray()));
+			} else {
+				json.put("particle", null);
+			}
+		} else {
+			json.put("exception", e.getMessage());
+		}
+
 		return json.toJSONString();
 	}
 }

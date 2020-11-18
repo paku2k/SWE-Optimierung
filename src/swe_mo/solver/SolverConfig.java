@@ -16,8 +16,6 @@ import org.json.simple.JSONObject;
 
 public class SolverConfig {
 
-	//test
-	
 	public int ffid;
 	
 	public int N; //dimension
@@ -161,8 +159,6 @@ public class SolverConfig {
 	
 	public static SolverConfig getDefault(String algorithm) throws Exception {
 		switch(algorithm) {
-			case "default":
-				return test_david.defaultConfig();
 			case "DErand1":
 				return DErand1.defaultConfig();
 			case "DEbest1":
@@ -183,9 +179,6 @@ public class SolverConfig {
 	public static SolverResult solveMethod(String algorithm, int id, SolverConfig config) throws Exception {
 
 		switch(algorithm) {
-			case "default":
-				return new test_david(id,
-									  config.N).calc();		
 			case "DErand1":
 				return new DErand1(config.N,
 										 config.NP,
@@ -214,7 +207,7 @@ public class SolverConfig {
 										 config.upperBound,
 										 config.lowerBound,
 										 config.ffid, id).solve();
-			case "DErandToBest":
+			case "DErandToBest1":
 				return new DErandToBest1(config.N,
 										 config.NP,
 										 config.F,
