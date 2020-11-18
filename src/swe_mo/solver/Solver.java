@@ -3,6 +3,8 @@ package swe_mo.solver;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import swe_mo.ui.clogger;
+
 
 
 public class Solver {
@@ -13,7 +15,7 @@ public class Solver {
 	private String algorithm;
 	private double status;
 	private boolean terminated;
-	private SolverResult result; 																						
+	private SolverResult result = new SolverResult(); 																						
 	private SolverConfig config; 																						
 		
 	
@@ -88,6 +90,7 @@ public class Solver {
 					if(status<=100) status = 101;
 				} catch(Exception e) {
 					result.e = e;
+					clogger.err(AUTH, "SolverThread "+id, e);
 					status = 103;
 				}
 			}

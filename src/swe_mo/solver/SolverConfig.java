@@ -261,6 +261,8 @@ public class SolverConfig {
 		
 		algorithms.add("DErand1");
 		algorithms.add("DEbest1");
+		algorithms.add("DEbest2");
+		algorithms.add("DErandToBest1");
 		algorithms.add("PSOgsc");
 		algorithms.add("PSOgscDecay");
 		
