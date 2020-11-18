@@ -17,32 +17,9 @@ public class DEbest2 extends DEbest1{
 	}
 			
 		
-
-	
-	
+		
 	@Override
-	public Particle_DE calculateV(int index) {
-		//calculates the Vector V for current generation
-		Particle_DE p = this.calculateRandomDoubleDifference(index);
-		p.multiply(this.F);
-		p.add(bestParticle);
-
-	
-		for (int i = 0; i < p.position.size(); i++) {
-			if(p.position.get(i)>this.upperBound) {
-				p.position.set(i, this.upperBound);
-			}
-			if(p.position.get(i)<this.lowerBound) {
-				p.position.set(i, this.lowerBound);
-			}
-		}
-		
-		
-		return p;
-	}
-		
-	
-	public Particle_DE calculateRandomDoubleDifference(int skip) {
+	public Particle_DE calculateRandomDifference(int skip) {
 		//Calculates a random difference between two vectors of the population and returns it as a new vector
 		//skip defines, what index to skip (because it belongs to the original vector)
 		int index1;
