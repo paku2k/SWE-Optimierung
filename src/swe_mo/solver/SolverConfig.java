@@ -4,6 +4,8 @@ import swe_mo.solver.de.DErand1;
 import swe_mo.solver.pso.PSOgsc;
 import swe_mo.solver.pso.PSOgscDecay;
 import swe_mo.solver.de.DEbest1;
+import swe_mo.solver.de.DEbest2;
+import swe_mo.solver.de.DErandToBest1;
 
 import org.json.simple.JSONObject;
 
@@ -23,6 +25,7 @@ public class SolverConfig {
 	public int maxGenerations; //numIter
 	public double upperBound; //max
 	public double lowerBound; //min
+	public double lambda;
 	//PSOgsc atributes
 	public double w;
 	public double cc;
@@ -59,6 +62,18 @@ public class SolverConfig {
 		this.lowerBound = lowerBound;
 	}
 
+	public SolverConfig(int ffid, int n, int nP, double f, double cR, double lambda, int maxGenerations, double upperBound, double lowerBound) {
+		super();
+		this.ffid = ffid;
+		N = n;
+		NP = nP;
+		F = f;
+		CR = cR;
+		this.lambda = lambda;
+		this.maxGenerations = maxGenerations;
+		this.upperBound = upperBound;
+		this.lowerBound = lowerBound;
+	}
 
 
 	public void set(String param, String value) throws Exception {
@@ -105,6 +120,9 @@ public class SolverConfig {
 			case "decayEnd":
 				decayEnd = Double.parseDouble(value);
 				return;
+			case "lambda":
+				lambda = Double.parseDouble(value);
+				return;
 		}
 		throw new Exception("No such hyperparameter ("+param+").");
 	}
@@ -127,6 +145,7 @@ public class SolverConfig {
 		json.put("NP", NP);
 		json.put("F", F);
 		json.put("CR", CR);
+		json.put("Lambda", lambda);
 		json.put("maxGenerations", maxGenerations);
 		json.put("lowerBound", lowerBound);
 		json.put("upperBound", upperBound);
@@ -146,10 +165,15 @@ public class SolverConfig {
 				return DErand1.defaultConfig();
 			case "DEbest1":
 				return DEbest1.defaultConfig();
+			case "DEbest2":
+				return DEbest2.defaultConfig();
+			case "DErandToBest1":
+				return DErandToBest1.defaultConfig();
 			case "PSOgsc":
 				return PSOgsc.defaultConfig();
 			case "PSOgscDecay":
 				return PSOgscDecay.defaultConfig();
+				
 		}	
 		throw new Exception("Algorithm not specified.");
 	}
@@ -179,6 +203,25 @@ public class SolverConfig {
 										 config.upperBound,
 										 config.lowerBound,
 										 config.ffid, id).solve();	
+			case "DEbest2":
+				return new DEbest2(config.N,
+										 config.NP,
+										 config.F,
+										 config.CR,
+										 config.maxGenerations,
+										 config.upperBound,
+										 config.lowerBound,
+										 config.ffid, id).solve();
+			case "DErandToBest":
+				return new DErandToBest1(config.N,
+										 config.NP,
+										 config.F,
+										 config.CR,
+										 config.lambda,
+										 config.maxGenerations,
+										 config.upperBound,
+										 config.lowerBound,
+										 config.ffid, id).solve();
 					
 			case "PSOgsc":
 				return new PSOgsc(config.N,
