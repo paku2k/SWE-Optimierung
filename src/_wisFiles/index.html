@@ -68,8 +68,9 @@
 
                 <label class="cmd_editor_buttons" id="cmd_save" onclick="saveAsMoclFile();">&#x1f5ab;</label>
                 <label class="cmd_editor_buttons"><input type="file" id="cmd_file"/>&#x1f5c0;</label>   
+                <label class="cmd_editor_buttons" id="cmd_clr" onclick="clr_cmd_input();">&#x2612;</label>
             </div>
-            <textarea id="cmd_input" ondrop="cmdInputDrop(event);" ondragover="cmdInputDragOver(event);" ondragleave="cmdInputDragLeave(event);"></textarea><br>
+            <textarea id="cmd_input" ondrop="cmdInputDrop(event);" ondragover="cmdInputDragOver(event);" ondragleave="cmdInputDragLeave(event);" oninput="cmd_input_changed(event);"></textarea><br>
             <label id="cmd_send" onclick="cmdInputExecute();" class="cmd_editor_buttons">Execute</label>
             
                                                                               

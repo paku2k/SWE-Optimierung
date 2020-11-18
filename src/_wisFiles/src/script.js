@@ -1,7 +1,8 @@
 /* ONLOAD */
 
 function onload(){    
-    document.getElementById('cmd_file').addEventListener('change', readFileSystemdialogue, false);   
+    document.getElementById('cmd_file').addEventListener('change', readFileSystemdialogue, false);  
+    document.addEventListener("keydown", cmd_keylistener, false);
     document.getElementById('tab_defaultOpen').click();
     openInfoNWcon("Connected.");
     checkConnection();
@@ -104,6 +105,7 @@ function closeInfoNWcon(){
 
 
 /* TAB SWITCHING */
+var current_tab = "";
 
 function tab(e, tabname) {
     var i, tabcontent, tablinks;
@@ -123,6 +125,8 @@ function tab(e, tabname) {
     //show the current tab, and add an "active" class to the button that opened the tab
     document.getElementById(tabname).style.display = "block";
     e.currentTarget.className += " active";
+    
+    current_tab = tabname;
 }
 
 
@@ -216,11 +220,34 @@ function  addToCmdInput(contents) {
 
 
 
+function cmd_keylistener(e) {
+    if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)  && e.keyCode == 83) {
+        e.preventDefault();
+        
+        if(current_tab == "tab_cmd"){
+            saveAsMoclFile();
+        }
+    } else if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)  && e.keyCode == 90) {
+        if(current_tab == "tab_cmd"){
+            if(revertClr_cmd_input()) e.preventDefault();
+        }            
+    } 
+}
+
+
 
 function saveAsMoclFile(){    
     var textData = document.getElementById('cmd_input').value; 
     
     if(textData.trim() == "") return;
+                
+    document.getElementById("cmd_input").style.transition = "0.1s";
+    document.getElementById("cmd_input").className = "onsave";
+
+    setTimeout(function(){
+        document.getElementById("cmd_input").className = "ondragleave";
+        setTimeout(function(){document.getElementById("cmd_input").style.transition = "0s";},100);                
+    },100);
     
     var date = new Date();
     var filename = "mocmdlist_"+date.getFullYear()+(date.getMonth()+1)+date.getDate()+"_"+(date.getHours() < 10 ? "0" : "")+date.getHours()+(date.getMinutes() < 10 ? "0" : "")+date.getMinutes()+".mocl";
@@ -231,8 +258,53 @@ function saveAsMoclFile(){
 
 
 
+var cmd_input_clearedValue = "";
+var cmd_input_revertClr_timeframe = false;
+var cmd_input_clr_timeframe;
+function clr_cmd_input(){
+    if(document.getElementById("cmd_input").value == ""){
+        if(cmd_input_revertClr_timeframe) revertClr_cmd_input();
+        return;
+    }
+    
+    cmd_input_clearedValue = document.getElementById("cmd_input").value;
+    document.getElementById("cmd_input").value = "";
+        
+                
+    document.getElementById("cmd_input").style.transition = "0.1s";
+    document.getElementById("cmd_input").className = "onclear";
 
+    setTimeout(function(){
+        document.getElementById("cmd_input").className = "ondragleave";
+        setTimeout(function(){document.getElementById("cmd_input").style.transition = "0s";},100);                
+    },100);
+    
+    document.getElementById("cmd_clr").innerHTML = "&#x2b6f;";
+    cmd_input_revertClr_timeframe = true;
+    
+    clearTimeout(cmd_input_clr_timeframe);
+    cmd_input_clr_timeframe = setTimeout(function(){
+        document.getElementById("cmd_clr").innerHTML = "&#x2612;";
+        cmd_input_revertClr_timeframe = false;
+    },10000);     
+}
 
+function revertClr_cmd_input(){
+    if(document.getElementById("cmd_input").value == ""){
+        document.getElementById("cmd_input").value = cmd_input_clearedValue;
+        document.getElementById("cmd_clr").innerHTML = "&#x2612;";
+        cmd_input_revertClr_timeframe = false;
+        return true;
+    }
+    return false;
+}
+
+function cmd_input_changed(){
+    if(cmd_input_revertClr_timeframe && document.getElementById("cmd_input").value != ""){
+        document.getElementById("cmd_clr").innerHTML = "&#x2612;";
+        cmd_input_revertClr_timeframe = false;        
+    }
+}
 
 
 
