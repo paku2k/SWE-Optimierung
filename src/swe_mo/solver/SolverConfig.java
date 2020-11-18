@@ -12,7 +12,10 @@ import org.json.simple.JSONObject;
 
 public class SolverConfig {
 
+	//test
+	
 	public int ffid;
+	
 	public int N; //dimension
 	public int NP; //particleCount
 	public double F;
