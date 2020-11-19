@@ -169,7 +169,7 @@ public class SolverConfig {
 				return DEbest1.defaultConfig();
 			case "DEbest2":
 				return DEbest2.defaultConfig();
-			case "DErandToBest1":
+			case "DErtb1":
 				return DErandToBest1.defaultConfig();
 			case "PSOgsc":
 				return PSOgsc.defaultConfig();
@@ -214,7 +214,7 @@ public class SolverConfig {
 										 config.upperBound,
 										 config.lowerBound,
 										 config.ffid, id).solve();
-			case "DErandToBest":
+			case "DErtb1":
 				return new DErandToBest1(config.N,
 										 config.NP,
 										 config.F,
@@ -262,7 +262,7 @@ public class SolverConfig {
 		algorithms.add("DErand1");
 		algorithms.add("DEbest1");
 		algorithms.add("DEbest2");
-		algorithms.add("DErandToBest1");
+		algorithms.add("DErtb1");
 		algorithms.add("PSOgsc");
 		algorithms.add("PSOgscDecay");
 		
