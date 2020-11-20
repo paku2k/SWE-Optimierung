@@ -38,19 +38,8 @@ public class PSOgsc {
 		}
 		
 			public static SolverConfig defaultConfig() {
-				SolverConfig conf = new SolverConfig();
-				conf.ffid = 1;
-				conf.N = 1;
-				conf.NP = 10;
-				conf.maxGenerations = 100;
-				conf.lowerBound = -5;
-				conf.upperBound = 5;
-				conf.w = 0.9;
-				conf.cc = 0.5;
-				conf.cs = 0.5;
-				conf.dt = 1;
-				
-				return conf;
+				//int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt
+				return new SolverConfig(1, 1, 10, 100, 5, -5, 0.9, 0.5, 0.5, 1);
 			}
 			
 	

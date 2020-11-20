@@ -566,7 +566,7 @@ public class UiBackend {
 					try {
 						id = Integer.parseInt(cmd_queue.poll());		
 					} catch(Exception e) {						
-						throw new Exception("No valied clone id given.");
+						throw new Exception("No valid clone id given.");
 					}
 				}
 				
@@ -642,7 +642,7 @@ public class UiBackend {
 							} catch(Exception e) {}
 						}
 						
-						throw new Exception("No valied clone id given.");
+						throw new Exception("No valid clone id given.");
 					}
 					
 					
@@ -778,10 +778,25 @@ public class UiBackend {
 				cmd_queue.remove();	
 						
 				if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {	
-					return SolverConfig.getAlgorithmList(true);
+					return SolverConfig.getAlgorithmList(true, false, "");
 				} else {
-					return SolverConfig.getAlgorithmList(false);
-				}						
+					return SolverConfig.getAlgorithmList(false, false, "");
+				}		
+				
+			} else if(cmd_queue.peek().equals("lspars")) {
+				cmd_queue.remove();	
+				
+				if(!cmd_queue.isEmpty() && !cmd_queue.peek().equals("-json")) {
+					String algo = cmd_queue.poll();
+					
+					if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {	
+						return SolverConfig.getAlgorithmList(true, true, algo);
+					} else {
+						return SolverConfig.getAlgorithmList(false, true, algo);
+					}					
+				} else {
+					throw new Exception("Specify algorithm.");
+				}
 			}
 			
 			
