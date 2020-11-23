@@ -53,6 +53,14 @@ public class DEbest2 extends DEbest1{
 		newP.substract(xPop.get(index3));
 		newP.substract(xPop.get(index4));
 		
+			double sumOfDifferences=0.0;
+		
+		for (int i = 0; i < newP.position.size(); i++) {
+			sumOfDifferences+=Math.abs(newP.position.get(i));
+		}
+		this.sumOfDifferencesGlobal+=sumOfDifferences;
+		
+		
 		return newP;
 	}
 	

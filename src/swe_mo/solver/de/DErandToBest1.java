@@ -41,8 +41,11 @@ public class DErandToBest1 extends DEbest1 {
 	public Particle_DE calculateV(int index) {
 		//calculates the Vector V for current generation
 		Particle_DE p=this.calculateRandomDifference(index);
+
+		
+		
 		p.multiply(this.F);
-		Particle_DE differenceToBest =  bestParticle;
+		Particle_DE differenceToBest = new Particle_DE(bestParticle);
 		differenceToBest.substract(xPop.get(index));
 		differenceToBest.multiply(this.lambda);
 		p.add(differenceToBest);
@@ -59,6 +62,8 @@ public class DErandToBest1 extends DEbest1 {
 			}
 			
 		}
+		
+		
 		
 		return p;
 	}

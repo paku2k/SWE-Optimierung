@@ -168,13 +168,6 @@ public class DErand1 {
 		Particle_DE p=this.calculateRandomDifference(index);
 		
 		
-		double sumOfDifferences=0.0;
-		
-		for (int i = 0; i < p.position.size(); i++) {
-			sumOfDifferences+=Math.abs(p.position.get(i));
-		}
-		this.sumOfDifferencesGlobal+=sumOfDifferences;
-		
 		
 		
 		p.multiply(this.F);
@@ -309,6 +302,13 @@ public class DErand1 {
 		newP.substract(xPop.get(index2));
 		//System.out.println("Test nach subtraktion: "+xPop.get(index1).toString());
 
+
+		double sumOfDifferences=0.0;
+		
+		for (int i = 0; i < newP.position.size(); i++) {
+			sumOfDifferences+=Math.abs(newP.position.get(i));
+		}
+		this.sumOfDifferencesGlobal+=sumOfDifferences;
 		
 		
 		return newP;
