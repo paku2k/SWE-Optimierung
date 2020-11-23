@@ -12,6 +12,7 @@ public class PSOparticle extends Particle_DE {
 	
 	ArrayList<Double> velocity = new ArrayList<Double>();
 	ArrayList<Double> personalBestPosition = new ArrayList<Double>();
+	ArrayList<Double> nc = new ArrayList<Double>();
 	double personalMinimum;
 	double w, cc, cs, dt,  min, max;
 	int dimension;
@@ -31,7 +32,8 @@ public class PSOparticle extends Particle_DE {
 		personalBestPosition = new ArrayList<Double>(position);
 
 	}
-		
+	
+	
 	
 	public PSOparticle(int dimension) {
 		//This constructor creates a particle with the given dimension and initializes all dimensions with zero
@@ -49,6 +51,20 @@ public class PSOparticle extends Particle_DE {
 					+  cc*rc*(personalBestPosition.get(i)
 							-position.get(i))  
 					+  cs*rs*(socialComponent.get(i)
+							-position.get(i)));
+		}
+		
+	}
+	
+	
+	public void updateVelocityNeighborhood() {
+		double rc=Math.random();
+		double rs=Math.random();
+		for(int i=0; i<velocity.size(); i++) {
+			velocity.set(i, w*velocity.get(i)  
+					+  cc*rc*(personalBestPosition.get(i)
+							-position.get(i))  
+					+  cs*rs*(nc.get(i)
 							-position.get(i)));
 		}
 		
@@ -87,6 +103,12 @@ public class PSOparticle extends Particle_DE {
 			}else {
 			position.set(i, position.get(i) + velocity.get(i)*dt);
 			}
+		}
+	}
+	
+	public void setNC(ArrayList<Double> nc) {
+		for(int i=0; i < nc.size(); i++) {
+			this.nc.set(i, nc.get(i));
 		}
 	}
 	

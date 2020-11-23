@@ -18,7 +18,6 @@ public class PSOgscDecay extends PSOgsc{
 		this.decayEnd = decayEnd;
 	}
 
-	
 	public static SolverConfig defaultConfig() {
 		SolverConfig conf = new SolverConfig();
 		conf.ffid = 1;
