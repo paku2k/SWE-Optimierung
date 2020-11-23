@@ -21,9 +21,11 @@ public class DEbest1 extends DErand1{
 	public Particle_DE calculateV(int index) {
 		//calculates the Vector V for current generation
 		Particle_DE p=this.calculateRandomDifference(index);
+		
 		p.multiply(this.F);
 		p.add(bestParticle);
 
+		
 		
 	
 		for (int i = 0; i < p.position.size(); i++) {

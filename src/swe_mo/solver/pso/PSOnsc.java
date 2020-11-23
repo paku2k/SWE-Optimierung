@@ -1,7 +1,62 @@
 package swe_mo.solver.pso;
 
-public class PSOnsc {
+import java.util.ArrayList;
 
+import swe_mo.solver.SolverConfig;
+import swe_mo.solver.SolverManager;
+import swe_mo.solver.SolverResult;
+
+public class PSOnsc extends PSOgsc {
+
+	ArrayList<PSOparticle> swarm = new ArrayList<PSOparticle>();
 	
 	
+	public PSOnsc(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, int solverID) {
+		super(dimension, min, max, particleCount, w, cc, cs, dt, numIter,  ffID, solverID);
+	}
+	
+	
+	public static SolverConfig defaultConfig() {
+		//int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt
+		return new SolverConfig(1, 1, 10, 100, 5, -5, 0.9, 0.5, 0.5, 1);
+	}
+	
+	
+	@Override
+	public SolverResult solve() {
+		// This method is the engine of the solver, that creates the swarm and updates / finds the globalBestPosition
+			
+			
+			int counter = 0;
+				
+			for(int i=0; i<particleCount; i++) {
+				PSOparticle p = new PSOparticle(dimension, max, min, w, cc, cs, dt);
+				swarm.add(p);
+			}
+			
+			
+			//for(int i=0; i<numIter && SolverManager.checkTerminated(solverID); i++) {
+			for(int i=0; i<numIter; i++) {
+				for(int j=0; j<particleCount; j++) {
+					updateNC(j);
+					swarm.get(j).updateVelocity(globalBestPosition);
+					swarm.get(j).updatePosition();
+					swarm.get(j).updatePersonalBestPosition(ffID);
+					counter++;
+				}
+				SolverManager.updateStatus(solverID, (100*((double)i)/((double)numIter)));
+			}
+			ArrayList<Double> ret = new ArrayList<Double>();
+			double val = (globalMinimum);
+			ret.addAll(globalBestPosition);
+			return new SolverResult(val, ret, counter);
+		}
+	
+	public void updateNC(int j) {
+		if(swarm.get(j).personalMinimum < swarm.get(j+1).personalMinimum) {
+			swarm.get(j).setNC(swarm.get(j+1).personalBestPosition);
+		}else if(swarm.get(j).personalMinimum < swarm.get(j-1).personalMinimum) {
+			swarm.get(j).setNC(swarm.get(j-1).personalBestPosition);	
+		}
+	}
 }

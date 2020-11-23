@@ -3,6 +3,8 @@ import swe_mo.solver.SolverManager;
 import swe_mo.solver.SolverResult;
 import swe_mo.solver.SolverConfig;
 
+import java.math.*;
+
 
 import java.util.ArrayList;
 
@@ -16,6 +18,7 @@ public class DErand1 {
 	int NP;
 	double F;
 	double CR;
+	
 	int maxGenerations;
 	private int generation;
 	double upperBound;
@@ -23,6 +26,12 @@ public class DErand1 {
 	int fitCount;
 	int solverID;
 	double best;
+	
+	double sumOfDifferencesGlobal;
+	double sumOfDifferencesGlobalLast;
+	double convergenceCrit;
+
+
 	Particle_DE bestParticle;
 	int ffIndex;
 	ArrayList<Double> lastResult;
@@ -32,12 +41,16 @@ public class DErand1 {
 		//With this constructor the population will be created with random set particles within the provided bounds. 
 		
 		this.solverID=solverID;
+		this.sumOfDifferencesGlobal=Double.MIN_VALUE;
+		this.sumOfDifferencesGlobalLast=Double.MIN_VALUE;
+		this.convergenceCrit=NP*N*(upperBound-lowerBound)*10E-5;
 		
 		this.fitCount=0;
 		this.bestParticle  = new Particle_DE(N);
 		this.best = Double.MAX_VALUE;
 		this.N=N;
 		this.NP=NP;
+		
 		this.F=F;
 		this.CR=CR;
 		this.upperBound= upperBound;
@@ -78,6 +91,9 @@ public class DErand1 {
 		
 		this.fitCount=0;
 		this.solverID=solverID;
+		this.sumOfDifferencesGlobal=Double.MIN_VALUE;
+		this.sumOfDifferencesGlobalLast=Double.MIN_VALUE;
+		this.convergenceCrit=NP*N*(upperBound-lowerBound)*10E-5;
 
 
 		this.bestParticle  = new Particle_DE(N);
@@ -119,15 +135,28 @@ public class DErand1 {
 			if(SolverManager.checkTerminated(solverID)) {
 				break;
 			}
-
+			sumOfDifferencesGlobalLast=sumOfDifferencesGlobal;
+			sumOfDifferencesGlobal=0.0;
 			
 			for(int i=0; i<NP; i++) {
 
 				xPop.set(i, compare(i, crossOver(xPop.get(i), calculateV(i))));
-
 				
 			}
 			//System.out.println("\n\n NEW GENERATION \n\n");
+			//System.out.println("Convergence: "+Math.abs(((sumOfDifferencesGlobalLast-sumOfDifferencesGlobal)/sumOfDifferencesGlobalLast)));
+			System.out.println("Sum of differences: "+sumOfDifferencesGlobal);
+
+
+
+
+			if(sumOfDifferencesGlobal<convergenceCrit) {
+				System.out.println("Sum of differences: "+sumOfDifferencesGlobal);
+
+				System.out.println("Convergence Crit. :"+convergenceCrit);
+
+					return new SolverResult(best, bestParticle.position, fitCount);
+			}
 
 		}
 
@@ -137,6 +166,10 @@ public class DErand1 {
 	public Particle_DE calculateV(int index) {
 		//calculates the Vector V for current generation
 		Particle_DE p=this.calculateRandomDifference(index);
+		
+		
+		
+		
 		p.multiply(this.F);
 		p.add(xPop.get(index));
 
@@ -269,6 +302,13 @@ public class DErand1 {
 		newP.substract(xPop.get(index2));
 		//System.out.println("Test nach subtraktion: "+xPop.get(index1).toString());
 
+
+		double sumOfDifferences=0.0;
+		
+		for (int i = 0; i < newP.position.size(); i++) {
+			sumOfDifferences+=Math.abs(newP.position.get(i));
+		}
+		this.sumOfDifferencesGlobal+=sumOfDifferences;
 		
 		
 		return newP;
