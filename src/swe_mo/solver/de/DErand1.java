@@ -60,7 +60,7 @@ public class DErand1 {
 		for(int i = 0; i<NP; i++) {
 	    	lastResult.add(Double.MAX_VALUE);
 	    }
-	
+
 	}
 	
 	public static SolverConfig defaultConfig() {		
