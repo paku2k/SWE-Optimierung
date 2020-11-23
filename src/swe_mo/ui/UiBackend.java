@@ -191,7 +191,7 @@ public class UiBackend {
 	private static Object cmd_interprete(String AUTH, String cmd) throws Exception {
 		//cut the command string
 		Queue<String> cmd_queue = new LinkedList<String>();
-		String[] cmd_split = cmd.replace("    "," ").replace("   "," ").replace("  "," ").split(" ");
+		String[] cmd_split = cmd.replace("\t"," ").replace("    "," ").replace("   "," ").replace("  "," ").split(" ");
 		for(String s : cmd_split) {
 			if(s != "" && s != null)
 				cmd_queue.offer(s);
@@ -447,16 +447,16 @@ public class UiBackend {
 
 			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
 				return     "sm - List of commands\r"
-						 + "\t" + "list    \tList all solvers\r"
-						 + "\t" + "create  \tCreate new solver-instance\r"
-						 + "\t" + "clone   \tCreate new solver-instance with cloned properties\r"
-						 + "\t" + "config  \tConfigure solver\r"
-						 + "\t" + "solve   \tStart solving\r"
-						 + "\t" + "term    \tTerminate solver\r"
-						 + "\t" + "status  \tGet status of solver)\r"
-						 + "\t" + "result  \tGet result\r"
-						 + "\t" + "delete  \tDelete solver-instance\r"
-				 		 + "\t" + "listalgo\tList of implemented algorithms\r";
+						 + "\t" + "list   \tList all solvers\r"
+						 + "\t" + "create \tCreate new solver-instance\r"
+						 + "\t" + "clone  \tCreate new solver-instance with cloned properties\r"
+						 + "\t" + "config \tConfigure solver\r"
+						 + "\t" + "solve  \tStart solving\r"
+						 + "\t" + "term   \tTerminate solver\r"
+						 + "\t" + "status \tGet status of solver)\r"
+						 + "\t" + "result \tGet result\r"
+						 + "\t" + "delete \tDelete solver-instance\r"
+				 		 + "\t" + "lsalgo \tList of implemented algorithms\r";
 								
 			} else if(cmd_queue.peek().equals("list") || cmd_queue.peek().equals("lsit")) {
 				cmd_queue.remove();		
@@ -566,7 +566,7 @@ public class UiBackend {
 					try {
 						id = Integer.parseInt(cmd_queue.poll());		
 					} catch(Exception e) {						
-						throw new Exception("No valied clone id given.");
+						throw new Exception("No valid clone id given.");
 					}
 				}
 				
@@ -642,7 +642,7 @@ public class UiBackend {
 							} catch(Exception e) {}
 						}
 						
-						throw new Exception("No valied clone id given.");
+						throw new Exception("No valid clone id given.");
 					}
 					
 					
@@ -740,9 +740,9 @@ public class UiBackend {
 						return SolverManager.result().toJSON();
 				} else {
 					if(id>-1)
-						return "Result: "+SolverManager.result(id);
+						return SolverManager.result(id);
 					else
-						return "Result: "+SolverManager.result();
+						return SolverManager.result();
 				}
 				
 				
@@ -774,14 +774,29 @@ public class UiBackend {
 					throw e;
 				}
 				
-			} else if(cmd_queue.peek().equals("listalgo")) {
+			} else if(cmd_queue.peek().equals("lsalgo")) {
 				cmd_queue.remove();	
 						
 				if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {	
-					return SolverConfig.getAlgorithmList(true);
+					return SolverConfig.getAlgorithmList(true, false, "");
 				} else {
-					return SolverConfig.getAlgorithmList(false);
-				}						
+					return SolverConfig.getAlgorithmList(false, false, "");
+				}		
+				
+			} else if(cmd_queue.peek().equals("lspars")) {
+				cmd_queue.remove();	
+				
+				if(!cmd_queue.isEmpty() && !cmd_queue.peek().equals("-json")) {
+					String algo = cmd_queue.poll();
+					
+					if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {	
+						return SolverConfig.getAlgorithmList(true, true, algo);
+					} else {
+						return SolverConfig.getAlgorithmList(false, true, algo);
+					}					
+				} else {
+					throw new Exception("Specify algorithm.");
+				}
 			}
 			
 			
