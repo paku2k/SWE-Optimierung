@@ -3,6 +3,7 @@ package swe_mo.solver;
 import swe_mo.solver.de.DErand1;
 import swe_mo.solver.pso.PSOgsc;
 import swe_mo.solver.pso.PSOgscDecay;
+import swe_mo.solver.pso.PSOnsc;
 import swe_mo.solver.de.DEbest1;
 import swe_mo.solver.de.DEbest2;
 import swe_mo.solver.de.DErandToBest1;
@@ -262,7 +263,9 @@ public class SolverConfig {
 				return DErandToBest1.defaultConfig();
 			case "PSOgsc":
 				return PSOgsc.defaultConfig();
-			case "PSOgscDecay":
+			case "PSOnsc":
+				return PSOnsc.defaultConfig();
+			case "PSOgscD":
 				return PSOgscDecay.defaultConfig();
 				
 		}	
@@ -323,7 +326,19 @@ public class SolverConfig {
 										 config.maxGenerations,
 										 config.ffid, id).solve();	
 				
-			case "PSOgscDecay":
+			case "PSOnsc":
+				return new PSOnsc(config.N,
+										 config.lowerBound,
+										 config.upperBound,
+										 config.NP,
+										 config.w,
+										 config.cc,
+										 config.cs,
+										 config.dt,
+										 config.maxGenerations,
+										 config.ffid, id).solve();
+				
+			case "PSOgscD":
 				return new PSOgscDecay(config.N,
 										 config.lowerBound,
 										 config.upperBound,
@@ -350,7 +365,9 @@ public class SolverConfig {
 		algorithms.add("DEbest2");
 		algorithms.add("DErtb1");
 		algorithms.add("PSOgsc");
-		algorithms.add("PSOgscDecay");
+		algorithms.add("PSOnsc");
+		algorithms.add("PSOgscD");
+		
 		
 		if(!pars) {
 			if(!json) {
