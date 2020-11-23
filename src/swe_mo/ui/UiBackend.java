@@ -3,6 +3,8 @@ package swe_mo.ui;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.json.simple.JSONObject;
+
 import swe_mo.Main;
 import swe_mo.Settings;
 import swe_mo.solver.SolverConfig;
@@ -227,7 +229,7 @@ public class UiBackend {
 			
 			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
 				return     "app - List of commands\r"
-						 + "\t" + "exit \t\tStop and exit application"
+						 + "\t" + "exit \t\tStop and exit application\r"
 						 + "\t" + "info \t\tApplication version information";		
 				
 			} else if(cmd_queue.peek().equals("exit")) {
@@ -241,10 +243,19 @@ public class UiBackend {
 			} else if(cmd_queue.peek().equals("info")) {
 				cmd_queue.remove();
 
-				return 	  "METAHEURISTIC OPTIMIZATION"+"\n\n"
-					 	+ "VERSION: "+Main.APPVERSION+"\n"
-					 	+ "DATE: "+Main.DATE+"\n"
-					 	+ "DEVELOPERS:\n"+Main.DEVELOPERS+"\n";
+				if(!cmd_queue.isEmpty() && cmd_queue.poll().equals("-json")) {
+					JSONObject jsonobj = new JSONObject();
+					jsonobj.put("version", Main.APPVERSION);
+					jsonobj.put("date", Main.DATE);
+					jsonobj.put("developers", Main.DEVELOPERS);
+					return jsonobj.toJSONString();
+					
+				} else {
+					return 	  "METAHEURISTIC OPTIMIZATION"+"\n\n"
+						 	+ "VERSION: "+Main.APPVERSION+"\n"
+						 	+ "DATE: "+Main.DATE+"\n"
+						 	+ "DEVELOPERS:\n"+Main.DEVELOPERS+"\n";					
+				}
 			}
 			
 			
@@ -453,10 +464,11 @@ public class UiBackend {
 						 + "\t" + "config \tConfigure solver\r"
 						 + "\t" + "solve  \tStart solving\r"
 						 + "\t" + "term   \tTerminate solver\r"
-						 + "\t" + "status \tGet status of solver)\r"
+						 + "\t" + "status \tGet status of solver\r"
 						 + "\t" + "result \tGet result\r"
 						 + "\t" + "delete \tDelete solver-instance\r"
-				 		 + "\t" + "lsalgo \tList of implemented algorithms\r";
+				 		 + "\t" + "lsalgo \tList of implemented algorithms\r"
+				 		 + "\t" + "lspars \tList of parameters for algorithm\r";
 								
 			} else if(cmd_queue.peek().equals("list") || cmd_queue.peek().equals("lsit")) {
 				cmd_queue.remove();		

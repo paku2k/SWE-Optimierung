@@ -664,6 +664,9 @@ public class UiFrontend {
 		stCmd.addKeyListener(keyadapter_fnkeys);
 		stCmd.addKeyListener(keyadapter_cmd);
 		
+		stCmd.forceFocus();
+		setCaretPosEnd("stCmd");
+		
 		cmd_last = stCmd.getText().length();
 		
 		scaleCompToDpi(shell);	

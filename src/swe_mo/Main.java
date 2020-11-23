@@ -5,9 +5,9 @@ import swe_mo.ui.*;
 
 
 public class Main {	
-	public final static String APPVERSION = "0.0.1.2";
+	public final static String APPVERSION = "0.0.1.3";
 	public final static String DEVELOPERS = "Jonas Dückmann\nDaniel Bätjer\nElias Niepötter\nSimon Pauka\nDavid Messow";
-	public final static String DATE = "2020-11-14";
+	public final static String DATE = "2020-11-23";
 	
 	public static void main(String[] args) {
 		
