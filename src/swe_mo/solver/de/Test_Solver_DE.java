@@ -46,7 +46,7 @@ public class Test_Solver_DE {
 				double curCR=((double)j/(double)stepsCR)*(maxCR-minCR)+minCR;
 				for(int p = 0; p<2; p++) {
 					System.out.println("NEW PARAMETER CR: "+curCR);
-					DErand1 rand1 = new DErand1(N, NP, curF, curCR, maxGenerations, upperBound, lowerBound, 8,1);
+					DErand1 rand1 = new DErand1(N, NP, curF, curCR, maxGenerations, upperBound, lowerBound, 8,1, 1.0);
 					SolverResult result=rand1.solve();
 					System.out.println("Result: "+result.toString()+" with parameters F: "+curF+" and CR: "+curCR+" and Particle "+rand1.bestParticle);
 

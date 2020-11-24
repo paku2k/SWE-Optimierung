@@ -27,6 +27,7 @@ public class DErand1 {
 	int solverID;
 	double best;
 	
+	
 	double sumOfDifferencesGlobal;
 	double sumOfDifferencesGlobalLast;
 	double convergenceCrit;
@@ -37,13 +38,13 @@ public class DErand1 {
 	ArrayList<Double> lastResult;
 	ArrayList<Particle_DE> xPop;
 	
-	public DErand1(int N, int NP, double F, double CR, int maxGenerations, double upperBound, double lowerBound, int ffIndex, int solverID) {
+	public DErand1(int N, int NP, double F, double CR, int maxGenerations, double upperBound, double lowerBound, int ffIndex, int solverID, double convergence) {
 		//With this constructor the population will be created with random set particles within the provided bounds. 
 		
 		this.solverID=solverID;
 		this.sumOfDifferencesGlobal=Double.MIN_VALUE;
 		this.sumOfDifferencesGlobalLast=Double.MIN_VALUE;
-		this.convergenceCrit=NP*N*(upperBound-lowerBound)*10E-5;
+		this.convergenceCrit=NP*N*(upperBound-lowerBound)*10E-5*convergence;
 		
 		this.fitCount=0;
 		this.bestParticle  = new Particle_DE(N);
@@ -77,10 +78,10 @@ public class DErand1 {
 	}
 	
 	public static SolverConfig defaultConfig() {		
-		return new SolverConfig(1,5,50,0.3,0.3,1000,5.14,-5.14);
+		return new SolverConfig(1,5,50,0.3,0.3,1000,5.14,-5.14, 1.0);
 	}
 	
-	public DErand1(int N, int NP, double F, double CR, int maxGenerations, int ffIndex, int solverID) {
+	public DErand1(int N, int NP, double F, double CR, int maxGenerations, int ffIndex, int solverID, double convergence) {
 		//If, for whatever reason, the population should be populated manually, this constructor can be used
 		// it will initialize all NP particles with all dimensions to be zero
 		
@@ -93,7 +94,7 @@ public class DErand1 {
 		this.solverID=solverID;
 		this.sumOfDifferencesGlobal=Double.MIN_VALUE;
 		this.sumOfDifferencesGlobalLast=Double.MIN_VALUE;
-		this.convergenceCrit=NP*N*(upperBound-lowerBound)*10E-5;
+		this.convergenceCrit=NP*N*(upperBound-lowerBound)*10E-5*convergence;
 
 
 		this.bestParticle  = new Particle_DE(N);

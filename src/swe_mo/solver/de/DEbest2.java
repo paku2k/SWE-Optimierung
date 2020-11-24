@@ -4,15 +4,15 @@ public class DEbest2 extends DEbest1{
 
 	
 	public DEbest2(int N, int NP, double F, double CR, int maxGenerations, double upperBound, double lowerBound,
-			int ffIndex, int solverID) {
-		super(N, NP, F, CR, maxGenerations, upperBound, lowerBound, ffIndex, solverID);
+			int ffIndex, int solverID, double convergence) {
+		super(N, NP, F, CR, maxGenerations, upperBound, lowerBound, ffIndex, solverID, convergence);
 		// TODO Auto-generated constructor stub
 	}
 	
 	
 	public DEbest2(int N, int NP, double F, double CR, int maxGenerations, 
-			int ffIndex, int solverID) {
-		super(N, NP, F, CR, maxGenerations,  ffIndex, solverID);
+			int ffIndex, int solverID, double convergence) {
+		super(N, NP, F, CR, maxGenerations,  ffIndex, solverID, convergence);
 		// TODO Auto-generated constructor stub
 	}
 			

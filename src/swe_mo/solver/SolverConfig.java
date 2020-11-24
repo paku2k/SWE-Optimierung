@@ -30,6 +30,7 @@ public class SolverConfig {
 	public double CR;
 	//DErtb1 attributes
 	public double lambda;
+	public double convergence;
 	//PSOgsc attributes
 	public double w;
 	public double cc;
@@ -69,6 +70,8 @@ public class SolverConfig {
 		this.usedpars = s.usedpars;
 	};
 	
+	
+	//basic
 	public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound) {
 		this.ffid = ffid;
 		this.N = n;
@@ -76,6 +79,7 @@ public class SolverConfig {
 		this.maxGenerations = maxGenerations;
 		this.upperBound = upperBound;
 		this.lowerBound = lowerBound;
+	
 		
 		usedpars.add("ffid");
 		usedpars.add("N");
@@ -85,10 +89,19 @@ public class SolverConfig {
 		usedpars.add("lowerBound");		
 	}
 	
+	//with convergence
+	public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double convergence) {
+		this(ffid, n, nP, maxGenerations, upperBound, lowerBound);
+		
+		this.convergence=convergence;
+		usedpars.add("convergence");
+
+	}
+	
 	
 	//DErand1, DEbest1, DEbest2
-	public SolverConfig(int ffid, int n, int nP, double f, double cR, int maxGenerations, double upperBound, double lowerBound) {
-		this(ffid, n, nP, maxGenerations, upperBound, lowerBound);
+	public SolverConfig(int ffid, int n, int nP, double f, double cR, int maxGenerations, double upperBound, double lowerBound, double convergence) {
+		this(ffid, n, nP, maxGenerations, upperBound, lowerBound, convergence);
 		this.F = f;
 		this.CR = cR;
 
@@ -97,8 +110,8 @@ public class SolverConfig {
 	}
 	
 	//DErtb1
-	public SolverConfig(int ffid, int n, int nP, double f, double cR, double lambda, int maxGenerations, double upperBound, double lowerBound) {
-		this(ffid, n, nP, f, cR, maxGenerations, upperBound, lowerBound);
+	public SolverConfig(int ffid, int n, int nP, double f, double cR, double lambda, int maxGenerations, double upperBound, double lowerBound, double convergence) {
+		this(ffid, n, nP, f, cR, maxGenerations, upperBound, lowerBound, convergence);
 		
 		this.lambda = lambda;
 
@@ -180,6 +193,9 @@ public class SolverConfig {
 			case "lambda":
 				lambda = Double.parseDouble(value);
 				return;
+			case "convergence":
+				convergence = Double.parseDouble(value);
+				return;
 		}
 		throw new Exception("No such hyperparameter ("+param+").");
 	}
@@ -217,6 +233,8 @@ public class SolverConfig {
 				return decayStart;
 			case "decayEnd": 
 				return decayEnd;
+			case "convergence": 
+				return convergence;
 		}
 		return "nd";
 	}
@@ -283,7 +301,7 @@ public class SolverConfig {
 										 config.maxGenerations,
 										 config.upperBound,
 										 config.lowerBound,
-										 config.ffid, id).solve();	
+										 config.ffid, id, config.convergence).solve();	
 				
 			case "DEbest1":
 				return new DEbest1(config.N,
@@ -293,7 +311,7 @@ public class SolverConfig {
 										 config.maxGenerations,
 										 config.upperBound,
 										 config.lowerBound,
-										 config.ffid, id).solve();	
+										 config.ffid, id,config.convergence).solve();	
 			case "DEbest2":
 				return new DEbest2(config.N,
 										 config.NP,
@@ -302,7 +320,7 @@ public class SolverConfig {
 										 config.maxGenerations,
 										 config.upperBound,
 										 config.lowerBound,
-										 config.ffid, id).solve();
+										 config.ffid, id,config.convergence).solve();
 			case "DErtb1":
 				return new DErandToBest1(config.N,
 										 config.NP,
@@ -312,7 +330,7 @@ public class SolverConfig {
 										 config.maxGenerations,
 										 config.upperBound,
 										 config.lowerBound,
-										 config.ffid, id).solve();
+										 config.ffid, id,config.convergence).solve();
 					
 			case "PSOgsc":
 				return new PSOgsc(config.N,
