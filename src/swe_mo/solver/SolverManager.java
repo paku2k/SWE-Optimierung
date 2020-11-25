@@ -371,6 +371,58 @@ public class SolverManager {
 	
 
 	
+	public static void clear() throws Exception {
+		clear(runningSolvers.size()-1);
+	}
+	
+	public static void clear(int id1, int id2) throws Exception {
+		if(id1>id2) {
+			int m = id1;
+			id1 = id2;
+			id2 = m;
+		}
+		if(id1<0) id1=0;
+		if(id2>runningSolvers.size()-1) id2 = runningSolvers.size()-1;
+		
+		for(int i=id1; i<=id2; i++) {
+			if(status(i) == -3 || status(i) == 104 || (status(i) >= 0 && status(i) < 100)) continue;	
+			clear(i);			
+		}		
+	}
+	
+	public static void clear(int id) throws Exception {
+		if(status(id) == -3) {
+			throw new Exception("No Solver with this ID.");	
+		} else if(status(id) == 104) {
+			throw new Exception("Solver is deleted.");			
+		} else if(status(id) >= 0 && status(id) < 100) {
+			throw new Exception("Solver is running. Try terminating.");						
+		}
+		runningSolvers.get(id).clear();
+	}
+	
+	public static void clearAll() {	
+		for(int i=0; i < runningSolvers.size(); i++) {
+			try {
+				clear(i);
+			} catch (Exception e) {
+				
+			}
+		}
+		clogger.info(AUTH, "clearAll", "Cleared all solvers (if possible).");
+	}																									
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public static void delete() throws Exception {
 		delete(runningSolvers.size()-1);
 	}
@@ -411,7 +463,7 @@ public class SolverManager {
 				
 			}
 		}
-		clogger.info(AUTH, "deleteAll", "Deleted all Solvers.");
+		clogger.info(AUTH, "deleteAll", "Deleted all solvers.");
 	}																						
 	
 	

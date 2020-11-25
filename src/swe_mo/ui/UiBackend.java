@@ -466,6 +466,7 @@ public class UiBackend {
 						 + "\t" + "term   \tTerminate solver\r"
 						 + "\t" + "status \tGet status of solver\r"
 						 + "\t" + "result \tGet result\r"
+						 + "\t" + "clear  \tClear solver-instance\r"
 						 + "\t" + "delete \tDelete solver-instance\r"
 				 		 + "\t" + "lsalgo \tList of implemented algorithms\r"
 				 		 + "\t" + "lspars \tList of parameters for algorithm\r";
@@ -755,8 +756,36 @@ public class UiBackend {
 						return SolverManager.result(id);
 					else
 						return SolverManager.result();
-				}
+				}	
 				
+				
+			} else if(cmd_queue.peek().equals("clear")) {
+				cmd_queue.remove();		
+				
+				try {
+					if(!cmd_queue.isEmpty()) {	
+						if(cmd_queue.peek().contains("-")) {
+							if(cmd_queue.poll().equals("-all")) {
+								SolverManager.clearAll();
+								return "All Solvers cleared (if possible).";
+							}
+						} else {	
+							int id = Integer.parseInt(cmd_queue.poll());								
+							if(!cmd_queue.isEmpty()) {	
+								SolverManager.clear(id, Integer.parseInt(cmd_queue.poll()));					
+								return "Solvers cleared.";								
+							} else {
+								SolverManager.clear(id);					
+								return "Solver cleared.";					
+							}
+						}
+					} else {					
+						SolverManager.clear();						
+						return "Solver cleared.";
+					}
+				} catch(Exception e) {
+					throw e;
+				}
 				
 			} else if(cmd_queue.peek().equals("delete")) {
 				cmd_queue.remove();		

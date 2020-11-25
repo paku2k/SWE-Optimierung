@@ -104,6 +104,12 @@ public class Solver {
 		status = 102;
 	}	
 	
+	public void clear() {
+		joinThread(2000);
+		terminated = false;
+		status = -1;
+	}
+	
 	public void joinThread(int tmax) {		
 		try {
 			solverThread.join(tmax);
