@@ -20,9 +20,8 @@ public class PSOgsc {
 	ArrayList<Double> globalBestPosition = new ArrayList<Double>();
 
 	
-		public PSOgsc(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, int solverID) {
+		public PSOgsc(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, int solverID) throws Exception {
 		// This constructor creates and  initializes a psoGlobal-Solver for classical Particle Swarm Optimization.
-			
 			this.solverID = solverID;
 			this.ffID = ffID;
 			
@@ -35,6 +34,31 @@ public class PSOgsc {
 			this.cc = cc;
 			this.cs = cs;
 			this.dt = dt;
+			
+			if(dimension < 2) {
+				throw new Exception("You need at least 2 dimensions");
+				}
+			if(min >= max) {
+				throw new Exception("Ranges are set incorrectly. Maximum must be greater than the minimum");
+				}
+			if(particleCount < 1) {
+				throw new Exception("You need at least 1 Particle");
+				}
+			if(w < 0 || w > 1) {
+				throw new Exception("w has to be between 0 and 1");
+				}
+			if(cc < 0 || cc > 1) {
+				throw new Exception("cc has to be between 0 and 1");
+				}
+			if(cs < 0 || cs > 1) {
+				throw new Exception("cs has to be between 0 and 1");
+				}
+			if(dt < 0 || dt > 3) {
+				throw new Exception("dt has to be between 0 and 3");
+				}
+			if(numIter < 1) {
+				throw new Exception("You need at least 1 Iteration");
+				}
 		}
 		
 			public static SolverConfig defaultConfig() {
@@ -61,6 +85,7 @@ public class PSOgsc {
 					for(int j=0; j<particleCount; j++) {
 						updateGlobalBestPosition(swarm.get(j));
 						swarm.get(j).updateVelocity(globalBestPosition);
+						
 						swarm.get(j).updatePosition();
 						swarm.get(j).updatePersonalBestPosition(ffID);
 						counter++;
@@ -77,11 +102,11 @@ public class PSOgsc {
 			public void updateGlobalBestPosition(PSOparticle particle) {
 			// This method updates the globalBestPosition through calculating the corresponding value for a given position
 				
+				
 				//double minimum = FitnessFunction.solve(ffID, particle);
 				if(particle.personalMinimum<globalMinimum) {
 					globalMinimum = particle.personalMinimum;
 					globalBestPosition = new ArrayList<Double>(particle.position);
-					
 				}
 			}
 			

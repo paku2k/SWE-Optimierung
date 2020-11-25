@@ -38,6 +38,7 @@ public class SolverConfig {
 	//PSOgscDecay attributes
 	public double decayStart;
 	public double decayEnd;
+	public int neighbors;
 	
 	
 	//list of used parameters
@@ -65,6 +66,7 @@ public class SolverConfig {
 		this.dt = s.dt;
 		this.decayStart = s.decayStart;
 		this.decayEnd = s.decayEnd;
+		this.neighbors=s.neighbors;
 		
 		this.usedpars = s.usedpars;
 	};
@@ -119,6 +121,19 @@ public class SolverConfig {
 		usedpars.add("cs");
 		usedpars.add("dt");
 	}
+	
+	//PSOnsc
+		public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, int neighbors) {
+			this(ffid, n, nP, maxGenerations, upperBound, lowerBound, w, cc, cs, dt);		
+
+			this.neighbors = neighbors;
+
+			usedpars.add("w");
+			usedpars.add("cc");
+			usedpars.add("cs");
+			usedpars.add("dt");
+			usedpars.add("neighbors");
+		}
 	
 	//PSOgscDecay
 	public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, double decayStart, double decayEnd) {
@@ -180,6 +195,9 @@ public class SolverConfig {
 			case "lambda":
 				lambda = Double.parseDouble(value);
 				return;
+			case "neighbors":
+				neighbors = Integer.parseInt(value);
+				return;
 		}
 		throw new Exception("No such hyperparameter ("+param+").");
 	}
@@ -217,6 +235,9 @@ public class SolverConfig {
 				return decayStart;
 			case "decayEnd": 
 				return decayEnd;
+			case "neighbors": 
+				return neighbors;
+				
 		}
 		return "nd";
 	}
@@ -336,7 +357,8 @@ public class SolverConfig {
 										 config.cs,
 										 config.dt,
 										 config.maxGenerations,
-										 config.ffid, id).solve();
+										 config.ffid, id,
+										 config.neighbors).solve();
 				
 			case "PSOgscD":
 				return new PSOgscDecay(config.N,
