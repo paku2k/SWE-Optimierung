@@ -351,20 +351,20 @@ function cmdInputExecute(){
     //split by line
     var cmd_strings = cmd_string.split(/\n/);
     
-    var datastring = "";
+    var data = "";
     var datacnt = 0;
     
     //build datastring
     for(i=0; i<cmd_strings.length; i++){
         cmd_strings[i] = cmd_strings[i].trim();
         if(cmd_strings[i] != "" && cmd_strings[i] != null){
-            datastring += "&cmd"+datacnt+"="+cmd_strings[i].trim();
+            if(data.length > 0) data += "&";
+            data += "cmd"+datacnt+"="+cmd_strings[i].trim();
             datacnt++;
         }
     }
     
     if(datacnt > 0){
-        var data = "cmdcnt="+datacnt+datastring;
         console.log(data);
         loadAsync("xhr", data, 2000, showMessage)
     }
