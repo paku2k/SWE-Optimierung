@@ -12,20 +12,20 @@ public class Debug {
 
 		// Test a new implementation here:
 		int dimension = 30;
-		double min = -500;
-		double max = 500;
-		int particleCount = 2000;
+		double min = -5.12;
+		double max = 5.12;
+		int particleCount = 200;
 		double w = 0.9;
-		double cc = 0.83;
-		double cs = 0.022;
-		double dt = 1.9;
-		int numIter = 5000;
+		double cc = 0.65;
+		double cs = 0.65;
+		double dt = 0.5;
+		int numIter = 2500;
 		int solverID = 1;
-		int ffID = 8;
+		int ffID = 1;
 		double decayStart = 0.9;
 		double decayEnd = 0.4;
 		
-		PSOgscDecay psoGlobalSolver = new PSOgscDecay(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID, decayStart, decayEnd);
+		PSOgsc psoGlobalSolver = new PSOgsc(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID);
 		SolverResult sr = new PSOgsc(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID).solve();
 
 		System.out.println(sr.toString());

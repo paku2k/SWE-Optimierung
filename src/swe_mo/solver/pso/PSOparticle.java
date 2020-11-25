@@ -12,7 +12,7 @@ public class PSOparticle extends Particle_DE {
 	
 	ArrayList<Double> velocity = new ArrayList<Double>();
 	ArrayList<Double> personalBestPosition = new ArrayList<Double>();
-	double personalMinimum;
+	double personalMinimum = Double.MAX_VALUE / 2;
 	double w, cc, cs, dt,  min, max;
 	int dimension;
 	
