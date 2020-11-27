@@ -479,37 +479,42 @@ public class UiBackend {
 					boolean show_notrunning = true;
 					boolean json = false;
 					String type = "";
+					String creator = "";
 					double status = -5;
 					double status_max = 105;
 					int id = 0;
 					int id_max = Integer.MAX_VALUE;
 					
-					int i = 5;
+					int i = 6;
 					while(cmd_queue.size()>0 && i>=0) {
-						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-r")) {
+						if(cmd_queue.peek().equals("-r")) {
 							cmd_queue.remove();		
 							show_running = true;
 							show_notrunning = false;
-						}
-						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-nr")) {
+						} else if(cmd_queue.peek().equals("-nr")) {
 							cmd_queue.remove();		
 							show_running = false;
 							show_notrunning = true;
-						}
-						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {
+						} else if(cmd_queue.peek().equals("-json")) {
 							cmd_queue.remove();		
 							json = true;
-						}
-						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-t")) {
+						} else if(cmd_queue.peek().equals("-t")) {
 							cmd_queue.remove();		
 							
 							if(!cmd_queue.isEmpty()) {
 								type = cmd_queue.poll();					
 							} else {
-								throw new Exception("Specify Solver type.");
+								throw new Exception("Specify solver type.");
 							}	
-						}
-						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-s")) {
+						} else if(cmd_queue.peek().equals("-c")) {
+							cmd_queue.remove();		
+							
+							if(!cmd_queue.isEmpty()) {
+								creator = cmd_queue.poll();					
+							} else {
+								throw new Exception("Specify solver creator.");
+							}	
+						} else if(cmd_queue.peek().equals("-s")) {
 							cmd_queue.remove();		
 							
 							if(!cmd_queue.isEmpty()) {
@@ -530,8 +535,7 @@ public class UiBackend {
 									}
 								} catch(Exception e) {}
 							}						
-						}
-						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-id")) {
+						} else if(cmd_queue.peek().equals("-id")) {
 							cmd_queue.remove();		
 							
 							if(!cmd_queue.isEmpty()) {
@@ -552,10 +556,12 @@ public class UiBackend {
 									}
 								} catch(Exception e) {}
 							}						
+						} else {
+							throw new Exception("No such parameter: "+cmd_queue.poll());
 						}
 						i--;
 					}					
-					return SolverManager.list(show_running, show_notrunning, type, status, status_max, id, id_max, json);
+					return SolverManager.list(show_running, show_notrunning, type, creator, status, status_max, id, id_max, json);
 					
 				} else {
 					return SolverManager.list();
@@ -565,10 +571,10 @@ public class UiBackend {
 				cmd_queue.remove();		
 				
 				if(!cmd_queue.isEmpty()) {					
-					return SolverManager.create(cmd_queue.poll());					
+					return SolverManager.create(AUTH, cmd_queue.poll());					
 				}
 				
-				return SolverManager.create();
+				return SolverManager.create(AUTH);
 				
 			} else if(cmd_queue.peek().equals("clone")) {
 				cmd_queue.remove();		

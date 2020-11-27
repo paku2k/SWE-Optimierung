@@ -20,13 +20,13 @@ public class SolverManager {
 	
 
 	
-	public static String create() throws Exception{
-		runningSolvers.add(new Solver(runningSolvers.size()));	
+	public static String create(String creator) throws Exception{
+		runningSolvers.add(new Solver(runningSolvers.size(), creator));	
 		return "Solver created (default) with ID "+(runningSolvers.size()-1);
 	}
 
-	public static String create(String algorithm) throws Exception {
-		runningSolvers.add(new Solver(runningSolvers.size(), algorithm));
+	public static String create(String creator, String algorithm) throws Exception {
+		runningSolvers.add(new Solver(runningSolvers.size(), creator, algorithm));
 		return "Solver created ("+algorithm+") with ID "+(runningSolvers.size()-1);
 	}																						
 	
@@ -471,7 +471,7 @@ public class SolverManager {
 	
 	public static String list() throws Exception {
 		try {
-			return list(true, true, "", -5, 105, 0, Integer.MAX_VALUE, false);
+			return list(true, true, "", "", -5, 105, 0, Integer.MAX_VALUE, false);
 			
 		}catch(Exception e) {
 			clogger.ftl(AUTH, "list", "test");
@@ -480,10 +480,10 @@ public class SolverManager {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static String list(boolean show_running, boolean show_notrunning, String type, double status, double status_max, int id, int id_max, boolean asJson) throws Exception {
+	public static String list(boolean show_running, boolean show_notrunning, String type, String creator, double status, double status_max, int id, int id_max, boolean asJson) throws Exception {
 		if(!type.equals("") && !isValidAlgorithm(type)) throw new Exception("Searching for invalid Algorithm.");
 		
-		String list = "ID\tAlgorithm\t\tStatus\n\n";
+		String list = "ID\tAlgorithm\tby\t\tStatus\n\n";
 		JSONArray jsonarr = new JSONArray();	
 		
 		for(int i=0; i<runningSolvers.size(); i++) {
@@ -492,6 +492,7 @@ public class SolverManager {
 				if(show_running && !show_notrunning && (runningSolvers.get(i).getStatus() < 0 || runningSolvers.get(i).getStatus() > 100)) continue;
 				if(show_notrunning && !show_running && (runningSolvers.get(i).getStatus() >= 0 && runningSolvers.get(i).getStatus() <= 100)) continue;
 				if(!type.equals("") && !type.equals(runningSolvers.get(i).getAlgorithm())) continue;
+				if(!creator.equals("") && !creator.equals(runningSolvers.get(i).getCreator())) continue;
 				if(runningSolvers.get(i).getStatus() < status || runningSolvers.get(i).getStatus() > status_max) continue;
 				if(i < id || i > id_max) continue;
 							
@@ -505,7 +506,8 @@ public class SolverManager {
 			if(!asJson) {
 				list += i + "\t";
 				try {
-					list += runningSolvers.get(i).getAlgorithm() + "\t\t\t";
+					list += runningSolvers.get(i).getAlgorithm() + "\t\t";
+					list += runningSolvers.get(i).getCreator() + "\t\t\t";
 					list += round(runningSolvers.get(i).getStatus(),3);	
 				} catch(Exception e) {
 					list += "--------- deleted ---------";
@@ -517,6 +519,7 @@ public class SolverManager {
 				try {		
 					jsonobj.put("algorithm", runningSolvers.get(i).getAlgorithm());
 					jsonobj.put("status", runningSolvers.get(i).getStatus());
+					jsonobj.put("creator", runningSolvers.get(i).getCreator());
 					jsonobj.put("deleted", false);
 				} catch(Exception e) {
 					jsonobj.put("deleted", true);				
