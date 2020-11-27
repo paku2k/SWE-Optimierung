@@ -1,8 +1,10 @@
 package swe_mo.solver.de;
 import swe_mo.solver.SolverManager;
+import swe_mo.solver.FileGenerator;
 import swe_mo.solver.SolverResult;
 import swe_mo.solver.SolverConfig;
 
+import java.io.IOException;
 import java.math.*;
 
 
@@ -27,6 +29,7 @@ public class DErand1 {
 	int solverID;
 	double best;
 	
+	FileGenerator file;
 	
 	double sumOfDifferencesGlobal;
 	double sumOfDifferencesGlobalLast;
@@ -38,8 +41,10 @@ public class DErand1 {
 	ArrayList<Double> lastResult;
 	ArrayList<Particle_DE> xPop;
 	
-	public DErand1(int N, int NP, double F, double CR, int maxGenerations, double upperBound, double lowerBound, int ffIndex, int solverID, double convergence) {
+	public DErand1(int N, int NP, double F, double CR, int maxGenerations, double upperBound, double lowerBound, int ffIndex, int solverID, double convergence) throws IOException {
 		//With this constructor the population will be created with random set particles within the provided bounds. 
+		
+		file=new FileGenerator("DErand1", "Generation;SumOfDifference;dSumOfDifference;Minimum" );
 		
 		this.solverID=solverID;
 		this.sumOfDifferencesGlobal=Double.MIN_VALUE;
@@ -78,14 +83,17 @@ public class DErand1 {
 	}
 	
 	public static SolverConfig defaultConfig() {		
-		return new SolverConfig(1,5,50,0.3,0.3,1000,5.14,-5.14, 1.0);
+		return new SolverConfig(1,5,50,0.3,0.3,1000,5.14,-5.14, 0.01);
 	}
 	
-	public DErand1(int N, int NP, double F, double CR, int maxGenerations, int ffIndex, int solverID, double convergence) {
+	public DErand1(int N, int NP, double F, double CR, int maxGenerations, int ffIndex, int solverID, double convergence) throws IOException {
 		//If, for whatever reason, the population should be populated manually, this constructor can be used
 		// it will initialize all NP particles with all dimensions to be zero
 		
 		//Bounds are created to be max.
+		
+		file=new FileGenerator("DErand1", "Generation;SumOfDifference;dSumOfDifference;Minimum" );
+
 		
 		this.upperBound=Double.MAX_VALUE;
 		this.lowerBound=-Double.MAX_VALUE;
@@ -125,7 +133,7 @@ public class DErand1 {
 	    }
 	}
 	
-	public SolverResult solve() {
+	public SolverResult solve() throws IOException  {
 		
 		SolverManager.updateStatus(solverID, 0.0);
 		
@@ -146,7 +154,9 @@ public class DErand1 {
 			}
 			//System.out.println("\n\n NEW GENERATION \n\n");
 			//System.out.println("Convergence: "+Math.abs(((sumOfDifferencesGlobalLast-sumOfDifferencesGlobal)/sumOfDifferencesGlobalLast)));
-			System.out.println("Sum of differences: "+sumOfDifferencesGlobal);
+			//System.out.println("Sum of differences: "+sumOfDifferencesGlobal);
+			
+			file.write(generation+";"+sumOfDifferencesGlobal+";"+(sumOfDifferencesGlobal-sumOfDifferencesGlobalLast)+";"+best);
 
 
 
@@ -155,12 +165,12 @@ public class DErand1 {
 				System.out.println("Sum of differences: "+sumOfDifferencesGlobal);
 
 				System.out.println("Convergence Crit. :"+convergenceCrit);
-
+					file.close();
 					return new SolverResult(best, bestParticle.position, fitCount);
 			}
 
 		}
-
+		file.close();
 		return new SolverResult(best, bestParticle.position, fitCount);
 	}
 	

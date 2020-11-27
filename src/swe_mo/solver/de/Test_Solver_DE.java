@@ -1,13 +1,15 @@
 
 package swe_mo.solver.de;
 
+import java.io.IOException;
+
 import swe_mo.solver.FitnessFunction;
 import swe_mo.solver.SolverResult;
 
 
 public class Test_Solver_DE {
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
 		int N = 50;
 		int NP = 500;

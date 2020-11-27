@@ -1,17 +1,19 @@
 package swe_mo.solver.de;
 
+import java.io.IOException;
+
 public class DEbest2 extends DEbest1{
 
 	
 	public DEbest2(int N, int NP, double F, double CR, int maxGenerations, double upperBound, double lowerBound,
-			int ffIndex, int solverID, double convergence) {
+			int ffIndex, int solverID, double convergence) throws IOException {
 		super(N, NP, F, CR, maxGenerations, upperBound, lowerBound, ffIndex, solverID, convergence);
 		// TODO Auto-generated constructor stub
 	}
 	
 	
 	public DEbest2(int N, int NP, double F, double CR, int maxGenerations, 
-			int ffIndex, int solverID, double convergence) {
+			int ffIndex, int solverID, double convergence) throws IOException {
 		super(N, NP, F, CR, maxGenerations,  ffIndex, solverID, convergence);
 		// TODO Auto-generated constructor stub
 	}
