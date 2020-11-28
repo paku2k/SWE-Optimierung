@@ -1,0 +1,22 @@
+/* TAB_SETTINGS */
+
+#tab_settings #settings_credentials {
+    text-align: center;
+    width: 50%;    
+    border: 1px solid grey;
+    margin: 0 auto;
+}
+
+#tab_settings #settings_credentials table {
+    width: 100%;
+}
+
+#tab_settings #settings_credentials td {
+    width: 50%;
+    padding: 0.4rem 0.7rem;
+}
+
+#tab_settings #settings_credentials tr > td:first-of-type {
+    text-align: right;
+}
+

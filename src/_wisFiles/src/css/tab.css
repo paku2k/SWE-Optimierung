@@ -1,0 +1,53 @@
+/* TAB */
+
+#tab {
+    overflow: hidden;
+    background-color: #ddd;
+}
+
+#tab button {
+    font-size: 1.1rem;    
+    font-family: "Tw Cen MT", sans-serif;
+    background-color: inherit;
+    float: left;
+    border: 1px solid #aaa;
+    border-bottom: none;
+    border-radius: 0.3rem 0.3rem 0 0;
+    outline: none;
+    cursor: pointer;    
+    padding: 0.5rem 2rem;
+    transition: 0.3s;
+    min-width: 33.33%;
+}
+
+#tab button:hover {
+    background-color: #888;
+}
+
+#tab button.active:hover {
+    background-color: white;
+    cursor: default;   
+}
+
+#tab button.active {
+    color: rgb(100,0,0);
+    background-color: white;
+    font-weight: bold;
+    border-bottom: none;
+}
+
+.tabcontent {
+    display: none;
+    padding: 1rem;
+    background-color: white;
+    animation: fadetab 0.3s;
+}
+
+.active_tabcontent {
+    display: block;
+}
+
+@keyframes fadetab {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}

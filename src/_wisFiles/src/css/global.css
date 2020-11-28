@@ -1,0 +1,24 @@
+/* GLOBAL */
+
+body {
+    margin: 0;
+    
+    font-family: "Tw Cen MT", sans-serif;
+    
+    -moz-hyphens: auto;
+    -o-hyphens: auto;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto; 
+    
+    word-wrap: break-word;
+    
+    min-width: 750px;
+}
+
+.tbi {
+   /* color: red;
+    border: 1px solid red;*/
+}
+
+

@@ -247,7 +247,7 @@ public class UiBackend {
 					JSONObject jsonobj = new JSONObject();
 					jsonobj.put("version", Main.APPVERSION);
 					jsonobj.put("date", Main.DATE);
-					jsonobj.put("developers", Main.DEVELOPERS.replaceAll("ü", "&#xFC;").replaceAll("ä", "&#xE4;").replaceAll("ö", "&#xF6;").replaceAll("ß", "&#xDF;"));
+					jsonobj.put("developers", Main.DEVELOPERS);
 					return jsonobj.toJSONString();
 					
 				} else {
@@ -759,9 +759,9 @@ public class UiBackend {
 						return SolverManager.result().toJSON();
 				} else {
 					if(id>-1)
-						return SolverManager.result(id);
+						return SolverManager.result(id).toString();
 					else
-						return SolverManager.result();
+						return SolverManager.result().toString();
 				}	
 				
 				

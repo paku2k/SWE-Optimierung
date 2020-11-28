@@ -210,6 +210,7 @@ public class WebInterfaceServer{
 							}
 							
 	    					String rv = (String) UiBackend.cmd(AUTH, cmd);
+	    					rv = rv.replaceAll("ü", "&#xFC;").replaceAll("ä", "&#xE4;").replaceAll("ö", "&#xF6;").replaceAll("ß", "&#xDF;");
 	    					if(!cmd.contains("-json")) {
 	    						jsonobj.put("ans", rv);
 	    					} else {    	    						

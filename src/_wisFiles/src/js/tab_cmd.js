@@ -1,140 +1,3 @@
-/* ONLOAD */
-
-function onload(){    
-    document.getElementById('cmd_file').addEventListener('change', readFileSystemdialogue, false);  
-    document.addEventListener("keydown", cmd_keylistener, false);
-    document.getElementById('tab_defaultOpen').click();
-    openInfoNWcon("Connected.");
-    checkConnection();
-}
-
-
-
-
-
-
-
-
-/* INFO BANNER */
-
-function openInfo(type, text){
-    if(document.getElementById("info").style.display!="none"){
-        closeInfo();
-        setTimeout(function(){ openInfo(type,text) }, 200);
-        return;
-    }
-    
-    setInfoColor(type);
-    document.getElementById("info_text").innerHTML = text;
-    document.getElementById("info").style.animationName = "fadeInfoIn";
-    document.getElementById("info").style.animationDuration = "0.2s";
-    document.getElementById("info").style.display = "block";   
-}
-
-function closeInfo(){
-    document.getElementById("info").style.animationName = "fadeInfoOut";
-    document.getElementById("info").style.animationDuration = "0.2s";
-    
-    var elem = document.getElementById("info");
-    elem.parentNode.replaceChild(elem.cloneNode(true), elem);
-    
-    setTimeout(function(){ document.getElementById("info").style.display = "none"; }, 150);    
-    
-    infonwerr_open = false;
-    infonwcon_open = false;
-}
-
-function setInfoColor(type){
-    if(type=="suc" || type=="warn" || type=="err"){
-        document.getElementById("info").className = type;
-        document.getElementById("info_close_x").className = "white";
-        if(type=="warn"){            
-            document.getElementById("info_close_x").className = "grey";
-        }
-    } else {
-        document.getElementById("info").className = "err";        
-    }    
-}
-
-
-
-
-
-
-
-/* CHECK CONNECTION TO WIS */
-
-function checkConnection(){
-    loadAsync("con", "", 1000, closeInfoNWerr);
-    setTimeout(checkConnection, 3000);
-}
-
-var infonwerr_open = false;
-function openInfoNWerr(text){
-    if(infonwerr_open == false){
-        openInfo("err", text);
-        infonwerr_open = true;  
-    }
-}
-
-function closeInfoNWerr(){
-    if(infonwerr_open){
-        closeInfo();
-        openInfoNWcon("Connection reestablished.")        
-    }
-}
-
-
-var infonwcon_open = false;
-function openInfoNWcon(text){
-    if(!infonwcon_open){
-        openInfo("suc", text);
-        infonwcon_open = true;
-        setTimeout(function(){closeInfoNWcon();},2000)
-    }
-}
-
-function closeInfoNWcon(){
-    if(infonwcon_open)
-        closeInfo();
-}
-
-
-
-
-
-
-/* TAB SWITCHING */
-var current_tab = "";
-
-function tab(e, tabname) {
-    var i, tabcontent, tablinks;
-
-    //get all elements with class="tabcontent" and hide them
-    tabcontent = document.getElementsByClassName("tabcontent");
-    for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
-    }
-
-    //get all elements with class="tablinks" and remove the class "active"
-    tablinks = document.getElementsByClassName("tablinks");
-    for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
-
-    //show the current tab, and add an "active" class to the button that opened the tab
-    document.getElementById(tabname).style.display = "block";
-    e.currentTarget.className += " active";
-    
-    current_tab = tabname;
-}
-
-
-
-
-
-
-
 /* TAB CMD load and save */
 
 var drag_active = false;
@@ -221,22 +84,46 @@ function  addToCmdInput(contents) {
 
 
 function cmd_keylistener(e) {
-    if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)  && e.keyCode == 83) {
+    if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) && e.shiftKey && e.keyCode == 83) { //ctrl + shift + S
         e.preventDefault();
         
         if(current_tab == "tab_cmd"){
-            saveAsMoclFile();
+            saveAsWithFilename();
         }
-    } else if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)  && e.keyCode == 90) {
+    } else if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)  && e.keyCode == 83) { //ctrl + S
+        e.preventDefault();
+        
+        if(current_tab == "tab_cmd"){
+            saveAsMoclFile("");
+        }
+    } else if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)  && e.keyCode == 90) { //ctrl + Z
         if(current_tab == "tab_cmd"){
             if(revertClr_cmd_input()) e.preventDefault();
+        }  
+    } else if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)  && e.keyCode == 69) { //ctrl + E
+        if(current_tab == "tab_cmd"){
+            e.preventDefault();
+            
+            cmdInputExecute();
         }            
     } 
 }
 
 
 
-function saveAsMoclFile(){    
+function saveAsWithFilename(){
+    var textData = document.getElementById('cmd_input').value;     
+    if(textData.trim() == "") return;
+    
+    var filename = window.prompt("Enter the filename: ", "");    
+    if(filename != null)
+        saveAsMoclFile(filename);
+}
+
+
+
+
+function saveAsMoclFile(filename){    
     var textData = document.getElementById('cmd_input').value; 
     
     if(textData.trim() == "") return;
@@ -250,7 +137,10 @@ function saveAsMoclFile(){
     },100);
     
     var date = new Date();
-    var filename = "mocmdlist_"+date.getFullYear()+(date.getMonth()+1)+date.getDate()+"_"+(date.getHours() < 10 ? "0" : "")+date.getHours()+(date.getMinutes() < 10 ? "0" : "")+date.getMinutes()+".mocl";
+    if(filename == ""){
+        filename = "mocmdlist_"+date.getFullYear()+(date.getMonth()+1)+date.getDate()+"_"+(date.getHours() < 10 ? "0" : "")+date.getHours()+(date.getMinutes() < 10 ? "0" : "")+date.getMinutes(); 
+    }
+    filename += ".mocl";
         
     var blob = new Blob([textData], {type: "text/plain;charset=utf-8"});
     saveAs(blob, filename);
@@ -317,17 +207,17 @@ function cmd_input_changed(){
 
 
 
-
-
+/* TAB CMD execute */
 
 function cmdInputExecute(){
     var cmd_string = document.getElementById("cmd_input").value;
-    cmd_string = cmd_string.trim(); //leerzeichen am anfang und ende entfernen    
+    cmd_string = cmd_string.trim(); //delete emtpy space at beginning and end   
     cmd_string = cmd_string.replace(/\r/,"\n").replace(/\t/," ");
     cmd_string += "\n";
     
     var string_helper1;
     var string_helper2;
+    
     //delete comments between //* */
     while(cmd_string.indexOf("/*") > -1){
         string_helper1 = cmd_string.substring(0, cmd_string.indexOf("/*"));
@@ -348,64 +238,84 @@ function cmdInputExecute(){
         cmd_string = string_helper1 + string_helper2.substring(string_helper2.indexOf("\n"),string_helper2.length);
     }
     
-    //split by line
-    var cmd_strings = cmd_string.split(/\n/);
-    
-    var data = "";
-    var datacnt = 0;
-    
-    //build datastring
-    for(i=0; i<cmd_strings.length; i++){
-        cmd_strings[i] = cmd_strings[i].trim();
-        if(cmd_strings[i] != "" && cmd_strings[i] != null){
-            if(data.length > 0) data += "&";
-            data += "cmd"+datacnt+"="+cmd_strings[i].trim();
-            datacnt++;
-        }
-    }
-    
-    if(datacnt > 0){
-        console.log(data);
-        loadAsync("xhr", data, 2000, showMessage)
-    }
+    sendCmds(cmd_string.split(/\n/), 2000, tab_cmd_responseHandler);
 }
 
 
 
 
-function loadAsync(adr, data, timeout, callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.ontimeout = function () {
-        openInfoNWerr("The connection timed out. Check if WIS is active.");
-    };
-    xhr.onerror = function () {
-        openInfoNWerr("Connection lost. Check if WIS is active and reload WebGUI.");        
-    }
-    xhr.onload = function() {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                closeInfoNWerr();
-                if(adr=="xhr") callback.apply(xhr);
-            } else {
-                openInfoNWerr("Connection lost. Check if WIS is active and reload WebGUI.");      
+
+function tab_cmd_responseHandler() {    
+    console.log("tab_cmd: \n"+this.responseText);
+    var response = JSON.parse(this.responseText);
+    
+    if(response.cmd_ans){
+        var cmd_ans = response.cmd_ans;
+        
+        for(var i=0; i < cmd_ans.length; i++){
+            var id = i;
+            if(cmd_ans[id].id != i){
+                id = 0;
+                while(cmd_ans[id].id != i){
+                    if(id >= cmd_ans.length){
+                        openInfo("err", "Could not find all cmd responses.");        
+                        return;
+                    }
+                    id++;
+                }
             }
+            
+            appendCmdAnswer(cmd_ans[id].cmd, cmd_ans[id].ans, cmd_ans[id].err);   
+            
+            
+            
         }
-    };
-    xhr.open("POST", adr, true);
-    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    xhr.timeout = timeout;
-    xhr.send(data);
+    } else {
+        openInfo("err", "Could not read data from WebInterfaceServer.");
+    }
 }
+
+
+var cmd_id_counter = 0;
+
+function appendCmdAnswer(cmd, ans, err){
+    console.log(cmd + ": " + ans);
     
-
-
-function showMessage () {
-    console.log(this.responseText);
+    
+    var tr = document.createElement("tr");
+    var td_id = document.createElement("td");
+    var td_cmd = document.createElement("td");
+    var td_ans = document.createElement("td");
+    
+    td_id.innerHTML = cmd_id_counter++;
+    td_cmd.innerHTML = cmd;
+    if(ans){
+        if(isJson(ans)) ans = JSON.stringify(ans);
+        td_ans.innerHTML = ans.replaceAll("\n","<br>").replaceAll("\r","<br>"); 
+    } else if(err){
+        td_ans.innerHTML = err.replaceAll("\n","<br>").replaceAll("\r","<br>"); 
+        td_ans.className = "err_msg";
+    } else {
+        td_ans.innerHTML = "unknown err (no response message)";
+        td_ans.className = "err_msg";
+    }
+    
+    tr.appendChild(td_id);
+    tr.appendChild(td_cmd);
+    tr.appendChild(td_ans);
+    
+    document.getElementById("tab_cmd_history_tableheader").after(tr);
+    
+    if(!document.getElementsByClassName("clearhistory")[0].className.includes("active")){
+        document.getElementsByClassName("clearhistory")[0].className = document.getElementsByClassName("clearhistory")[0].className + " active";
+    }
 }
 
-
-
-
-
-
+function clearCmdHistory(){
+    while(document.getElementById("tab_cmd_history_tableheader").nextSibling){
+        document.getElementById("tab_cmd_history_tableheader").nextSibling.remove();        
+    }
+    cmd_id_counter = 0;
+    document.getElementsByClassName("clearhistory")[0].className = document.getElementsByClassName("clearhistory")[0].className.replace(" active", "");
+}
 
