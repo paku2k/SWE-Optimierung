@@ -247,7 +247,7 @@ public class UiBackend {
 					JSONObject jsonobj = new JSONObject();
 					jsonobj.put("version", Main.APPVERSION);
 					jsonobj.put("date", Main.DATE);
-					jsonobj.put("developers", Main.DEVELOPERS);
+					jsonobj.put("developers", Main.DEVELOPERS.replaceAll("ü", "&#xFC;").replaceAll("ä", "&#xE4;").replaceAll("ö", "&#xF6;").replaceAll("ß", "&#xDF;"));
 					return jsonobj.toJSONString();
 					
 				} else {
