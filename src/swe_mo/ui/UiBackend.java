@@ -14,7 +14,6 @@ import swe_mo.solver.SolverManager;
 
 public class UiBackend {	
 	private final static String AUTH = "UiB";
-	private final static String _AUTH = AUTH;
 	
 	private static boolean running = false;
 	private static boolean exit = false;
@@ -48,7 +47,7 @@ public class UiBackend {
 		try {
 			UiBackend.cmd(AUTH, "uif start");			
 		} catch(Exception e) {
-			clogger.err(_AUTH, "start", e);
+			clogger.err(AUTH, "start", e);
 		}
 
 		while(running) {
@@ -124,7 +123,7 @@ public class UiBackend {
 				}
 			}
 		} catch (Exception e) {
-			clogger.err(_AUTH, "while_run", e);
+			clogger.err(AUTH, "while_run", e);
 		}
 				
 	}
@@ -157,40 +156,39 @@ public class UiBackend {
 	 * function to be called by every function for commandline interpreter access
 	 * logs cmd request and answer, calls cmd_interprete 
 	 * 
-	 * @param AUTH 	authenticator for submitting class
+	 * @param auth 	authenticator for submitting class
 	 * @param cmd	command as String
 	 * 
 	 * @return returns Object with answer
 	 * 
 	 * @throws Exception
 	 */
-	public static Object cmd(String AUTH, String cmd) throws Exception {
+	public static Object cmd(String auth, String cmd) throws Exception {
 		int token = cmd_cnt++;
 		Object status;
-		clogger.cmd(_AUTH, "cmd", "$("+AUTH+"-"+token+") "+cmd);
+		clogger.cmd(AUTH, "cmd", "$("+auth+"-"+token+") "+cmd);
 		try {
-			status = cmd_interprete(AUTH, cmd); 
+			status = cmd_interprete(auth, cmd); 
 		} catch(Exception e){
-			clogger.cmd(_AUTH, "cmd", "$("+AUTH+"-"+token+") --> ERR: "+e.getMessage());
+			clogger.cmd(AUTH, "cmd", "$("+auth+"-"+token+") --> ERR: "+e.getMessage());
 			throw e;
 		}
-		clogger.cmd(_AUTH, "cmd", "$("+AUTH+"-"+token+") --> "+status);
+		clogger.cmd(AUTH, "cmd", "$("+auth+"-"+token+") --> "+status);
 		return status;
 	}
-	
 
 	
 	/**
 	 * interprete cmd line command
 	 * 
-	 * @param AUTH 	authenticator for submitting class
+	 * @param auth 	authenticator for submitting class
 	 * @param cmd	command as String
 	 * 
 	 * @return returns Object with answer
 	 * 
 	 * @throws Exception
 	 */	
-	private static Object cmd_interprete(String AUTH, String cmd) throws Exception {
+	private static Object cmd_interprete(String auth, String cmd) throws Exception {
 		//cut the command string
 		Queue<String> cmd_queue = new LinkedList<String>();
 		String[] cmd_split = cmd.replace("\t"," ").replace("    "," ").replace("   "," ").replace("  "," ").split(" ");
@@ -218,7 +216,7 @@ public class UiBackend {
 						 + "\t" + "sm  \t\tSolverManager\r"
 						 + "\t" + "om  \t\tOptimizer";
 			} else {
-				return cmd(AUTH, cmd_queue.poll()+" help");
+				return cmd(auth, cmd_queue.poll()+" help");
 			}
 			
 			
@@ -296,7 +294,7 @@ public class UiBackend {
 					Settings.set(key, cmd_queue.poll());
 					return "New value set.";
 				} else {
-					return Settings.get(key);
+					return Settings.get(key).toString();
 				}
 			}
 			
@@ -381,7 +379,7 @@ public class UiBackend {
 				if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-n")) {
 					cmd_queue.remove();
 
-					if(wis.status()) UiBackend.cmd(_AUTH, "wis stop");
+					if(wis.status()) UiBackend.cmd(AUTH, "wis stop");
 					
 					if(cmd_queue.isEmpty()) {
 						wis = new WebInterfaceServer();
@@ -395,11 +393,11 @@ public class UiBackend {
 						}
 					}					
 					
-					return UiBackend.cmd(_AUTH, "wis start");
+					return UiBackend.cmd(AUTH, "wis start");
 					
 				} else if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-r")) {
-					if(wis.status()) UiBackend.cmd(_AUTH, "wis stop");
-					return UiBackend.cmd(_AUTH, "wis start");					
+					if(wis.status()) UiBackend.cmd(AUTH, "wis stop");
+					return UiBackend.cmd(AUTH, "wis start");					
 				}
 				
 				if(cmd_queue.isEmpty()) {
@@ -572,10 +570,10 @@ public class UiBackend {
 				cmd_queue.remove();		
 				
 				if(!cmd_queue.isEmpty()) {					
-					return SolverManager.create(AUTH, cmd_queue.poll());					
+					return SolverManager.create(auth, cmd_queue.poll());					
 				}
 				
-				return SolverManager.create(AUTH);
+				return SolverManager.create(auth);
 				
 			} else if(cmd_queue.peek().equals("clone")) {
 				cmd_queue.remove();		
@@ -584,6 +582,7 @@ public class UiBackend {
 				
 				if(!cmd_queue.isEmpty()) {	
 					try {
+						clogger.dbg(AUTH, "cmd", cmd_queue.peek());
 						id = Integer.parseInt(cmd_queue.poll());		
 					} catch(Exception e) {						
 						throw new Exception("No valid clone id given.");
@@ -591,9 +590,9 @@ public class UiBackend {
 				}
 				
 				if(id > -1) {
-					return SolverManager.cloneSolver(id);
+					return SolverManager.cloneSolver(auth, id);
 				} else {
-					return SolverManager.cloneSolver();
+					return SolverManager.cloneSolver(auth);
 				}
 				
 			} else if(cmd_queue.peek().equals("config")) {

@@ -33,18 +33,18 @@ public class SolverManager {
 	
 
 	
-	public static String cloneSolver() throws Exception {
+	public static String cloneSolver(String _auth) throws Exception {
 		if(runningSolvers.size()==0)
 			throw new Exception("No Solver created yet.");
 		
-		return cloneSolver(runningSolvers.size()-1);		
+		return cloneSolver(_auth, runningSolvers.size()-1);		
 	}
 	
-	public static String cloneSolver(int cloneId) throws Exception {
+	public static String cloneSolver(String _auth, int cloneId) throws Exception {
 		if(status(cloneId)<=-3 || status(cloneId)>=104) 
 			throw new Exception("Solver with clone id not found.");
 		
-		create(runningSolvers.get(cloneId).getAlgorithm());
+		create(_auth,runningSolvers.get(cloneId).getAlgorithm());
 		cloneConfig(cloneId);		
 		
 		return "Solver "+cloneId+" cloned";

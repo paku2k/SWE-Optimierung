@@ -31,6 +31,7 @@ public class Settings {
 		//define all application settings here
 		settings.put("minUifOnWebguiOpen", true);
 		settings.put("defaultAlgorithm", "DEbest1");
+		settings.put("WebGUIshowDelSolvers", true);
 		
 	}
 	
