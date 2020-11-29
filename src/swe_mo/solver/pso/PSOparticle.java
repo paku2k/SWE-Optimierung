@@ -33,6 +33,13 @@ public class PSOparticle extends Particle_DE {
 
 	}
 	
+	//clone
+	public PSOparticle(PSOparticle clone) {
+		super(clone);
+	}
+	
+	
+	
 	
 	
 	public PSOparticle(int dimension) {

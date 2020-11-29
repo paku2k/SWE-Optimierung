@@ -1,5 +1,6 @@
 package swe_mo.solver.pso;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import swe_mo.solver.SolverConfig;
@@ -11,7 +12,7 @@ public class PSOgscDecay extends PSOgsc{
 	double decayStart;
 	double decayEnd;
 	
-	public PSOgscDecay(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, int solverID, double decayStart, double decayEnd) {
+	public PSOgscDecay(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, int solverID, double decayStart, double decayEnd) throws IOException {
 		
 		super(dimension, min, max, particleCount, w, cc, cs, dt, numIter,  ffID, solverID);
 		this.decayStart = decayStart;

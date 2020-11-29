@@ -9,8 +9,8 @@ public class DErandToBest1 extends DEbest1 {
 	
 	
 	public DErandToBest1(int N, int NP, double F, double CR, double lambda, int maxGenerations, double upperBound, double lowerBound,
-			int ffIndex, int solverID) throws Exception {
-		super(N, NP, F, CR, maxGenerations, upperBound, lowerBound, ffIndex, solverID);
+			int ffIndex, int solverID, double convergence) throws Exception {
+		super(N, NP, F, CR, maxGenerations, upperBound, lowerBound, ffIndex, solverID, convergence);
 		this.lambda = lambda;
 		
 		if(NP < 4) {
@@ -20,8 +20,8 @@ public class DErandToBest1 extends DEbest1 {
 
 	
 	
-	public DErandToBest1(int N, int NP, double F, double CR, double lambda, int maxGenerations, int ffIndex, int solverID)  throws Exception {
-		super(N, NP, F, CR, maxGenerations, ffIndex, solverID);
+	public DErandToBest1(int N, int NP, double F, double CR, double lambda, int maxGenerations, int ffIndex, int solverID, double convergence)  throws Exception {
+		super(N, NP, F, CR, maxGenerations, ffIndex, solverID, convergence);
 		this.lambda = lambda;
 		
 		if(NP < 4) {
@@ -32,7 +32,7 @@ public class DErandToBest1 extends DEbest1 {
 	
 	
 	public static SolverConfig defaultConfig() {		
-		return new SolverConfig(1,5,50,0.3,0.3,0.3,1000,5.14,-5.14);
+		return new SolverConfig(1,5,50,0.3,0.3,0.3,1000,5.14,-5.14,1);
 	}
 	
 	
