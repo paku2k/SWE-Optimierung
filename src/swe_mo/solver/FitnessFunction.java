@@ -7,7 +7,7 @@ import swe_mo.solver.de.Particle_DE;
 public class FitnessFunction {
 	
 	public static double solve(int index, Particle_DE vector) 
-	//the index refers to papa Cakars list of functions
+	//the index refers to Papa Cakar's list of functions
 	{
 		switch(index) {
 		case 1:

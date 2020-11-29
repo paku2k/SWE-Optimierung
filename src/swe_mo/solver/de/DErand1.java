@@ -36,6 +36,7 @@ public class DErand1 {
 	int ffIndex;
 	ArrayList<Double> lastResult;
 	ArrayList<Particle_DE> xPop;
+	int numberOfCalls = 0;
 	
 	public DErand1(int N, int NP, double F, double CR, int maxGenerations, double upperBound, double lowerBound, int ffIndex, int solverID) {
 		//With this constructor the population will be created with random set particles within the provided bounds. 
@@ -168,8 +169,6 @@ public class DErand1 {
 		Particle_DE p=this.calculateRandomDifference(index);
 		
 		
-		
-		
 		p.multiply(this.F);
 		p.add(xPop.get(index));
 
@@ -225,25 +224,24 @@ public class DErand1 {
 		return u;
 	}
 	
+	
 	public Particle_DE compare(int xIndex, Particle_DE vectorU) {
-		
-		//TODO: find origin of FF calls
-		
 		//Compares vectorX and vectorU and returns the better one. If both give the same result, vectorU is returned
 		double xRes;
-		if(lastResult.get(xIndex)==Double.MAX_VALUE) {
+		if(generation == 0) {
 			 xRes=FitnessFunction.solve(ffIndex, xPop.get(xIndex));
 			fitCount+=1;
-
 		}
+		
+		
 		else {
 			xRes=lastResult.get(xIndex);
 		}
 		double uRes=FitnessFunction.solve(ffIndex, vectorU);
 		fitCount+=1;
-		//System.out.println("current best: "+best);
-		//System.out.println("xRes: "+xRes);
-		//System.out.println("uRes: "+uRes);
+		System.out.println("current best: "+best);
+		System.out.println("xRes: "+xRes);
+		System.out.println("uRes: "+uRes);
 
 		
 		if(xRes<uRes) {
@@ -252,10 +250,7 @@ public class DErand1 {
 				bestParticle = new Particle_DE(xPop.get(xIndex));
 				//System.out.println("Best Value:"+ best);
 				//System.out.println("In generation: "+ generation);
-
-
 				//System.out.println("BestX: "+bestParticle);
-
 			}
 			
 
@@ -268,10 +263,7 @@ public class DErand1 {
 				bestParticle = new Particle_DE(vectorU);
 				//System.out.println("Best Value:"+ best);
 				//System.out.println("In generation: "+ generation);
-
 				//System.out.println("BestU: "+vectorU);
-
-
 			}
 
 			lastResult.set(xIndex, uRes);
