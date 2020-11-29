@@ -105,9 +105,8 @@
         
         
         <div id="tab_cmd" class="tabcontent">	
-            <div>
-                <h2>CMD Editor</h2>            
-
+            <h2>CMD Editor</h2>   
+            <div>         
                 <label class="cmd_editor_buttons" id="cmd_save_as" onclick="saveAsWithFilename();">&#x1f5ab; ...</label>
                 <label class="cmd_editor_buttons" id="cmd_save" onclick="saveAsMoclFile('');">&#x1f5ab;</label>
                 <label class="cmd_editor_buttons"><input type="file" id="cmd_file"/>&#x1f5c0;</label>   
@@ -132,14 +131,18 @@
         
         
         <div id="tab_settings" class="tabcontent">
-            <h2 class="tbi">Application Settings</h2>
+            <h2>Application Settings</h2>
             
-            <p onclick='openInfo("warn", "Test Banner WARN");' >test warn banner</p>
-            
-            <br>
-            <br>
-            <br>
-            <br>
+            <div id="settings_list">
+                <table id="tab_settings_table">
+                    <tr id="tab_settings_tableheader">
+                        <th>Setting</th>
+                        <th>Value</th>
+                    </tr>
+                </table> 
+                <label onclick="settingsReset();">Reset All</label>
+            </div>               
+                
             <div id="settings_credentials">
                 <h3>App Info</h3>
                 <table>

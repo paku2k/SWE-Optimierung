@@ -1,14 +1,13 @@
+#tab_cmd h2 {
+    text-align: center;
+    display: none;
+}
+
 /* CMD Editor */
 
 #tab_cmd > div{
     margin-top: 0.45rem;
     clear: both;
-}
-
-#tab_cmd > div > h2 {
-    margin: 0;
-    float: left;
-    padding-top: 0.8rem;
 }
 
 #tab_cmd #cmd_file {
@@ -40,7 +39,6 @@
     max-width: 100%;
     min-width: 100%;
     height: 40%;
-    margin-top: 0.7rem;
 }
 
 #tab_cmd .ondragover {

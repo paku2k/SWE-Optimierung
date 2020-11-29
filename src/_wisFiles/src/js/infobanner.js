@@ -1,6 +1,12 @@
 /* INFO BANNER */
 
+var timeout;
+
 function openInfo(type, text){
+    openInfoAdvanced(type, text, 10000)
+}
+
+function openInfoAdvanced(type, text, ontime){
     if(document.getElementById("info").style.display!="none"){
         closeInfo();
         setTimeout(function(){ openInfo(type,text) }, 200);
@@ -12,6 +18,10 @@ function openInfo(type, text){
     document.getElementById("info").style.animationName = "fadeInfoIn";
     document.getElementById("info").style.animationDuration = "0.2s";
     document.getElementById("info").style.display = "block";   
+    
+    clearTimeout(timeout);
+    
+    if(ontime > 0) timeout = setTimeout(function(){ closeInfo(); }, ontime); 
 }
 
 function closeInfo(){

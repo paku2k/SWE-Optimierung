@@ -29,6 +29,24 @@ function tab_settings_responseHandler(){
                         createOrChangeSettingHTML(cfg_list[j].key, cfg_list[j].value);
                     }
                 } 
+                
+            }else if(cmd_ans[i].cmd == "cfg -reset"){
+                // settings reset to default
+                if(cmd_ans[i].ans){
+                    openInfo("suc", cmd_ans[i].ans);
+                    loadAppSettings();
+                } else if(cmd_ans[i].err){
+                    openInfo("err", cmd_ans[i].err);
+                } 
+                
+            }else if(cmd_ans[i].cmd.includes("cfg ")){
+                // setting changed
+                if(cmd_ans[i].ans){
+                    openInfo("suc", cmd_ans[i].ans);
+                    loadAppSettings();
+                } else if(cmd_ans[i].err){
+                    openInfo("err", cmd_ans[i].err);
+                } 
             }
             
         }
@@ -42,6 +60,32 @@ function tab_settings_responseHandler(){
 
 
 function createOrChangeSettingHTML(key, value){
-    /* tbi */
-    console.log(key +": "+ value);
+    if(document.getElementById("settings_"+key)){
+        document.getElementById("settings_"+key).lastChild.innerHTML = '<input type="text" value="'+value+'" onchange="settingsChange(\''+key+'\', this.value)">';
+        
+    } else {        
+        var tr = document.getElementById("tab_settings_table").insertRow(-1);
+        var td_key = document.createElement("td");
+        var td_value = document.createElement("td");
+
+        tr.setAttribute("id","settings_"+key);
+
+        td_key.innerHTML = key;
+        td_value.innerHTML = '<input type="text" value="'+value+'" onchange="settingsChange(\''+key+'\', this.value)">';
+
+        tr.appendChild(td_key);
+        tr.appendChild(td_value);
+        
+    }
+}
+
+
+function settingsChange(key, value){
+    sendCmds(["cfg "+key+" "+value], 2000, tab_settings_responseHandler);
+}
+
+
+
+function settingsReset(){
+    sendCmds(["cfg -reset"], 2000, tab_settings_responseHandler);    
 }

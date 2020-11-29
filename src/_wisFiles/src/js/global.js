@@ -6,9 +6,11 @@ function onload(){
     document.getElementById('tab_defaultOpen').click();
     openInfoNWcon("Connected.");
    
+    
     checkConnection();
     loadAppInfo();
     loadAppSettings();
+    /**/
 }
 
 
@@ -22,7 +24,7 @@ function checkConnection(){
 var infonwerr_open = false;
 function openInfoNWerr(text){
     if(infonwerr_open == false){
-        openInfo("err", text);
+        openInfoAdvanced("err", text, -1);
         infonwerr_open = true;  
     }
 }

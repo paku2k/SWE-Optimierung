@@ -235,6 +235,7 @@ public class UiBackend {
 			} else if(cmd_queue.peek().equals("exit")) {
 				cmd_queue.remove();
 				
+				UiFrontend.setMinimized(false);
 				if(wis.status()) wis.stop(true);
 				UiFrontend.stop(true);
 				UiBackend.stop(true);
