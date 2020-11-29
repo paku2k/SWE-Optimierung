@@ -72,7 +72,7 @@ public class DErand1 {
 	    }
 		
 		for(int i = 0; i<NP; i++) {
-	    	lastResult.add(0.0);
+	    	lastResult.add(Double.MAX_VALUE);
 	    }
 
 	}
@@ -233,15 +233,15 @@ public class DErand1 {
 			fitCount+=1;
 		}
 		
-
+		
 		else {
 			xRes=lastResult.get(xIndex);
 		}
 		double uRes=FitnessFunction.solve(ffIndex, vectorU);
 		fitCount+=1;
-		//System.out.println("current best: "+best);
-		//System.out.println("xRes: "+xRes);
-		//System.out.println("uRes: "+uRes);
+		System.out.println("current best: "+best);
+		System.out.println("xRes: "+xRes);
+		System.out.println("uRes: "+uRes);
 
 		
 		if(xRes<uRes) {
