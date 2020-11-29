@@ -1,5 +1,6 @@
 package swe_mo.solver.pso;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import swe_mo.solver.SolverConfig;
@@ -11,7 +12,7 @@ public class PSOnsc extends PSOgsc {
 	ArrayList<PSOparticle> swarm = new ArrayList<PSOparticle>();
 	
 	
-	public PSOnsc(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, int solverID) {
+	public PSOnsc(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, int solverID) throws IOException {
 		super(dimension, min, max, particleCount, w, cc, cs, dt, numIter,  ffID, solverID);
 	}
 	
