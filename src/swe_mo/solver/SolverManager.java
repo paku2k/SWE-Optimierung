@@ -302,7 +302,7 @@ public class SolverManager {
 		
 		for(int i=0; i < runningSolvers.size(); i++) {
 			try {
-				if(status(i) >= 0)
+				if(status(i) >= 0 && status(i) < 104)
 					runningSolvers.get(i).joinThread();
 			} catch(Exception e) {
 				clogger.err(AUTH, "joinAllThreads", e);

@@ -78,8 +78,10 @@ public class UiFrontend {
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
-		}	
-		display.dispose();
+		}
+
+		if(!shell.isDisposed()) display.dispose();	
+
 		shell = null;
 		clogger.info(AUTH, "run", "UiFrontend stopped");
 	}
