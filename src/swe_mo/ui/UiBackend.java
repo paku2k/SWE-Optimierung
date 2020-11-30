@@ -582,7 +582,6 @@ public class UiBackend {
 				
 				if(!cmd_queue.isEmpty()) {	
 					try {
-						clogger.dbg(AUTH, "cmd", cmd_queue.peek());
 						id = Integer.parseInt(cmd_queue.poll());		
 					} catch(Exception e) {						
 						throw new Exception("No valid clone id given.");
@@ -706,7 +705,7 @@ public class UiBackend {
 					throw e;
 				}
 				
-			} else if(cmd_queue.peek().equals("term")) {
+			} else if(cmd_queue.peek().equals("term") || cmd_queue.peek().equals("terminate")) {
 				cmd_queue.remove();		
 				
 				try {

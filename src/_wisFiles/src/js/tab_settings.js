@@ -4,10 +4,11 @@ function loadAppInfo(){
 
 function loadAppSettings(){
     sendCmds(["cfg -list -json"], 2000, tab_settings_responseHandler);
+    setTimeout(loadAppSettings, 5000);
 }
 
 function tab_settings_responseHandler(){   
-    console.log("tab_settings: \n"+this.responseText);
+    //console.log("tab_settings: \n"+this.responseText);
     var response = JSON.parse(this.responseText);
     
     if(response.cmd_ans){
@@ -59,9 +60,17 @@ function tab_settings_responseHandler(){
 
 
 
-function createOrChangeSettingHTML(key, value){
+function createOrChangeSettingHTML(key, value){    
+    if(key == "WebGUIshowDelSolvers"){
+        setShowDelSolvers(value);
+    }
+    
     if(document.getElementById("settings_"+key)){
-        document.getElementById("settings_"+key).lastChild.innerHTML = '<input type="text" value="'+value+'" onchange="settingsChange(\''+key+'\', this.value)">';
+        if(!(document.getElementById("settings_"+key).lastChild.firstChild===document.activeElement)){
+            document.getElementById("settings_"+key).lastChild.innerHTML = '<input type="text" value="'+value+'" onchange="settingsChange(\''+key+'\', this.value)">';
+        } else {
+            return;
+        }
         
     } else {        
         var tr = document.getElementById("tab_settings_table").insertRow(-1);

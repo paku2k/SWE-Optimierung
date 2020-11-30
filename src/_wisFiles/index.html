@@ -28,10 +28,10 @@
         <script language="javascript" type="text/javascript" src="src/js/helperfn.js"></script>
         <script language="javascript" type="text/javascript" src="src/js/loadAsync.js"></script>
         <script language="javascript" type="text/javascript" src="src/js/infobanner.js"></script>
-        <script language="javascript" type="text/javascript" src="src/js/tab_settings.js"></script>
         <script language="javascript" type="text/javascript" src="src/js/filesaver.js"></script>
         <script language="javascript" type="text/javascript" src="src/js/tab_cmd.js"></script>
         <script language="javascript" type="text/javascript" src="src/js/tab_solver.js"></script>
+        <script language="javascript" type="text/javascript" src="src/js/tab_settings.js"></script>
         <script language="javascript" type="text/javascript" src="src/js/tab.js"></script>
         <script language="javascript" type="text/javascript" src="src/js/global.js"></script>
     </header>
@@ -49,12 +49,12 @@
             
             
         <div id="tab">
-            <button class="tablinks" onclick="tab(event, 'tab_solver')">Solver</button>
+            <button class="tablinks" onclick="tab(event, 'tab_solver')" id="tab_defaultOpen">Solver</button>
             <!--
             <button class="tablinks" onclick="tab(event, 'tab_optimizer')">Optimizer</button>
             <button class="tablinks" onclick="tab(event, 'tab_functions')">Functions</button>
             -->
-            <button class="tablinks" onclick="tab(event, 'tab_cmd')" id="tab_defaultOpen">CMD Editor</button>
+            <button class="tablinks" onclick="tab(event, 'tab_cmd')">CMD Editor</button>
             <button class="tablinks" onclick="tab(event, 'tab_settings')">Settings</button>            
         </div>
         
@@ -65,25 +65,93 @@
                 <table>
                     <tr>
                         <td id="solver_list">                            
-                            <button class="solver_list_elem active" onclick="switch_solver(event, 'solver_0')">0: DErand1</button>
-                            <button class="solver_list_elem" onclick="switch_solver(event, 'solver_1')">1: PSOgsc</button>
-                            <button class="solver_list_elem" onclick="switch_solver(event, 'solver_2')">2: PSOnsc</button>
-
                             <label id="solver_add" onclick="switch_solver(event, 'add_solver')">add solver</label>                                 
                         </td>
-                        <td>            
-                            <div id="solver_0" class="solver_content active">
-                                <p class="tbi">Content DErand1</p>
-                            </div>
-                            <div id="solver_1" class="solver_content">
-                                <p class="tbi">Content PSOgsc</p>
-                            </div>
-                            <div id="solver_2" class="solver_content">
-                                <p class="tbi">Content PSOnsc</p>                                
-                            </div>
+                        <td id="solver_contents">      
                             <div id="add_solver" class="solver_content">
-                                <p class="tbi">Add Solver</p>                                
+                                <h3>Add Solver</h3><br>  
+                                <label for="algorithm">Algorithm:</label>
+                                <select id="algorithm">
+                                    <option value="default">default</option>
+                                </select>
+                                <button class="solver_content_btn" onclick="createSolver();">Create</button>           
+                                                          
                             </div>
+                            
+                 <!--           
+<div id="solver_0" class="solver_content">
+           <table class="solver_content_t1">
+               <tr>
+                   <td>
+                        <h3>DErand1</h3>
+                   </td>
+                   <td>
+                       <span id="solver_0_status">initialized (-2)</span>   
+                   </td>
+                   <td>
+                       <button onclick="solverDuplicate(0);">Duplicate</button>
+                       <button onclick="solverDelete(0);">Delete</button>
+                   </td>
+               </tr>
+           </table>
+
+            <div>
+                <table class="solver_content_t2">
+                   <tr>
+                    <td>
+                        <h4>Configuration</h4>
+                    </td>
+                    <td>
+                        <button id="solver_0_copyfromBtn" onclick="solverCfgCopyFrom(0);">Copy from</button>
+                        <input type="text" value="0" id="solver_0_copyfrom">
+                    </td>
+                    </tr>
+                </table>
+                        
+                        
+                   <table class="solver_content_t3">
+                            <tr id="solver_config_tableheader">
+                                <th>Parameter</th>
+                                <th>Value</th>
+                            </tr>
+                           <tr>
+                               <td>ffid</td>
+                               <td><input type="text" value="1" id="solver_0_cfg_ffid" autocomplete="off" onchange="solverCfgChange(0,'ffid',this.value)"></td>
+                           </tr>
+                   </table>  
+
+            </div>
+
+            <div>
+                <button id="solver_0_solveBtn" onclick="solverSolve(0);">Solve</button>     
+                <button id="solver_0_termBtn" onclick="solverTerm(0);">Terminate</button>
+                <button id="solver_0_clearBtn" onclick="solverClear(0);">Clear</button>                                 
+            </div>
+
+            <div id="solver_0_result">
+                <h4>Result</h4>
+                   <table class="solver_content_t4">
+                           <tr>
+                               <td>Minimum: </td>
+                               <td id="solver_0_resultMin"></td>
+                           </tr>
+                           <tr>
+                               <td>Position: </td>
+                               <td id="solver_0_resultPos"></td>
+                           </tr>
+                           <tr>
+                               <td>Function Calls: </td>
+                               <td id="solver_0_resultFC"></td>
+                           </tr>
+                           <tr>
+                               <td>Exception: </td>
+                               <td id="solver_0_resultException"></td>
+                           </tr>
+                   </table>                           
+            </div>          
+</div>
+                  -->     
+                       
                         </td>
                     </tr>
                 </table>
@@ -152,7 +220,7 @@
                     </tr>
                     <tr>
                         <td>WebGUI Version</td>
-                        <td id="appinfo_wguiversion">0.0.2.1</td>
+                        <td id="appinfo_wguiversion">0.1.0.0</td>
                     </tr>
                     <tr>
                         <td>Release Date</td>

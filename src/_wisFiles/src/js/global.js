@@ -4,13 +4,17 @@ function onload(){
     document.getElementById('cmd_file').addEventListener('change', readFileSystemdialogue, false);  
     document.addEventListener("keydown", cmd_keylistener, false);
     document.getElementById('tab_defaultOpen').click();
-    openInfoNWcon("Connected.");
    
     
+    openInfoNWcon("Connected.");
+   
+   
     checkConnection();
     loadAppInfo();
     loadAppSettings();
-    /**/
+    
+    document.getElementById('solver_add').click();
+    loadSolverInitial();
 }
 
 
@@ -50,5 +54,3 @@ function closeInfoNWcon(){
     if(infonwcon_open)
         closeInfo();
 }
-
-

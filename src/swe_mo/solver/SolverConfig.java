@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 
 
@@ -238,11 +239,18 @@ public class SolverConfig {
 	
 	@SuppressWarnings("unchecked")
 	public String toJSON() {
-		JSONObject json = new JSONObject();
+		JSONArray jarr = new JSONArray();
 		
 		for(String p : usedpars) {
-			json.put(p, getValue(p));
+			JSONObject json = new JSONObject();
+			json.put("key", p);
+			json.put("value", getValue(p));
+			jarr.add(json);
 		}
+		
+
+		JSONObject json = new JSONObject();
+		json.put("cfg", jarr);
 		
 		return json.toJSONString();
 	}
@@ -383,8 +391,13 @@ public class SolverConfig {
 				
 				return l;
 			} else {
+				JSONArray algoarray = new JSONArray();
+				for(int i=0; i < algorithms.size(); i++) {					
+					algoarray.add((JSONObject) new JSONParser().parse(getAlgorithmList(true,true,algorithms.get(i))));
+				}
+				
 				JSONObject jsonobj = new JSONObject();
-				jsonobj.put("algorithms", algorithms);
+				jsonobj.put("algorithms", algoarray);
 				return jsonobj.toJSONString();
 			}
 			
