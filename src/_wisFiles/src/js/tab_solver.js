@@ -419,6 +419,12 @@ function updateSolverResult(id, result, err){
         } else {
             document.getElementById("solver_"+id+"_resultPos").parentElement.style.display = "none";            
         }
+        if(result.iterations != null){
+            document.getElementById("solver_"+id+"_resultIter").innerHTML = result.iterations;
+            document.getElementById("solver_"+id+"_resultIter").parentElement.style.display = "inherit";
+        } else {
+            document.getElementById("solver_"+id+"_resultIter").parentElement.style.display = "none";            
+        }
         if(result.ffCounter != null){
             document.getElementById("solver_"+id+"_resultFC").innerHTML = result.ffCounter;
             document.getElementById("solver_"+id+"_resultFC").parentElement.style.display = "inherit";
@@ -506,7 +512,7 @@ function newSolverContentDiv(id, algorithm){
         var div3 = document.createElement("div");
         div3.setAttribute("id", "solver_"+id+"_result");
         div3.setAttribute("style", "display: none;");
-        div3.innerHTML = '<h4>Result</h4><table class="solver_content_t4"><tr><td>Minimum: </td><td id="solver_'+id+'_resultMin"></td></tr><tr><td>Position: </td><td id="solver_'+id+'_resultPos"></td></tr><tr><td>Function Calls: </td><td id="solver_'+id+'_resultFC"></td></tr><tr><td>Exception: </td><td id="solver_'+id+'_resultException"></td></tr></table>';
+        div3.innerHTML = '<h4>Result</h4><table class="solver_content_t4"><tr><td>Minimum: </td><td id="solver_'+id+'_resultMin"></td></tr><tr><td>Position: </td><td id="solver_'+id+'_resultPos"></td></tr><tr><td>Iterations: </td><td id="solver_'+id+'_resultIter"></td></tr><tr><td>Function Calls: </td><td id="solver_'+id+'_resultFC"></td></tr><tr><td>Exception: </td><td id="solver_'+id+'_resultException"></td></tr></table>';
     
     div.appendChild(div3);
     

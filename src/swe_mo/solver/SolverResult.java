@@ -8,7 +8,8 @@ import org.json.simple.JSONObject;
 public class SolverResult {
 	public double value;
 	public ArrayList<Double> returnPosition;
-	public int ffCounter;
+	public long ffCounter;
+	public long iterations;
 	//other messages (number of iterations until result, ...)
 	
 	Exception e; //bitte stehen lassen, hier speichere ich die Exception, falls ihr in der solve Methode eine werft
@@ -25,6 +26,13 @@ public class SolverResult {
 		
 	}
 	
+	public SolverResult(double value, ArrayList<Double> position, long ffCounter, long iterations) {
+		this.value = value;
+		this.returnPosition = position;
+		this.ffCounter=ffCounter;
+		this.iterations = iterations;
+	}
+	
 	
 	
 
@@ -39,6 +47,7 @@ public class SolverResult {
 			} else {
 				s += "Particle: null";
 			}
+			s += "\nIterations: "+iterations;
 			s += "\nFitness functions run: "+ffCounter;
 		} else {
 			s += "Exception: "+e.getMessage();
@@ -53,6 +62,7 @@ public class SolverResult {
 		if(e == null) {
 			json.put("value", value);
 			json.put("ffCounter", ffCounter);
+			json.put("iterations", iterations);
 			if(returnPosition != null) {
 				json.put("particle", Arrays.toString(returnPosition.toArray()));
 			} else {

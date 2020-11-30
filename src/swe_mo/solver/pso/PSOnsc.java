@@ -69,7 +69,7 @@ public class PSOnsc extends PSOgsc {
 				
 				if(converged&&convergence!=0.0) {
 					c.file.close();
-					return new SolverResult(globalMinimum, globalBestPosition, counter);
+					return new SolverResult(globalMinimum, globalBestPosition, counter, i);
 				}
 				
 			}
@@ -78,7 +78,7 @@ public class PSOnsc extends PSOgsc {
 			ret.addAll(globalBestPosition);
 			
 			c.file.close();
-			return new SolverResult(val, ret, counter);
+			return new SolverResult(val, ret, counter, numIter);
 		}
 	
 	public void updateNC(PSOparticle particle) {

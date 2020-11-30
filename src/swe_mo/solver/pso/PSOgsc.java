@@ -131,7 +131,7 @@ public class PSOgsc {
 					
 					if(converged&&convergence!=0.0) {
 						c.file.close();
-						return new SolverResult(globalMinimum, globalBestPosition, counter);
+						return new SolverResult(globalMinimum, globalBestPosition, counter, i);
 					}
 
 					
@@ -141,7 +141,7 @@ public class PSOgsc {
 				ret.addAll(globalBestPosition);
 				
 				c.file.close();
-				return new SolverResult(val, ret, counter);
+				return new SolverResult(val, ret, counter, numIter);
 			}
 			
 			

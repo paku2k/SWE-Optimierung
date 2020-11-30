@@ -1,12 +1,10 @@
 package swe_mo.solver.de;
 import swe_mo.solver.SolverManager;
-import swe_mo.solver.FileGenerator;
 import swe_mo.solver.SolverResult;
 import swe_mo.solver.SolverConfig;
 import swe_mo.solver.Convergence;
 
 import java.io.IOException;
-import java.math.*;
 
 
 import java.util.ArrayList;
@@ -146,7 +144,7 @@ public class DErand1 {
 			if (converged&&this.convergenceCrit!=0.0) {
 				c.file.close();
 
-				return new SolverResult(best, bestParticle.position, fitCount);
+				return new SolverResult(best, bestParticle.position, fitCount, generation);
 				
 
 			}
@@ -160,7 +158,7 @@ public class DErand1 {
 
 		c.file.close();
 			
-		return new SolverResult(best, bestParticle.position, fitCount);
+		return new SolverResult(best, bestParticle.position, fitCount, generation);
 	}
 	
 	public Particle_DE calculateV(int index) {
