@@ -68,13 +68,8 @@
     margin-bottom: 0.5rem;
 }
 
-#tab_solver #solver_list button:hover {
-    background-color: #ddd;
-}
-
 #tab_solver #solver_list button.initialized{
-    background-color: #eee;
-    
+    background-color: #eee;    
 }
 
 #tab_solver #solver_list button.deleted {
@@ -102,7 +97,9 @@
 #tab_solver button.active {
     opacity: 100% !important;
     font-weight: bold;
+    cursor: default !important;
 }
+
 
 #solver_add {
     background-color: #f1f1f1;
@@ -122,13 +119,19 @@
 
 #solver_add:hover {
     background-color: #ddd;
-    opacity: 100% !important;
+}
+
+#solver_add.active:hover {
+    background-color: #f1f1f1;
 }
 
 #solver_add.active {
     opacity: 100% !important;
     font-weight: bold;    
+    cursor: default !important;
 }
+
+
 
 
 
