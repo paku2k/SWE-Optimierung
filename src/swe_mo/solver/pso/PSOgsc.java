@@ -1,9 +1,22 @@
 package swe_mo.solver.pso;
 
 import swe_mo.solver.*;
+import swe_mo.solver.de.CRN;
+import swe_mo.solver.de.Particle_DE;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class PSOgsc {
+
+	
+	//convergence related
+	double sumOfDifferencesGlobal;
+	Convergence c;
+	double convergence;
+	//end convergence related
+	
+	
 
 	int dimension;
 	int numIter;
@@ -18,10 +31,19 @@ public class PSOgsc {
 	double dt;
 	double globalMinimum = Double.MAX_VALUE;
 	ArrayList<Double> globalBestPosition = new ArrayList<Double>();
+	ArrayList<PSOparticle> swarm;
+
 
 	
-		public PSOgsc(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, int solverID) throws Exception {
+
+		public PSOgsc(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, double convergence, int solverID) throws Exception {
 		// This constructor creates and  initializes a psoGlobal-Solver for classical Particle Swarm Optimization.
+			swarm = new ArrayList<PSOparticle>();
+
+
+			c = new Convergence("PSOgsc");
+			this.convergence = convergence;
+
 			this.solverID = solverID;
 			this.ffID = ffID;
 			
@@ -35,6 +57,9 @@ public class PSOgsc {
 			this.cs = cs;
 			this.dt = dt;
 			
+
+			this.sumOfDifferencesGlobal=Double.MIN_VALUE;
+
 			if(dimension < 2) {
 				throw new Exception("You need at least 2 dimensions");
 				}
@@ -59,19 +84,21 @@ public class PSOgsc {
 			if(numIter < 1) {
 				throw new Exception("You need at least 1 Iteration");
 				}
+
 		}
 		
+
+
 			public static SolverConfig defaultConfig() {
-				//int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt
-				return new SolverConfig(1, 2, 10, 100, 5, -5, 0.9, 0.5, 0.5, 1);
+				//int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, 
+				return new SolverConfig(1, 2, 10, 100, 5, -5, 0.9, 0.5, 0.5, 1, 1.0);
 			}
 			
 	
 			
-			public SolverResult solve() {
+			public SolverResult solve() throws IOException {
 			// This method is the engine of the solver, that creates the swarm and updates / finds the globalBestPosition
 				
-				ArrayList<PSOparticle> swarm = new ArrayList<PSOparticle>();
 				int counter = 0;
 					
 				for(int i=0; i<particleCount; i++) {
@@ -82,19 +109,38 @@ public class PSOgsc {
 				
 				//for(int i=0; i<numIter && SolverManager.checkTerminated(solverID); i++) {
 				for(int i=0; i<numIter; i++) {
+					sumOfDifferencesGlobal=0.0;
+					
 					for(int j=0; j<particleCount; j++) {
 						updateGlobalBestPosition(swarm.get(j));
 						swarm.get(j).updateVelocity(globalBestPosition);
 						
 						swarm.get(j).updatePosition();
 						swarm.get(j).updatePersonalBestPosition(ffID);
+						
+						
+						//convergence related
+						calculateRandomDifference(j);						
+						//end convergence related
+						
+						
 						counter++;
 					}
 					SolverManager.updateStatus(solverID, (100*((double)i)/((double)numIter)));
+					boolean converged = c.update(sumOfDifferencesGlobal, globalMinimum);	
+					
+					if(converged&&convergence!=0.0) {
+						c.file.close();
+						return new SolverResult(globalMinimum, globalBestPosition, counter);
+					}
+
+					
 				}
 				ArrayList<Double> ret = new ArrayList<Double>();
 				double val = (globalMinimum);
 				ret.addAll(globalBestPosition);
+				
+				c.file.close();
 				return new SolverResult(val, ret, counter);
 			}
 			
@@ -108,6 +154,38 @@ public class PSOgsc {
 					globalMinimum = particle.personalMinimum;
 					globalBestPosition = new ArrayList<Double>(particle.position);
 				}
+			}
+			
+			public PSOparticle calculateRandomDifference(int skip) {
+				
+				int index1;
+				int index2;
+				PSOparticle newP;
+				
+				do {
+					index1 = CRN.rInt(0, (int)particleCount-1);
+				}
+				while (index1 == skip);
+				
+				do {
+					index2 = CRN.rInt(0, (int)particleCount-1);
+				}
+				while (index2 == skip || index2 == index1);
+				
+				newP = new PSOparticle(swarm.get(index1));
+				newP.substract(swarm.get(index2));
+
+
+				double sumOfDifferences=0.0;
+				
+				for (int i = 0; i < newP.position.size(); i++) {
+					sumOfDifferences+=Math.abs(newP.position.get(i));
+				}
+				this.sumOfDifferencesGlobal+=sumOfDifferences;
+				
+				
+				return newP;
+				
 			}
 			
 }
