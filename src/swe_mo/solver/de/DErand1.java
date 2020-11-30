@@ -72,7 +72,7 @@ public class DErand1 {
 	}
 	
 	public static SolverConfig defaultConfig() {		
-		return new SolverConfig(1,5,50,0.3,0.3,1000,5.14,-5.14, 0.01);
+		return new SolverConfig(1,5,50,0.3,0.3,1000,5.14,-5.14, 1.0);
 	}
 	
 	public DErand1(int N, int NP, double F, double CR, int maxGenerations, int ffIndex, int solverID, double convergence) throws IOException {
@@ -141,8 +141,10 @@ public class DErand1 {
 				xPop.set(i, compare(i, crossOver(xPop.get(i), calculateV(i))));
 				
 			}
-		
-			if (c.update(sumOfDifferencesGlobal, best)) {
+			boolean converged = c.update(sumOfDifferencesGlobal, best);
+			if (converged&&this.convergenceCrit!=0.0) {
+				c.file.close();
+
 				return new SolverResult(best, bestParticle.position, fitCount);
 				
 
@@ -307,11 +309,11 @@ public class DErand1 {
 		double sumOfDifferences=0.0;
 		
 		for (int i = 0; i < newP.position.size(); i++) {
-			sumOfDifferences+=Math.abs(newP.position.get(i));
+			sumOfDifferences+=Math.pow(Math.abs(newP.position.get(i)),2);
 
 		}
 
-		this.sumOfDifferencesGlobal+=sumOfDifferences;
+		this.sumOfDifferencesGlobal+=Math.sqrt(sumOfDifferences);
 
 		
 		
