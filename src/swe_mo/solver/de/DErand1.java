@@ -62,7 +62,7 @@ public class DErand1 {
 		this.convergenceCrit=NP*N*(upperBound-lowerBound)*10E-5*convergence;
 		this.bestParticle  = new Particle_DE(N, upperBound,lowerBound);
 
-		System.out.println("particle before everything "+xPop.get(2).toString());
+		//System.out.println("particle before everything "+xPop.get(2).toString());
 
 
 		
@@ -247,9 +247,9 @@ public class DErand1 {
 		
 		double uRes=FitnessFunction.solve(ffIndex, vectorU);
 		fitCount+=1;
-		System.out.println("current best: "+best);
+		/*System.out.println("current best: "+best);
 		System.out.println("xRes: "+xRes);
-		System.out.println("uRes: "+uRes);
+		System.out.println("uRes: "+uRes);*/
 
 		
 		if(xRes<uRes) {
