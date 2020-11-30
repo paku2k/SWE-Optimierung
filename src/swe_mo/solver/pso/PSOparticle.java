@@ -39,6 +39,13 @@ public class PSOparticle extends Particle_DE {
 
 	}
 	
+
+	//clone
+	public PSOparticle(PSOparticle clone) {
+		super(clone);
+	}
+	
+
 	public PSOparticle(int dimension, double max, double min, double w, double cc, double cs, double dt, int particleCount, int neighbors) {
 		//This constructor creates a particle with the given dimension 
 		//and initializes all dimensions with a random number within the given bounds
@@ -46,6 +53,7 @@ public class PSOparticle extends Particle_DE {
 	this.particleCount=particleCount;
 	setNeighbors(neighbors);
 }	
+
 	
 	public PSOparticle(int dimension) {
 		//This constructor creates a particle with the given dimension and initializes all dimensions with zero

@@ -5,6 +5,7 @@ import swe_mo.solver.pso.PSOgnsc;
 import swe_mo.solver.pso.PSOgsc;
 import swe_mo.solver.pso.PSOgscDecay;
 import swe_mo.solver.pso.PSOnsc;
+import swe_mo.ui.clogger;
 import swe_mo.solver.de.DEbest1;
 import swe_mo.solver.de.DEbest2;
 import swe_mo.solver.de.DErandToBest1;
@@ -20,6 +21,7 @@ import org.json.simple.parser.JSONParser;
 
 public class SolverConfig {
 
+	//test
 	public int ffid;
 	
 	public int N; //dimension
@@ -32,6 +34,7 @@ public class SolverConfig {
 	public double CR;
 	//DErtb1 attributes
 	public double lambda;
+	public double convergence;
 	//PSOgsc attributes
 	public double w;
 	public double cc;
@@ -69,10 +72,12 @@ public class SolverConfig {
 		this.decayStart = s.decayStart;
 		this.decayEnd = s.decayEnd;
 		this.neighbors=s.neighbors;
-		
+		this.convergence=s.convergence;
 		this.usedpars = s.usedpars;
 	};
 	
+	
+	//basic
 	public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound) {
 		this.ffid = ffid;
 		this.N = n;
@@ -80,6 +85,7 @@ public class SolverConfig {
 		this.maxGenerations = maxGenerations;
 		this.upperBound = upperBound;
 		this.lowerBound = lowerBound;
+	
 		
 		usedpars.add("ffid");
 		usedpars.add("N");
@@ -89,10 +95,19 @@ public class SolverConfig {
 		usedpars.add("lowerBound");		
 	}
 	
+	//with convergence
+	public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double convergence) {
+		this(ffid, n, nP, maxGenerations, upperBound, lowerBound);
+		
+		this.convergence=convergence;
+		usedpars.add("convergence");
+
+	}
+	
 	
 	//DErand1, DEbest1, DEbest2
-	public SolverConfig(int ffid, int n, int nP, double f, double cR, int maxGenerations, double upperBound, double lowerBound) {
-		this(ffid, n, nP, maxGenerations, upperBound, lowerBound);
+	public SolverConfig(int ffid, int n, int nP, double f, double cR, int maxGenerations, double upperBound, double lowerBound, double convergence) {
+		this(ffid, n, nP, maxGenerations, upperBound, lowerBound, convergence);
 		this.F = f;
 		this.CR = cR;
 
@@ -101,8 +116,8 @@ public class SolverConfig {
 	}
 	
 	//DErtb1
-	public SolverConfig(int ffid, int n, int nP, double f, double cR, double lambda, int maxGenerations, double upperBound, double lowerBound) {
-		this(ffid, n, nP, f, cR, maxGenerations, upperBound, lowerBound);
+	public SolverConfig(int ffid, int n, int nP, double f, double cR, double lambda, int maxGenerations, double upperBound, double lowerBound, double convergence) {
+		this(ffid, n, nP, f, cR, maxGenerations, upperBound, lowerBound, convergence);
 		
 		this.lambda = lambda;
 
@@ -110,8 +125,8 @@ public class SolverConfig {
 	}
 	
 	//PSOgsc
-	public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt) {
-		this(ffid, n, nP, maxGenerations, upperBound, lowerBound);		
+	public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, double convergence) {
+		this(ffid, n, nP, maxGenerations, upperBound, lowerBound, convergence);		
 
 		this.w = w;
 		this.cc = cc;
@@ -125,16 +140,18 @@ public class SolverConfig {
 	}
 	
 	//PSOnsc / PSOgnsc
-		public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, int neighbors) {
-			this(ffid, n, nP, maxGenerations, upperBound, lowerBound, w, cc, cs, dt);		
-
+		public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, int neighbors, double convergence) {
+			this(ffid, n, nP, maxGenerations, upperBound, lowerBound, w, cc, cs, dt, convergence);		
+		
 			this.neighbors = neighbors;
 			usedpars.add("neighbors");
+		
+
 		}
 	
 	//PSOgscDecay
-	public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, double decayStart, double decayEnd) {
-		this(ffid, n, nP, maxGenerations, upperBound, lowerBound, w, cc, cs, dt);		
+	public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, double decayStart, double decayEnd, double convergence) {
+		this(ffid, n, nP, maxGenerations, upperBound, lowerBound, w, cc, cs, dt, convergence);		
 
 		this.decayStart = decayStart;
 		this.decayEnd = decayEnd;
@@ -192,6 +209,9 @@ public class SolverConfig {
 			case "lambda":
 				lambda = Double.parseDouble(value);
 				return;
+			case "convergence":
+				convergence = Double.parseDouble(value);
+				return;
 			case "neighbors":
 				neighbors = Integer.parseInt(value);
 				return;
@@ -232,6 +252,8 @@ public class SolverConfig {
 				return decayStart;
 			case "decayEnd": 
 				return decayEnd;
+			case "convergence": 
+				return convergence;
 			case "neighbors": 
 				return neighbors;
 				
@@ -310,7 +332,7 @@ public class SolverConfig {
 										 config.maxGenerations,
 										 config.upperBound,
 										 config.lowerBound,
-										 config.ffid, id).solve();	
+										 config.ffid, id, config.convergence).solve();	
 				
 			case "DEbest1":
 				return new DEbest1(config.N,
@@ -320,7 +342,7 @@ public class SolverConfig {
 										 config.maxGenerations,
 										 config.upperBound,
 										 config.lowerBound,
-										 config.ffid, id).solve();	
+										 config.ffid, id,config.convergence).solve();	
 			case "DEbest2":
 				return new DEbest2(config.N,
 										 config.NP,
@@ -329,7 +351,7 @@ public class SolverConfig {
 										 config.maxGenerations,
 										 config.upperBound,
 										 config.lowerBound,
-										 config.ffid, id).solve();
+										 config.ffid, id,config.convergence).solve();
 			case "DErtb1":
 				return new DErandToBest1(config.N,
 										 config.NP,
@@ -339,21 +361,23 @@ public class SolverConfig {
 										 config.maxGenerations,
 										 config.upperBound,
 										 config.lowerBound,
-										 config.ffid, id).solve();
+										 config.ffid, id,config.convergence).solve();
 					
 			case "PSOgsc":
 				return new PSOgsc(config.N,
-										 config.lowerBound,
-										 config.upperBound,
-										 config.NP,
-										 config.w,
-										 config.cc,
-										 config.cs,
-										 config.dt,
-										 config.maxGenerations,
-										 config.ffid, id).solve();	
+								 config.lowerBound,
+								 config.upperBound,
+								 config.NP,
+								 config.w,
+								 config.cc,
+								 config.cs,
+								 config.dt,
+								 config.maxGenerations,
+								 config.ffid,
+								 config.convergence, id).solve();	
 				
 			case "PSOnsc":
+				clogger.dbg("", "", "Neighbours: "+config.neighbors);
 				return new PSOnsc(config.N,
 										 config.lowerBound,
 										 config.upperBound,
@@ -364,7 +388,8 @@ public class SolverConfig {
 										 config.dt,
 										 config.maxGenerations,
 										 config.ffid, id,
-										 config.neighbors).solve();
+										 config.neighbors,
+										 config.convergence).solve();
 				
 			case "PSOgnsc":
 				return new PSOgnsc(config.N,
@@ -377,7 +402,8 @@ public class SolverConfig {
 										 config.dt,
 										 config.maxGenerations,
 										 config.ffid, id,
-										 config.neighbors).solve();	
+										 config.neighbors,
+										 config.convergence).solve();	
 				
 			case "PSOgscD":
 				return new PSOgscDecay(config.N,
@@ -392,7 +418,8 @@ public class SolverConfig {
 										 config.ffid, 
 										 id,
 										 config.decayStart,
-										 config.decayEnd).solve();	
+										 config.decayEnd,
+										 config.convergence).solve();	
 
 		}
 		throw new Exception("Algorithm not specified or no solver method.");
