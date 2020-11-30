@@ -3,15 +3,17 @@ package swe_mo.ui;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.json.simple.JSONObject;
+
 import swe_mo.Main;
 import swe_mo.Settings;
+import swe_mo.solver.SolverConfig;
 import swe_mo.solver.SolverManager;
 
 
 
 public class UiBackend {	
 	private final static String AUTH = "UiB";
-	private final static String _AUTH = AUTH;
 	
 	private static boolean running = false;
 	private static boolean exit = false;
@@ -45,7 +47,7 @@ public class UiBackend {
 		try {
 			UiBackend.cmd(AUTH, "uif start");			
 		} catch(Exception e) {
-			clogger.err(_AUTH, "start", e);
+			clogger.err(AUTH, "start", e);
 		}
 
 		while(running) {
@@ -121,7 +123,7 @@ public class UiBackend {
 				}
 			}
 		} catch (Exception e) {
-			clogger.err(_AUTH, "while_run", e);
+			clogger.err(AUTH, "while_run", e);
 		}
 				
 	}
@@ -154,43 +156,42 @@ public class UiBackend {
 	 * function to be called by every function for commandline interpreter access
 	 * logs cmd request and answer, calls cmd_interprete 
 	 * 
-	 * @param AUTH 	authenticator for submitting class
+	 * @param auth 	authenticator for submitting class
 	 * @param cmd	command as String
 	 * 
 	 * @return returns Object with answer
 	 * 
 	 * @throws Exception
 	 */
-	public static Object cmd(String AUTH, String cmd) throws Exception {
+	public static Object cmd(String auth, String cmd) throws Exception {
 		int token = cmd_cnt++;
 		Object status;
-		clogger.cmd(_AUTH, "cmd", "$("+AUTH+"-"+token+") "+cmd);
+		clogger.cmd(AUTH, "cmd", "$("+auth+"-"+token+") "+cmd);
 		try {
-			status = cmd_interprete(AUTH, cmd); 
+			status = cmd_interprete(auth, cmd); 
 		} catch(Exception e){
-			clogger.cmd(_AUTH, "cmd", "$("+AUTH+"-"+token+") --> ERR: "+e.getMessage());
+			clogger.cmd(AUTH, "cmd", "$("+auth+"-"+token+") --> ERR: "+e.getMessage());
 			throw e;
 		}
-		clogger.cmd(_AUTH, "cmd", "$("+AUTH+"-"+token+") --> "+status);
+		clogger.cmd(AUTH, "cmd", "$("+auth+"-"+token+") --> "+status);
 		return status;
 	}
-	
 
 	
 	/**
 	 * interprete cmd line command
 	 * 
-	 * @param AUTH 	authenticator for submitting class
+	 * @param auth 	authenticator for submitting class
 	 * @param cmd	command as String
 	 * 
 	 * @return returns Object with answer
 	 * 
 	 * @throws Exception
 	 */	
-	private static Object cmd_interprete(String AUTH, String cmd) throws Exception {
+	private static Object cmd_interprete(String auth, String cmd) throws Exception {
 		//cut the command string
 		Queue<String> cmd_queue = new LinkedList<String>();
-		String[] cmd_split = cmd.replace("    "," ").replace("   "," ").replace("  "," ").split(" ");
+		String[] cmd_split = cmd.replace("\t"," ").replace("    "," ").replace("   "," ").replace("  "," ").split(" ");
 		for(String s : cmd_split) {
 			if(s != "" && s != null)
 				cmd_queue.offer(s);
@@ -215,7 +216,7 @@ public class UiBackend {
 						 + "\t" + "sm  \t\tSolverManager\r"
 						 + "\t" + "om  \t\tOptimizer";
 			} else {
-				return cmd(AUTH, cmd_queue.poll()+" help");
+				return cmd(auth, cmd_queue.poll()+" help");
 			}
 			
 			
@@ -226,12 +227,13 @@ public class UiBackend {
 			
 			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
 				return     "app - List of commands\r"
-						 + "\t" + "exit \t\tStop and exit application"
+						 + "\t" + "exit \t\tStop and exit application\r"
 						 + "\t" + "info \t\tApplication version information";		
 				
 			} else if(cmd_queue.peek().equals("exit")) {
 				cmd_queue.remove();
 				
+				UiFrontend.setMinimized(false);
 				if(wis.status()) wis.stop(true);
 				UiFrontend.stop(true);
 				UiBackend.stop(true);
@@ -240,10 +242,19 @@ public class UiBackend {
 			} else if(cmd_queue.peek().equals("info")) {
 				cmd_queue.remove();
 
-				return 	  "METAHEURISTIC OPTIMIZATION"+"\n\n"
-					 	+ "VERSION: "+Main.APPVERSION+"\n"
-					 	+ "DATE: "+Main.DATE+"\n"
-					 	+ "DEVELOPERS:\n"+Main.DEVELOPERS+"\n";
+				if(!cmd_queue.isEmpty() && cmd_queue.poll().equals("-json")) {
+					JSONObject jsonobj = new JSONObject();
+					jsonobj.put("version", Main.APPVERSION);
+					jsonobj.put("date", Main.DATE);
+					jsonobj.put("developers", Main.DEVELOPERS);
+					return jsonobj.toJSONString();
+					
+				} else {
+					return 	  "METAHEURISTIC OPTIMIZATION"+"\n\n"
+						 	+ "VERSION: "+Main.APPVERSION+"\n"
+						 	+ "DATE: "+Main.DATE+"\n"
+						 	+ "DEVELOPERS:\n"+Main.DEVELOPERS+"\n";					
+				}
 			}
 			
 			
@@ -283,7 +294,7 @@ public class UiBackend {
 					Settings.set(key, cmd_queue.poll());
 					return "New value set.";
 				} else {
-					return Settings.get(key);
+					return Settings.get(key).toString();
 				}
 			}
 			
@@ -368,7 +379,7 @@ public class UiBackend {
 				if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-n")) {
 					cmd_queue.remove();
 
-					if(wis.status()) UiBackend.cmd(_AUTH, "wis stop");
+					if(wis.status()) UiBackend.cmd(AUTH, "wis stop");
 					
 					if(cmd_queue.isEmpty()) {
 						wis = new WebInterfaceServer();
@@ -382,11 +393,11 @@ public class UiBackend {
 						}
 					}					
 					
-					return UiBackend.cmd(_AUTH, "wis start");
+					return UiBackend.cmd(AUTH, "wis start");
 					
 				} else if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-r")) {
-					if(wis.status()) UiBackend.cmd(_AUTH, "wis stop");
-					return UiBackend.cmd(_AUTH, "wis start");					
+					if(wis.status()) UiBackend.cmd(AUTH, "wis stop");
+					return UiBackend.cmd(AUTH, "wis start");					
 				}
 				
 				if(cmd_queue.isEmpty()) {
@@ -446,15 +457,18 @@ public class UiBackend {
 
 			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
 				return     "sm - List of commands\r"
-						 + "\t" + "list \t\tList all solvers\r"
-						 + "\t" + "create \t\tCreate new solver-instance\r"
-						 + "\t" + "clone \t\tCreate new solver-instance with cloned properties\r"
-						 + "\t" + "config \t\tConfigure solver\r"
-						 + "\t" + "solve \t\tStart solving\r"
-						 + "\t" + "term \t\tTerminate solver\r"
-						 + "\t" + "status \t\tGet status of solver)\r"
-						 + "\t" + "result \t\tGet result\r"
-						 + "\t" + "delete \t\tDelete solver-instance\r";
+						 + "\t" + "list   \tList all solvers\r"
+						 + "\t" + "create \tCreate new solver-instance\r"
+						 + "\t" + "clone  \tCreate new solver-instance with cloned properties\r"
+						 + "\t" + "config \tConfigure solver\r"
+						 + "\t" + "solve  \tStart solving\r"
+						 + "\t" + "term   \tTerminate solver\r"
+						 + "\t" + "status \tGet status of solver\r"
+						 + "\t" + "result \tGet result\r"
+						 + "\t" + "clear  \tClear solver-instance\r"
+						 + "\t" + "delete \tDelete solver-instance\r"
+				 		 + "\t" + "lsalgo \tList of implemented algorithms\r"
+				 		 + "\t" + "lspars \tList of parameters for algorithm\r";
 								
 			} else if(cmd_queue.peek().equals("list") || cmd_queue.peek().equals("lsit")) {
 				cmd_queue.remove();		
@@ -464,37 +478,42 @@ public class UiBackend {
 					boolean show_notrunning = true;
 					boolean json = false;
 					String type = "";
+					String creator = "";
 					double status = -5;
 					double status_max = 105;
 					int id = 0;
 					int id_max = Integer.MAX_VALUE;
 					
-					int i = 5;
+					int i = 6;
 					while(cmd_queue.size()>0 && i>=0) {
-						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-r")) {
+						if(cmd_queue.peek().equals("-r")) {
 							cmd_queue.remove();		
 							show_running = true;
 							show_notrunning = false;
-						}
-						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-nr")) {
+						} else if(cmd_queue.peek().equals("-nr")) {
 							cmd_queue.remove();		
 							show_running = false;
 							show_notrunning = true;
-						}
-						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {
+						} else if(cmd_queue.peek().equals("-json")) {
 							cmd_queue.remove();		
 							json = true;
-						}
-						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-t")) {
+						} else if(cmd_queue.peek().equals("-t")) {
 							cmd_queue.remove();		
 							
 							if(!cmd_queue.isEmpty()) {
 								type = cmd_queue.poll();					
 							} else {
-								throw new Exception("Specify Solver type.");
+								throw new Exception("Specify solver type.");
 							}	
-						}
-						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-s")) {
+						} else if(cmd_queue.peek().equals("-c")) {
+							cmd_queue.remove();		
+							
+							if(!cmd_queue.isEmpty()) {
+								creator = cmd_queue.poll();					
+							} else {
+								throw new Exception("Specify solver creator.");
+							}	
+						} else if(cmd_queue.peek().equals("-s")) {
 							cmd_queue.remove();		
 							
 							if(!cmd_queue.isEmpty()) {
@@ -515,8 +534,7 @@ public class UiBackend {
 									}
 								} catch(Exception e) {}
 							}						
-						}
-						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-id")) {
+						} else if(cmd_queue.peek().equals("-id")) {
 							cmd_queue.remove();		
 							
 							if(!cmd_queue.isEmpty()) {
@@ -537,10 +555,12 @@ public class UiBackend {
 									}
 								} catch(Exception e) {}
 							}						
+						} else {
+							throw new Exception("No such parameter: "+cmd_queue.poll());
 						}
 						i--;
 					}					
-					return SolverManager.list(show_running, show_notrunning, type, status, status_max, id, id_max, json);
+					return SolverManager.list(show_running, show_notrunning, type, creator, status, status_max, id, id_max, json);
 					
 				} else {
 					return SolverManager.list();
@@ -550,10 +570,10 @@ public class UiBackend {
 				cmd_queue.remove();		
 				
 				if(!cmd_queue.isEmpty()) {					
-					return SolverManager.create(cmd_queue.poll());					
+					return SolverManager.create(auth, cmd_queue.poll());					
 				}
 				
-				return SolverManager.create();
+				return SolverManager.create(auth);
 				
 			} else if(cmd_queue.peek().equals("clone")) {
 				cmd_queue.remove();		
@@ -564,14 +584,14 @@ public class UiBackend {
 					try {
 						id = Integer.parseInt(cmd_queue.poll());		
 					} catch(Exception e) {						
-						throw new Exception("No valied clone id given.");
+						throw new Exception("No valid clone id given.");
 					}
 				}
 				
 				if(id > -1) {
-					return SolverManager.cloneSolver(id);
+					return SolverManager.cloneSolver(auth, id);
 				} else {
-					return SolverManager.cloneSolver();
+					return SolverManager.cloneSolver(auth);
 				}
 				
 			} else if(cmd_queue.peek().equals("config")) {
@@ -640,7 +660,7 @@ public class UiBackend {
 							} catch(Exception e) {}
 						}
 						
-						throw new Exception("No valied clone id given.");
+						throw new Exception("No valid clone id given.");
 					}
 					
 					
@@ -685,7 +705,7 @@ public class UiBackend {
 					throw e;
 				}
 				
-			} else if(cmd_queue.peek().equals("term")) {
+			} else if(cmd_queue.peek().equals("term") || cmd_queue.peek().equals("terminate")) {
 				cmd_queue.remove();		
 				
 				try {
@@ -738,11 +758,39 @@ public class UiBackend {
 						return SolverManager.result().toJSON();
 				} else {
 					if(id>-1)
-						return "Result: "+SolverManager.result(id);
+						return SolverManager.result(id).toString();
 					else
-						return "Result: "+SolverManager.result();
-				}
+						return SolverManager.result().toString();
+				}	
 				
+				
+			} else if(cmd_queue.peek().equals("clear")) {
+				cmd_queue.remove();		
+				
+				try {
+					if(!cmd_queue.isEmpty()) {	
+						if(cmd_queue.peek().contains("-")) {
+							if(cmd_queue.poll().equals("-all")) {
+								SolverManager.clearAll();
+								return "All Solvers cleared (if possible).";
+							}
+						} else {	
+							int id = Integer.parseInt(cmd_queue.poll());								
+							if(!cmd_queue.isEmpty()) {	
+								SolverManager.clear(id, Integer.parseInt(cmd_queue.poll()));					
+								return "Solvers cleared.";								
+							} else {
+								SolverManager.clear(id);					
+								return "Solver cleared.";					
+							}
+						}
+					} else {					
+						SolverManager.clear();						
+						return "Solver cleared.";
+					}
+				} catch(Exception e) {
+					throw e;
+				}
 				
 			} else if(cmd_queue.peek().equals("delete")) {
 				cmd_queue.remove();		
@@ -770,7 +818,31 @@ public class UiBackend {
 					}
 				} catch(Exception e) {
 					throw e;
-				}						
+				}
+				
+			} else if(cmd_queue.peek().equals("lsalgo")) {
+				cmd_queue.remove();	
+						
+				if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {	
+					return SolverConfig.getAlgorithmList(true, false, "");
+				} else {
+					return SolverConfig.getAlgorithmList(false, false, "");
+				}		
+				
+			} else if(cmd_queue.peek().equals("lspars")) {
+				cmd_queue.remove();	
+				
+				if(!cmd_queue.isEmpty() && !cmd_queue.peek().equals("-json")) {
+					String algo = cmd_queue.poll();
+					
+					if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {	
+						return SolverConfig.getAlgorithmList(true, true, algo);
+					} else {
+						return SolverConfig.getAlgorithmList(false, true, algo);
+					}					
+				} else {
+					throw new Exception("Specify algorithm.");
+				}
 			}
 			
 			

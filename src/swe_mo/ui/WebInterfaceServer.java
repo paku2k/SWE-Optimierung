@@ -7,6 +7,9 @@ import java.awt.*;
 import java.util.*;
 
 import org.apache.commons.io.IOUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import com.sun.net.httpserver.*;
 
@@ -175,7 +178,8 @@ public class WebInterfaceServer{
      * @param httpExchange HttpExchange-Object
      * @throws IOException
      */
-    private static void handleRequest(HttpExchange httpExchange) throws IOException {
+    @SuppressWarnings("unchecked")
+	private static void handleRequest(HttpExchange httpExchange) throws IOException {
     	try {
     		httpRequestParameters requestParameters = new httpRequestParameters(httpExchange);
     		String responseString = "";
@@ -189,26 +193,41 @@ public class WebInterfaceServer{
     	    	    
     	    	} else if(requestParameters.getPath().equals("/xhr")) {
     	    		//xhr request (sending cmd commands and receiving+send answers via json)
-    		        String r = "{ "; 
+    	    		JSONArray jsonarr = new JSONArray();
+    	    		
+	    			for(int i=0; i < requestParameters.getPar().size(); i++) {
+				    	JSONObject jsonobj = new JSONObject();
+						jsonobj.put("id", i);	
 
-    	    		if(requestParameters.getParValue("cmdcnt")!=null) { //count of transmitted cmd
-    	    			for(int i=0; i < Integer.valueOf(requestParameters.getParValue("cmdcnt")); i++) {
-    	    				r += "\"cmd"+i+"\": ";
-    	    				try {
-    	    					String rv = (String) UiBackend.cmd(AUTH, requestParameters.getParValue("cmd"+i));
-    	    					if(!requestParameters.getParValue("cmd"+i).contains("-json")) r += "\"";
-    	    					r += rv;
-    	    					if(!requestParameters.getParValue("cmd"+i).contains("-json")) r += "\"";
-    	    				} catch(Exception e) {
-    	    					r += "\"ERR: "+e.getMessage()+"\"";
-    	    				}
-    	    				if(i+1 < Integer.valueOf(requestParameters.getParValue("cmdcnt"))) r += ",";
-    	    			}
-    	    		}		
-    		        r += "}"; 
+	    				try {						
+							
+							String cmd = requestParameters.getParValue("cmd"+i);
+							
+							if(cmd != null) {
+								jsonobj.put("cmd", cmd);
+							} else {
+								throw new Exception("No cmd with id="+i+" found.");
+							}
+							
+	    					String rv = (String) UiBackend.cmd(AUTH, cmd);
+	    					rv = rv.replaceAll("ü", "&#xFC;").replaceAll("ä", "&#xE4;").replaceAll("ö", "&#xF6;").replaceAll("ß", "&#xDF;");
+	    					if(!cmd.contains("-json")) {
+	    						jsonobj.put("ans", rv);
+	    					} else {    	    						
+	    						jsonobj.put("ans", (JSONObject) new JSONParser().parse(rv));    	    						
+	    					}   
+
+	    				} catch(Exception e) {
+	    					jsonobj.put("err", e.getMessage());
+	    				}
+	    				jsonarr.add(jsonobj);
+	    			}		
+    	    		
+					JSONObject listjson = new JSONObject();
+					listjson.put("cmd_ans", jsonarr);
     	
     	    	    httpExchange.getResponseHeaders().set("Content-Type", getContentType("json"));
-    		        sendHttpResponse(httpExchange, 200, r.getBytes());
+    		        sendHttpResponse(httpExchange, 200, listjson.toJSONString().getBytes());
 
     	    	    
     	    	} else if(requestParameters.getPath().equals("/con")) {    	
@@ -314,8 +333,7 @@ public class WebInterfaceServer{
     	} catch(Exception e) {
     		in.close();
     		throw new IOException("file not found ("+filepath+")");
-    	}
-    	
+    	}    	
 	}
     
     /**

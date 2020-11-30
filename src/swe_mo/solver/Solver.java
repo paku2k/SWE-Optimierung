@@ -3,31 +3,36 @@ package swe_mo.solver;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import swe_mo.Settings;
+import swe_mo.ui.clogger;
+
 
 
 public class Solver {
 	final String AUTH = "SLV";
 
 	private int id;
+	private String creator;
 	private Thread solverThread;	
 	private String algorithm;
 	private double status;
 	private boolean terminated;
-	private SolverResult result; 																						
+	private SolverResult result = new SolverResult(); 																						
 	private SolverConfig config; 																						
 		
 	
 
 	
-	public Solver(int id, String algorithm) throws Exception{
+	public Solver(int id, String creator, String algorithm) throws Exception{
 		this.algorithm = algorithm;
 		this.id = id;
+		this.creator = creator;
 		status = -2;
 		terminated = false;
 		config = SolverConfig.getDefault(algorithm);
 	}
-	public Solver(int id) throws Exception {
-		this(id, "default");
+	public Solver(int id, String creator) throws Exception {
+		this(id, creator, Settings.get("defaultAlgorithm").toString());
 	}																						
 	
 	
@@ -37,7 +42,7 @@ public class Solver {
 		Queue<String> configQueue = new LinkedList<String>();
 		String hyperparameterNotFound = "";
 					
-		for(String s : configString.replace(","," ").replace("    "," ").replace("   "," ").replace("  "," ").replace("= ","=").replace(" =","=").split(" ")) {
+		for(String s : configString.replace(","," ").replace("\t"," ").replace("    "," ").replace("   "," ").replace("  "," ").replace("= ","=").replace(" =","=").split(" ")) {
 			if(s != "" && s != null)
 				configQueue.offer(s);
 		}
@@ -88,6 +93,7 @@ public class Solver {
 					if(status<=100) status = 101;
 				} catch(Exception e) {
 					result.e = e;
+					clogger.err(AUTH, "SolverThread "+id, e);
 					status = 103;
 				}
 			}
@@ -99,6 +105,12 @@ public class Solver {
 		terminated = true;
 		status = 102;
 	}	
+	
+	public void clear() {
+		joinThread(2000);
+		terminated = false;
+		status = -1;
+	}
 	
 	public void joinThread(int tmax) {		
 		try {
@@ -120,6 +132,10 @@ public class Solver {
 	
 	public String getAlgorithm() {
 		return algorithm;
+	}
+	
+	public String getCreator() {
+		return creator;
 	}
 	
 	public String getConfig(boolean json) {
