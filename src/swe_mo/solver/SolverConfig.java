@@ -129,11 +129,6 @@ public class SolverConfig {
 			this(ffid, n, nP, maxGenerations, upperBound, lowerBound, w, cc, cs, dt);		
 
 			this.neighbors = neighbors;
-
-			usedpars.add("w");
-			usedpars.add("cc");
-			usedpars.add("cs");
-			usedpars.add("dt");
 			usedpars.add("neighbors");
 		}
 	
