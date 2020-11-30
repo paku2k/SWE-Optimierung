@@ -10,6 +10,7 @@
     font-size: 1.1rem;
     font-weight: bolder;
     clear: both;
+    z-index: 100;
 }
 
 @keyframes fadeInfoIn {
