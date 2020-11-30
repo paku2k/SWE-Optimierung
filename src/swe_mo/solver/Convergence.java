@@ -117,8 +117,8 @@ public class Convergence {
 			
 			if(gradientMean<maxGradient*gradientDecay&&bestGradientCount>=20)
 			{
-				System.out.println("Gradient converged to: "+gradientMean+" with the criteria being "+(gradientDecay*maxGradient)+" with max Gradient in the first "+minObserveGenerations+" iterations of: "+maxGradient);
-				System.out.println("Gradient of MinValue converged to: "+gradientMeanBest+" with the criteria being "+(gradientDecay*maxGradientBest)+" with max Gradient in the first "+minObserveGenerations+" iterations of: "+maxGradientBest);
+				//System.out.println("Gradient converged to: "+gradientMean+" with the criteria being "+(gradientDecay*maxGradient)+" with max Gradient in the first "+minObserveGenerations+" iterations of: "+maxGradient);
+				//System.out.println("Gradient of MinValue converged to: "+gradientMeanBest+" with the criteria being "+(gradientDecay*maxGradientBest)+" with max Gradient in the first "+minObserveGenerations+" iterations of: "+maxGradientBest);
 
 				return true;
 			}

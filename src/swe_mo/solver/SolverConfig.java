@@ -5,6 +5,7 @@ import swe_mo.solver.pso.PSOgnsc;
 import swe_mo.solver.pso.PSOgsc;
 import swe_mo.solver.pso.PSOgscDecay;
 import swe_mo.solver.pso.PSOnsc;
+import swe_mo.ui.clogger;
 import swe_mo.solver.de.DEbest1;
 import swe_mo.solver.de.DEbest2;
 import swe_mo.solver.de.DErandToBest1;
@@ -71,7 +72,7 @@ public class SolverConfig {
 		this.decayStart = s.decayStart;
 		this.decayEnd = s.decayEnd;
 		this.neighbors=s.neighbors;
-		
+		this.convergence=s.convergence;
 		this.usedpars = s.usedpars;
 	};
 	
@@ -124,8 +125,8 @@ public class SolverConfig {
 	}
 	
 	//PSOgsc
-	public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt) {
-		this(ffid, n, nP, maxGenerations, upperBound, lowerBound);		
+	public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, double convergence) {
+		this(ffid, n, nP, maxGenerations, upperBound, lowerBound, convergence);		
 
 		this.w = w;
 		this.cc = cc;
@@ -139,16 +140,18 @@ public class SolverConfig {
 	}
 	
 	//PSOnsc / PSOgnsc
-		public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, int neighbors) {
-			this(ffid, n, nP, maxGenerations, upperBound, lowerBound, w, cc, cs, dt);		
-
+		public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, int neighbors, double convergence) {
+			this(ffid, n, nP, maxGenerations, upperBound, lowerBound, w, cc, cs, dt, convergence);		
+		
 			this.neighbors = neighbors;
 			usedpars.add("neighbors");
+		
+
 		}
 	
 	//PSOgscDecay
-	public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, double decayStart, double decayEnd) {
-		this(ffid, n, nP, maxGenerations, upperBound, lowerBound, w, cc, cs, dt);		
+	public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, double decayStart, double decayEnd, double convergence) {
+		this(ffid, n, nP, maxGenerations, upperBound, lowerBound, w, cc, cs, dt, convergence);		
 
 		this.decayStart = decayStart;
 		this.decayEnd = decayEnd;
@@ -362,17 +365,19 @@ public class SolverConfig {
 					
 			case "PSOgsc":
 				return new PSOgsc(config.N,
-										 config.lowerBound,
-										 config.upperBound,
-										 config.NP,
-										 config.w,
-										 config.cc,
-										 config.cs,
-										 config.dt,
-										 config.maxGenerations,
-										 config.ffid, id).solve();	
+								 config.lowerBound,
+								 config.upperBound,
+								 config.NP,
+								 config.w,
+								 config.cc,
+								 config.cs,
+								 config.dt,
+								 config.maxGenerations,
+								 config.ffid,
+								 config.convergence, id).solve();	
 				
 			case "PSOnsc":
+				clogger.dbg("", "", "Neighbours: "+config.neighbors);
 				return new PSOnsc(config.N,
 										 config.lowerBound,
 										 config.upperBound,
@@ -383,7 +388,8 @@ public class SolverConfig {
 										 config.dt,
 										 config.maxGenerations,
 										 config.ffid, id,
-										 config.neighbors).solve();
+										 config.neighbors,
+										 config.convergence).solve();
 				
 			case "PSOgnsc":
 				return new PSOgnsc(config.N,
@@ -396,7 +402,8 @@ public class SolverConfig {
 										 config.dt,
 										 config.maxGenerations,
 										 config.ffid, id,
-										 config.neighbors).solve();	
+										 config.neighbors,
+										 config.convergence).solve();	
 				
 			case "PSOgscD":
 				return new PSOgscDecay(config.N,
@@ -411,7 +418,8 @@ public class SolverConfig {
 										 config.ffid, 
 										 id,
 										 config.decayStart,
-										 config.decayEnd).solve();	
+										 config.decayEnd,
+										 config.convergence).solve();	
 
 		}
 		throw new Exception("Algorithm not specified or no solver method.");

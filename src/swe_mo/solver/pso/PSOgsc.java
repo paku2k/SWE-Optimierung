@@ -11,10 +11,11 @@ public class PSOgsc {
 
 	
 	//convergence related
-
 	double sumOfDifferencesGlobal;
 	Convergence c;
+	double convergence;
 	//end convergence related
+	
 	
 
 	int dimension;
@@ -35,12 +36,13 @@ public class PSOgsc {
 
 	
 
-		public PSOgsc(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, int solverID) throws Exception {
+		public PSOgsc(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, double convergence, int solverID) throws Exception {
 		// This constructor creates and  initializes a psoGlobal-Solver for classical Particle Swarm Optimization.
+			swarm = new ArrayList<PSOparticle>();
 
 
 			c = new Convergence("PSOgsc");
-
+			this.convergence = convergence;
 
 			this.solverID = solverID;
 			this.ffID = ffID;
@@ -85,9 +87,11 @@ public class PSOgsc {
 
 		}
 		
+
+
 			public static SolverConfig defaultConfig() {
-				//int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt
-				return new SolverConfig(1, 2, 10, 100, 5, -5, 0.9, 0.5, 0.5, 1);
+				//int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, 
+				return new SolverConfig(1, 2, 10, 100, 5, -5, 0.9, 0.5, 0.5, 1, 1.0);
 			}
 			
 	
@@ -95,7 +99,6 @@ public class PSOgsc {
 			public SolverResult solve() throws IOException {
 			// This method is the engine of the solver, that creates the swarm and updates / finds the globalBestPosition
 				
-				swarm = new ArrayList<PSOparticle>();
 				int counter = 0;
 					
 				for(int i=0; i<particleCount; i++) {
@@ -124,7 +127,10 @@ public class PSOgsc {
 						counter++;
 					}
 					SolverManager.updateStatus(solverID, (100*((double)i)/((double)numIter)));
-					if(c.update(sumOfDifferencesGlobal, globalMinimum)) {
+					boolean converged = c.update(sumOfDifferencesGlobal, globalMinimum);	
+					
+					if(converged&&convergence!=0.0) {
+						c.file.close();
 						return new SolverResult(globalMinimum, globalBestPosition, counter);
 					}
 
@@ -133,6 +139,8 @@ public class PSOgsc {
 				ArrayList<Double> ret = new ArrayList<Double>();
 				double val = (globalMinimum);
 				ret.addAll(globalBestPosition);
+				
+				c.file.close();
 				return new SolverResult(val, ret, counter);
 			}
 			
