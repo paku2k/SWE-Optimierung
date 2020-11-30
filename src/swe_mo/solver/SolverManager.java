@@ -194,8 +194,16 @@ public class SolverManager {
 		} else if(status(id) >= 0 && status(id) < 100) {
 			throw new Exception("Solver already running.");						
 		}
+		
+		ArrayList<String> usedpars = runningSolvers.get(id).getConfig().usedpars;
+		ArrayList<String> usedparsClone = runningSolvers.get(cloneId).getConfig().usedpars;
+		
+		for(int i=0; i < usedpars.size(); i++) {
+			if(usedparsClone.contains(usedpars.get(i))) {
+				runningSolvers.get(id).configure(usedpars.get(i)+"="+runningSolvers.get(cloneId).getConfig().getValue(usedpars.get(i)));
+			}
+		}
 
-		runningSolvers.get(id).setConfig(runningSolvers.get(cloneId).getConfig());
 		if(status(cloneId) > -2)
 			runningSolvers.get(id).updateStatus(-1);
 	}																						

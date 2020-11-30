@@ -377,7 +377,6 @@ public class SolverConfig {
 								 config.convergence, id).solve();	
 				
 			case "PSOnsc":
-				clogger.dbg("", "", "Neighbours: "+config.neighbors);
 				return new PSOnsc(config.N,
 										 config.lowerBound,
 										 config.upperBound,
