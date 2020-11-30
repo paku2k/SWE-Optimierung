@@ -65,6 +65,7 @@
     border-bottom-left-radius: 0.3rem;    
     border-bottom-right-radius: 0.3rem;    
     border-bottom: 1px solid #aaa;
+    margin-bottom: 0.5rem;
 }
 
 #tab_solver #solver_list button:hover {
@@ -109,7 +110,6 @@
     font-family: "Tw Cen MT", sans-serif;  
     font-style: italic;
     color: black;
-    margin-top: 0.5rem;
     padding: 0.4rem 1rem;
     border: 1px solid #aaa;
     border-radius: 0.3rem 0.3rem 0.3rem 0.3rem;    

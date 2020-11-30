@@ -246,7 +246,7 @@ function cmdInputExecute(){
 
 
 function tab_cmd_responseHandler() {    
-    console.log("tab_cmd: \n"+this.responseText);
+    //console.log("tab_cmd: \n"+this.responseText);
     var response = JSON.parse(this.responseText);
     
     if(response.cmd_ans){
@@ -278,10 +278,7 @@ function tab_cmd_responseHandler() {
 
 var cmd_id_counter = 0;
 
-function appendCmdAnswer(cmd, ans, err){
-    console.log(cmd + ": " + ans);
-    
-    
+function appendCmdAnswer(cmd, ans, err){   
     var tr = document.createElement("tr");
     var td_id = document.createElement("td");
     var td_cmd = document.createElement("td");

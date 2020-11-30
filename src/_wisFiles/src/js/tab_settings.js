@@ -96,5 +96,6 @@ function settingsChange(key, value){
 
 
 function settingsReset(){
-    sendCmds(["cfg -reset"], 2000, tab_settings_responseHandler);    
+    if(window.confirm("Reset application settings?"))
+        sendCmds(["cfg -reset"], 2000, tab_settings_responseHandler);    
 }

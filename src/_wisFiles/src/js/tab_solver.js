@@ -1,4 +1,4 @@
-var REFRESH_RATE_SOLVER = 500;
+var REFRESH_RATE_SOLVER = 1000;
 
 
 /* TAB_SOLVER switching tabs */
@@ -42,7 +42,7 @@ function loadSolverInitial(){
     checkSolverList();
     loadSolverDetail_updater();
     
-    sendCmds(["sm lsalgo -json"], 500, tab_solver_responseHandler);
+    sendCmds(["sm lsalgo -json"], 1000, tab_solver_responseHandler);
 }
 
 
@@ -51,7 +51,7 @@ function loadSolverInitial(){
 var currentSolverList_JSON;
 
 function checkSolverList(){    
-    sendCmds(["sm list -json"], 500, tab_solver_responseHandler);
+    sendCmds(["sm list -json"], 1000, tab_solver_responseHandler);
     setTimeout(checkSolverList, REFRESH_RATE_SOLVER);
 }
 
@@ -102,7 +102,13 @@ function createOrChangeSolverListHTML(solver){
         if(document.getElementById("solverBtn_"+solver.id)){ //exists in list
             var btn = document.getElementById("solverBtn_"+solver.id);
             if(btn.className.includes("active")){
-                document.getElementById('solver_add').click();                
+                if(btn.nextElementSibling && btn.nextElementSibling !== document.getElementById('solver_add')){
+                    btn.nextElementSibling.click();
+                } else if(btn.previousElementSibling){
+                    btn.previousElementSibling.click();                
+                } else {
+                    document.getElementById('solver_add').click();                       
+                }             
             }
             btn.className = "solver_list_elem deleted";
             btn.removeAttribute("onclick");
@@ -224,10 +230,17 @@ function setShowDelSolvers(bool){
 /* loading data SOLVER DETAIL VIEW */
 
 var load_sd_timeout;
+var current_solver_detail = "";
 
 function loadSolverDetail_updater(){
     if(current_solver != "add_solver"){
-        loadSolverStatus(current_solver.replace("solver_",""));    
+        var id = current_solver.replace("solver_","");
+        loadSolverStatus(id);    
+        if(current_solver_detail != current_solver){
+            current_solver_detail = current_solver;
+            loadSolverConfiguration(id);
+            loadSolverResult(id);
+        }
     }
     
     clearTimeout(load_sd_timeout);
@@ -238,7 +251,7 @@ function loadSolverDetail_updater(){
 
 
 function loadSolverStatus(id){
-    sendCmds(["sm status "+id], 500, tab_solver_detail_responseHandler);     
+    sendCmds(["sm status "+id], 1000, tab_solver_detail_responseHandler);     
 }
 
 function loadSolverConfiguration(id){
@@ -306,14 +319,14 @@ function updateSolverStatus(id, status, err){
         return;
     }
     
-    var statusstring = "("+status+")";
+    var statusstring = "";
     
     if(status == -2){
         statusstring = "initialized";
     } else if(status == -1){
         statusstring = "configured";        
     } else if(status >= 0 && status <= 100){
-        statusstring = "running ("+status+"%)";          
+        statusstring = "running ("+Math.round(status)+"%)";          
     } else if(status == 101){
         statusstring = "finished";          
     } else if(status == 102){
@@ -486,12 +499,13 @@ function newSolverContentDiv(id, algorithm){
     div.appendChild(div1);
     
         var div2 = document.createElement("div");
-        div2.innerHTML = '<button id="solver_'+id+'_solveBtn" onclick="solverSolve('+id+');">Solve</button><button id="solver_'+id+'_termBtn" onclick="solverTerm('+id+');">Terminate</button><button id="solver_'+id+'_clearBtn" onclick="solverClear('+id+');">Clear</button>';
+        div2.innerHTML = '<button id="solver_'+id+'_solveBtn" onclick="solverSolve('+id+');">Solve</button><button id="solver_'+id+'_termBtn" onclick="solverTerm('+id+');" style="display: none;">Terminate</button><button id="solver_'+id+'_clearBtn" onclick="solverClear('+id+');" style="display: none;">Clear</button>';
 
     div.appendChild(div2);
         
         var div3 = document.createElement("div");
         div3.setAttribute("id", "solver_"+id+"_result");
+        div3.setAttribute("style", "display: none;");
         div3.innerHTML = '<h4>Result</h4><table class="solver_content_t4"><tr><td>Minimum: </td><td id="solver_'+id+'_resultMin"></td></tr><tr><td>Position: </td><td id="solver_'+id+'_resultPos"></td></tr><tr><td>Function Calls: </td><td id="solver_'+id+'_resultFC"></td></tr><tr><td>Exception: </td><td id="solver_'+id+'_resultException"></td></tr></table>';
     
     div.appendChild(div3);
@@ -525,7 +539,7 @@ function solverDuplicate(id){
 
 function solverDelete(id){
     if(window.confirm("Delete solver?"))
-        sendCmds(["sm delete "+id], 500, tab_solver_responseHandler);        
+        sendCmds(["sm delete "+id], 1000, tab_solver_responseHandler);        
 }
 
 function solverCfgCopyFrom(id){
@@ -600,7 +614,6 @@ function solverCfgReset(id, name){
         if(pars[i].name == name){
             if(document.getElementById("solver_"+id+"_cfg_"+pars[i].name).value != pars[i].default){
                 solverCfgChange(id, pars[i].name, pars[i].default);
-                openInfoAdvanced("suc", "Hyperparameter reset to default.", 3000);
             }
                 
             break;
@@ -609,7 +622,7 @@ function solverCfgReset(id, name){
 }
 
 function solverSolve(id){
-    sendCmds(["sm solve "+id], 500, tab_solver_responseHandler);  
+    sendCmds(["sm solve "+id], 1000, tab_solver_responseHandler);  
     loadSolverStatus(id);
     if(currentSolverList_JSON[id].status == -2){
         openInfo("warn","Solver not configured, using default values.");
@@ -617,12 +630,12 @@ function solverSolve(id){
 }
 
 function solverTerm(id){
-    sendCmds(["sm term "+id], 500, tab_solver_responseHandler);   
+    sendCmds(["sm term "+id], 1000, tab_solver_responseHandler);   
     loadSolverStatus(id)
 }
 
 function solverClear(id){
-    sendCmds(["sm clear "+id], 500, tab_solver_responseHandler);  
+    sendCmds(["sm clear "+id], 1000, tab_solver_responseHandler);  
     loadSolverStatus(id)
 }
 
@@ -639,7 +652,7 @@ function createSolver(){
     if(algorithm != "default"){
         cmd += " "+algorithm;
     }
-    sendCmds([cmd], 500, tab_solver_responseHandler);
+    sendCmds([cmd], 1000, tab_solver_responseHandler);
 }
 
 
