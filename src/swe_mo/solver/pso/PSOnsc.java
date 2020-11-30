@@ -26,7 +26,7 @@ public class PSOnsc extends PSOgsc {
 	
 	public static SolverConfig defaultConfig() {
 		//int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt
-		return new SolverConfig(1, 1, 10, 100, 5, -5, 0.9, 0.5, 0.5, 1);
+		return new SolverConfig(2, 1, 10, 100, 5, -5, 0.9, 0.5, 0.5, 1, 50);
 	}
 	
 	
