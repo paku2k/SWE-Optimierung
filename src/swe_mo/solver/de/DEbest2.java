@@ -2,12 +2,16 @@ package swe_mo.solver.de;
 
 import java.io.IOException;
 
+import swe_mo.solver.Convergence;
+
 public class DEbest2 extends DEbest1{
 
 	
 	public DEbest2(int N, int NP, double F, double CR, int maxGenerations, double upperBound, double lowerBound,
 			int ffIndex, int solverID, double convergence) throws IOException {
 		super(N, NP, F, CR, maxGenerations, upperBound, lowerBound, ffIndex, solverID, convergence);
+		c= new Convergence("DEbest2");
+
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -15,6 +19,8 @@ public class DEbest2 extends DEbest1{
 	public DEbest2(int N, int NP, double F, double CR, int maxGenerations, 
 			int ffIndex, int solverID, double convergence) throws IOException {
 		super(N, NP, F, CR, maxGenerations,  ffIndex, solverID, convergence);
+		c= new Convergence("DEbest2");
+
 		// TODO Auto-generated constructor stub
 	}
 			
@@ -55,13 +61,16 @@ public class DEbest2 extends DEbest1{
 		newP.substract(xPop.get(index3));
 		newP.substract(xPop.get(index4));
 		
-			double sumOfDifferences=0.0;
+		
+		double sumOfDifferences=0.0;
 		
 		for (int i = 0; i < newP.position.size(); i++) {
-			sumOfDifferences+=Math.abs(newP.position.get(i));
+			sumOfDifferences+=Math.pow(Math.abs(newP.position.get(i)),2);
+
 		}
-		this.sumOfDifferencesGlobal+=sumOfDifferences;
-		
+
+		this.sumOfDifferencesGlobal+=Math.sqrt(sumOfDifferences);
+
 		
 		return newP;
 	}
