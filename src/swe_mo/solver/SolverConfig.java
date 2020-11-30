@@ -1,6 +1,7 @@
 package swe_mo.solver;
 
 import swe_mo.solver.de.DErand1;
+import swe_mo.solver.pso.PSOgnsc;
 import swe_mo.solver.pso.PSOgsc;
 import swe_mo.solver.pso.PSOgscDecay;
 import swe_mo.solver.pso.PSOnsc;
@@ -122,7 +123,7 @@ public class SolverConfig {
 		usedpars.add("dt");
 	}
 	
-	//PSOnsc
+	//PSOnsc / PSOgnsc
 		public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, int neighbors) {
 			this(ffid, n, nP, maxGenerations, upperBound, lowerBound, w, cc, cs, dt);		
 
@@ -288,6 +289,8 @@ public class SolverConfig {
 				return PSOnsc.defaultConfig();
 			case "PSOgscD":
 				return PSOgscDecay.defaultConfig();
+			case "PSOgnsc":
+				return PSOgnsc.defaultConfig();
 				
 		}	
 		throw new Exception("Algorithm not specified.");
@@ -360,6 +363,19 @@ public class SolverConfig {
 										 config.ffid, id,
 										 config.neighbors).solve();
 				
+			case "PSOgnsc":
+				return new PSOgnsc(config.N,
+										 config.lowerBound,
+										 config.upperBound,
+										 config.NP,
+										 config.w,
+										 config.cc,
+										 config.cs,
+										 config.dt,
+										 config.maxGenerations,
+										 config.ffid, id,
+										 config.neighbors).solve();	
+				
 			case "PSOgscD":
 				return new PSOgscDecay(config.N,
 										 config.lowerBound,
@@ -388,6 +404,7 @@ public class SolverConfig {
 		algorithms.add("DErtb1");
 		algorithms.add("PSOgsc");
 		algorithms.add("PSOnsc");
+		algorithms.add("PSOgnsc");
 		algorithms.add("PSOgscD");
 		
 		

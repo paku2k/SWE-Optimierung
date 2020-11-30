@@ -83,6 +83,20 @@ public class PSOparticle extends Particle_DE {
 	}
 	
 	
+	public void updateVelocityGNSC(ArrayList<Double> socialComponent) {
+		double rc=Math.random();
+		double rs=Math.random();
+		for(int i=0; i<velocity.size(); i++) {
+			velocity.set(i, w*velocity.get(i)  
+					+  cc*rc*(personalBestPosition.get(i)
+							-position.get(i))  
+					+  cs*rs*((nc.get(i)
+							-position.get(i)) + (socialComponent.get(i) - position.get(i))));
+		}
+		
+	}
+	
+	
 	public void updateVelocityDecay(ArrayList<Double> socialComponent, int numIter , int Iter, double decayStart, double decayEnd) {
 		double rc=Math.random();
 		double rs=Math.random();
