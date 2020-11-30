@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -30,6 +31,7 @@ public class Settings {
 		//define all application settings here
 		settings.put("minUifOnWebguiOpen", true);
 		settings.put("defaultAlgorithm", "DEbest1");
+		settings.put("WebGUIshowDelSolvers", true);
 		
 	}
 	
@@ -39,11 +41,16 @@ public class Settings {
 	@SuppressWarnings("unchecked")
 	public static String listAll(boolean json) {  		
         if(json) {		
-            JSONObject listOfSettings = new JSONObject();	
-            for(String key : settings.keySet()) {            	
-            	listOfSettings.put(key, settings.get(key));	
-            }    		
-    		return listOfSettings.toJSONString();
+        	JSONArray listOfSettings = new JSONArray();
+            for(String key : settings.keySet()) {  
+            	JSONObject obj = new JSONObject();
+            	obj.put("key", key);
+            	obj.put("value", settings.get(key));
+            	listOfSettings.add(obj);	
+            }    	
+            JSONObject jsonobj = new JSONObject();	
+            jsonobj.put("cfg_list", listOfSettings);
+    		return jsonobj.toJSONString();
         	
         } else {
             String s = "List of application settings\n";

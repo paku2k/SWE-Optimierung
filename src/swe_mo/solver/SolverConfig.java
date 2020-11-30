@@ -1,6 +1,7 @@
 package swe_mo.solver;
 
 import swe_mo.solver.de.DErand1;
+import swe_mo.solver.pso.PSOgnsc;
 import swe_mo.solver.pso.PSOgsc;
 import swe_mo.solver.pso.PSOgscDecay;
 import swe_mo.solver.pso.PSOnsc;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 
 
@@ -39,6 +41,7 @@ public class SolverConfig {
 	//PSOgscDecay attributes
 	public double decayStart;
 	public double decayEnd;
+	public int neighbors;
 	
 	
 	//list of used parameters
@@ -66,6 +69,7 @@ public class SolverConfig {
 		this.dt = s.dt;
 		this.decayStart = s.decayStart;
 		this.decayEnd = s.decayEnd;
+		this.neighbors=s.neighbors;
 		
 		this.usedpars = s.usedpars;
 	};
@@ -133,6 +137,14 @@ public class SolverConfig {
 		usedpars.add("dt");
 	}
 	
+	//PSOnsc / PSOgnsc
+		public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, int neighbors) {
+			this(ffid, n, nP, maxGenerations, upperBound, lowerBound, w, cc, cs, dt);		
+
+			this.neighbors = neighbors;
+			usedpars.add("neighbors");
+		}
+	
 	//PSOgscDecay
 	public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, double decayStart, double decayEnd) {
 		this(ffid, n, nP, maxGenerations, upperBound, lowerBound, w, cc, cs, dt);		
@@ -196,6 +208,9 @@ public class SolverConfig {
 			case "convergence":
 				convergence = Double.parseDouble(value);
 				return;
+			case "neighbors":
+				neighbors = Integer.parseInt(value);
+				return;
 		}
 		throw new Exception("No such hyperparameter ("+param+").");
 	}
@@ -235,6 +250,9 @@ public class SolverConfig {
 				return decayEnd;
 			case "convergence": 
 				return convergence;
+			case "neighbors": 
+				return neighbors;
+				
 		}
 		return "nd";
 	}
@@ -256,11 +274,18 @@ public class SolverConfig {
 	
 	@SuppressWarnings("unchecked")
 	public String toJSON() {
-		JSONObject json = new JSONObject();
+		JSONArray jarr = new JSONArray();
 		
 		for(String p : usedpars) {
-			json.put(p, getValue(p));
+			JSONObject json = new JSONObject();
+			json.put("key", p);
+			json.put("value", getValue(p));
+			jarr.add(json);
 		}
+		
+
+		JSONObject json = new JSONObject();
+		json.put("cfg", jarr);
 		
 		return json.toJSONString();
 	}
@@ -285,6 +310,8 @@ public class SolverConfig {
 				return PSOnsc.defaultConfig();
 			case "PSOgscD":
 				return PSOgscDecay.defaultConfig();
+			case "PSOgnsc":
+				return PSOgnsc.defaultConfig();
 				
 		}	
 		throw new Exception("Algorithm not specified.");
@@ -354,7 +381,21 @@ public class SolverConfig {
 										 config.cs,
 										 config.dt,
 										 config.maxGenerations,
-										 config.ffid, id).solve();
+										 config.ffid, id,
+										 config.neighbors).solve();
+				
+			case "PSOgnsc":
+				return new PSOgnsc(config.N,
+										 config.lowerBound,
+										 config.upperBound,
+										 config.NP,
+										 config.w,
+										 config.cc,
+										 config.cs,
+										 config.dt,
+										 config.maxGenerations,
+										 config.ffid, id,
+										 config.neighbors).solve();	
 				
 			case "PSOgscD":
 				return new PSOgscDecay(config.N,
@@ -384,6 +425,7 @@ public class SolverConfig {
 		algorithms.add("DErtb1");
 		algorithms.add("PSOgsc");
 		algorithms.add("PSOnsc");
+		algorithms.add("PSOgnsc");
 		algorithms.add("PSOgscD");
 		
 		
@@ -401,8 +443,13 @@ public class SolverConfig {
 				
 				return l;
 			} else {
+				JSONArray algoarray = new JSONArray();
+				for(int i=0; i < algorithms.size(); i++) {					
+					algoarray.add((JSONObject) new JSONParser().parse(getAlgorithmList(true,true,algorithms.get(i))));
+				}
+				
 				JSONObject jsonobj = new JSONObject();
-				jsonobj.put("algorithms", algorithms);
+				jsonobj.put("algorithms", algoarray);
 				return jsonobj.toJSONString();
 			}
 			

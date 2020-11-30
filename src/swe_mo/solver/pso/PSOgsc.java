@@ -34,12 +34,14 @@ public class PSOgsc {
 
 
 	
-		public PSOgsc(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, int solverID) throws IOException {
-		// This constructor creates and  initializes a psoGlobal-Solver for classical Particle Swarm Optimization.
-			
-			c= new Convergence("PSOgsc");
 
-			
+		public PSOgsc(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, int solverID) throws Exception {
+		// This constructor creates and  initializes a psoGlobal-Solver for classical Particle Swarm Optimization.
+
+
+			c = new Convergence("PSOgsc");
+
+
 			this.solverID = solverID;
 			this.ffID = ffID;
 			
@@ -53,12 +55,39 @@ public class PSOgsc {
 			this.cs = cs;
 			this.dt = dt;
 			
+
 			this.sumOfDifferencesGlobal=Double.MIN_VALUE;
+
+			if(dimension < 2) {
+				throw new Exception("You need at least 2 dimensions");
+				}
+			if(min >= max) {
+				throw new Exception("Ranges are set incorrectly. Maximum must be greater than the minimum");
+				}
+			if(particleCount < 1) {
+				throw new Exception("You need at least 1 Particle");
+				}
+			if(w < 0 || w > 1) {
+				throw new Exception("w has to be between 0 and 1");
+				}
+			if(cc < 0 || cc > 1) {
+				throw new Exception("cc has to be between 0 and 1");
+				}
+			if(cs < 0 || cs > 1) {
+				throw new Exception("cs has to be between 0 and 1");
+				}
+			if(dt < 0 || dt > 3) {
+				throw new Exception("dt has to be between 0 and 3");
+				}
+			if(numIter < 1) {
+				throw new Exception("You need at least 1 Iteration");
+				}
+
 		}
 		
 			public static SolverConfig defaultConfig() {
 				//int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt
-				return new SolverConfig(1, 1, 10, 100, 5, -5, 0.9, 0.5, 0.5, 1);
+				return new SolverConfig(1, 2, 10, 100, 5, -5, 0.9, 0.5, 0.5, 1);
 			}
 			
 	
@@ -82,6 +111,7 @@ public class PSOgsc {
 					for(int j=0; j<particleCount; j++) {
 						updateGlobalBestPosition(swarm.get(j));
 						swarm.get(j).updateVelocity(globalBestPosition);
+						
 						swarm.get(j).updatePosition();
 						swarm.get(j).updatePersonalBestPosition(ffID);
 						
@@ -110,11 +140,11 @@ public class PSOgsc {
 			public void updateGlobalBestPosition(PSOparticle particle) {
 			// This method updates the globalBestPosition through calculating the corresponding value for a given position
 				
+				
 				//double minimum = FitnessFunction.solve(ffID, particle);
 				if(particle.personalMinimum<globalMinimum) {
 					globalMinimum = particle.personalMinimum;
 					globalBestPosition = new ArrayList<Double>(particle.position);
-					
 				}
 			}
 			

@@ -6,7 +6,13 @@
         
         
         <title>MO WebGUI</title>
-        <link rel="stylesheet" href="src/style.css">
+        <link rel="stylesheet" href="src/css/global.css">
+        <link rel="stylesheet" href="src/css/header.css">
+        <link rel="stylesheet" href="src/css/infobanner.css">
+        <link rel="stylesheet" href="src/css/tab.css">
+        <link rel="stylesheet" href="src/css/tab_solver.css">
+        <link rel="stylesheet" href="src/css/tab_cmd.css">
+        <link rel="stylesheet" href="src/css/tab_settings.css">
         
         <link rel="icon" type="image/png" href="img/icon.png">        
         <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
@@ -19,14 +25,21 @@
         <meta name="msapplication-config" content="img/browserconfig.xml">
         <meta name="theme-color" content="#ffffff">
         
-        <script language="javascript" type="text/javascript" src="src/script.js"></script>
-        <script language="javascript" type="text/javascript" src="src/filesaver.js"></script>
+        <script language="javascript" type="text/javascript" src="src/js/helperfn.js"></script>
+        <script language="javascript" type="text/javascript" src="src/js/loadAsync.js"></script>
+        <script language="javascript" type="text/javascript" src="src/js/infobanner.js"></script>
+        <script language="javascript" type="text/javascript" src="src/js/filesaver.js"></script>
+        <script language="javascript" type="text/javascript" src="src/js/tab_cmd.js"></script>
+        <script language="javascript" type="text/javascript" src="src/js/tab_solver.js"></script>
+        <script language="javascript" type="text/javascript" src="src/js/tab_settings.js"></script>
+        <script language="javascript" type="text/javascript" src="src/js/tab.js"></script>
+        <script language="javascript" type="text/javascript" src="src/js/global.js"></script>
     </header>
     <body onload="onload();">
         
         <div id="info" style="display: none;">
             <div><p id="info_close_x" onclick="closeInfo();">&#x2715;</p></div>
-            <p id="info_text" class="tbi"></p>
+            <p id="info_text"></p>
         </div>
 	    
 	    <div id="header">
@@ -36,16 +49,113 @@
             
             
         <div id="tab">
-            <button class="tablinks" onclick="tab(event, 'tab_solver')">Solver</button>
+            <button class="tablinks" onclick="tab(event, 'tab_solver')" id="tab_defaultOpen">Solver</button>
+            <!--
             <button class="tablinks" onclick="tab(event, 'tab_optimizer')">Optimizer</button>
             <button class="tablinks" onclick="tab(event, 'tab_functions')">Functions</button>
-            <button class="tablinks" onclick="tab(event, 'tab_cmd')" id="tab_defaultOpen">CMD Editor</button>
+            -->
+            <button class="tablinks" onclick="tab(event, 'tab_cmd')">CMD Editor</button>
             <button class="tablinks" onclick="tab(event, 'tab_settings')">Settings</button>            
         </div>
         
         
         <div id="tab_solver" class="tabcontent">
-            <h2 contextmenu="to be implemented" class="tbi">TBI</h2>
+            <h2 class="tbi">Solver Manager</h2>
+            <div>
+                <table>
+                    <tr>
+                        <td id="solver_list">                            
+                            <label id="solver_add" onclick="switch_solver(event, 'add_solver')">add solver</label>                                 
+                        </td>
+                        <td id="solver_contents">      
+                            <div id="add_solver" class="solver_content">
+                                <h3>Add Solver</h3><br>  
+                                <label for="algorithm">Algorithm:</label>
+                                <select id="algorithm">
+                                    <option value="default">default</option>
+                                </select>
+                                <button class="solver_content_btn" onclick="createSolver();">Create</button>           
+                                                          
+                            </div>
+                            
+                 <!--           
+<div id="solver_0" class="solver_content">
+           <table class="solver_content_t1">
+               <tr>
+                   <td>
+                        <h3>DErand1</h3>
+                   </td>
+                   <td>
+                       <span id="solver_0_status">initialized (-2)</span>   
+                   </td>
+                   <td>
+                       <button onclick="solverDuplicate(0);">Duplicate</button>
+                       <button onclick="solverDelete(0);">Delete</button>
+                   </td>
+               </tr>
+           </table>
+
+            <div>
+                <table class="solver_content_t2">
+                   <tr>
+                    <td>
+                        <h4>Configuration</h4>
+                    </td>
+                    <td>
+                        <button id="solver_0_copyfromBtn" onclick="solverCfgCopyFrom(0);">Copy from</button>
+                        <input type="text" value="0" id="solver_0_copyfrom">
+                    </td>
+                    </tr>
+                </table>
+                        
+                        
+                   <table class="solver_content_t3">
+                            <tr id="solver_config_tableheader">
+                                <th>Parameter</th>
+                                <th>Value</th>
+                            </tr>
+                           <tr>
+                               <td>ffid</td>
+                               <td><input type="text" value="1" id="solver_0_cfg_ffid" autocomplete="off" onchange="solverCfgChange(0,'ffid',this.value)"></td>
+                           </tr>
+                   </table>  
+
+            </div>
+
+            <div>
+                <button id="solver_0_solveBtn" onclick="solverSolve(0);">Solve</button>     
+                <button id="solver_0_termBtn" onclick="solverTerm(0);">Terminate</button>
+                <button id="solver_0_clearBtn" onclick="solverClear(0);">Clear</button>                                 
+            </div>
+
+            <div id="solver_0_result">
+                <h4>Result</h4>
+                   <table class="solver_content_t4">
+                           <tr>
+                               <td>Minimum: </td>
+                               <td id="solver_0_resultMin"></td>
+                           </tr>
+                           <tr>
+                               <td>Position: </td>
+                               <td id="solver_0_resultPos"></td>
+                           </tr>
+                           <tr>
+                               <td>Function Calls: </td>
+                               <td id="solver_0_resultFC"></td>
+                           </tr>
+                           <tr>
+                               <td>Exception: </td>
+                               <td id="solver_0_resultException"></td>
+                           </tr>
+                   </table>                           
+            </div>          
+</div>
+                  -->     
+                       
+                        </td>
+                    </tr>
+                </table>
+            </div>            
             
         </div>
         
@@ -63,46 +173,62 @@
         
         
         <div id="tab_cmd" class="tabcontent">	
-            <div>
-                <h2 contextmenu="to be implemented" class="tbi">CMD Editor</h2>            
-
-                <label class="cmd_editor_buttons" id="cmd_save" onclick="saveAsMoclFile();">&#x1f5ab;</label>
+            <h2>CMD Editor</h2>   
+            <div>         
+                <label class="cmd_editor_buttons" id="cmd_save_as" onclick="saveAsWithFilename();">&#x1f5ab; ...</label>
+                <label class="cmd_editor_buttons" id="cmd_save" onclick="saveAsMoclFile('');">&#x1f5ab;</label>
                 <label class="cmd_editor_buttons"><input type="file" id="cmd_file"/>&#x1f5c0;</label>   
                 <label class="cmd_editor_buttons" id="cmd_clr" onclick="clr_cmd_input();">&#x2612;</label>
             </div>
             <textarea id="cmd_input" ondrop="cmdInputDrop(event);" ondragover="cmdInputDragOver(event);" ondragleave="cmdInputDragLeave(event);" oninput="cmd_input_changed(event);"></textarea><br>
             <label id="cmd_send" onclick="cmdInputExecute();" class="cmd_editor_buttons">Execute</label>
             
+            <div>       
+                <h3 id="historyH3">Command History</h3>
+                <label class="clearhistory" onclick="clearCmdHistory();">Clear</label>
+                <table id="tab_cmd_history_table">
+                    <tr id="tab_cmd_history_tableheader">
+                        <th>ID</th>
+                        <th>Command</th>
+                        <th>Response</th>
+                    </tr>
+                </table>                
+            </div>     
                                                                               
         </div>
         
         
         <div id="tab_settings" class="tabcontent">
-            <h2 contextmenu="to be implemented" onclick='openInfo("warn", "Test Banner WARN");' class="tbi">TBI</h2>
+            <h2>Application Settings</h2>
             
-            
-            <br>
-            <br>
-            <br>
-            <br>
+            <div id="settings_list">
+                <table id="tab_settings_table">
+                    <tr id="tab_settings_tableheader">
+                        <th>Setting</th>
+                        <th>Value</th>
+                    </tr>
+                </table> 
+                <label onclick="settingsReset();">Reset All</label>
+            </div>               
+                
             <div id="settings_credentials">
                 <h3>App Info</h3>
                 <table>
                     <tr>
                         <td>App Version</td>
-                        <td class="tbi">0.0.1.2</td>
+                        <td id="appinfo_version"></td>
                     </tr>
                     <tr>
                         <td>WebGUI Version</td>
-                        <td class="tbi">0.0.2.1</td>
+                        <td id="appinfo_wguiversion">0.1.0.0</td>
                     </tr>
                     <tr>
                         <td>Release Date</td>
-                        <td class="tbi">2020-11-15</td>
+                        <td id="appinfo_date"></td>
                     </tr>
                     <tr>
                         <td>Developers</td>
-                        <td class="tbi">Jonas D&uuml;ckmann<br>Daniel B&auml;tjer<br>Elias Niep&ouml;tter<br>Simon Pauka<br>David Messow</td>
+                        <td id="appinfo_developers"></td>
                     </tr>
                 </table>    
                 <p>&copy; 2020</p>                

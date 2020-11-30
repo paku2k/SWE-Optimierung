@@ -32,7 +32,7 @@ public class PSOoptimizer {
 		
 	}
 
-	public void psoGlobalLinear3DimensionalGridSearch(int resolution, double w_upper, double w_lower, double cc_upper, double cc_lower, double cs_upper, double cs_lower) throws IOException {
+	public void psoGlobalLinear3DimensionalGridSearch(int resolution, double w_upper, double w_lower, double cc_upper, double cc_lower, double cs_upper, double cs_lower) throws Exception {
 		
 		FileWriter author = new FileWriter(filename+".txt");
 		

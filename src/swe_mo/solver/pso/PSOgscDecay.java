@@ -12,16 +12,23 @@ public class PSOgscDecay extends PSOgsc{
 	double decayStart;
 	double decayEnd;
 	
-	public PSOgscDecay(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, int solverID, double decayStart, double decayEnd) throws IOException {
+
+	public PSOgscDecay(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, int solverID, double decayStart, double decayEnd) throws Exception {
+
 		
 		super(dimension, min, max, particleCount, w, cc, cs, dt, numIter,  ffID, solverID);
-		this.decayStart = decayStart;
-		this.decayEnd = decayEnd;
+		if(decayStart > decayEnd) {
+			this.decayStart = decayStart;
+			this.decayEnd = decayEnd;
+		}else if(decayStart < decayEnd) {
+			this.decayStart = decayEnd;
+			this.decayEnd = decayStart;
+		}
 	}
 
 	public static SolverConfig defaultConfig() {
 		//int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, double decayStart, double decayEnd
-		return new SolverConfig(1, 1, 10, 100, 5, -5, 0.9, 0.5, 0.5, 1, 0.9, 0.4);
+		return new SolverConfig(2, 1, 10, 100, 5, -5, 0.9, 0.5, 0.5, 1, 0.9, 0.4);
 	}
 	
 	
