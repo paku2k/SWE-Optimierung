@@ -17,7 +17,7 @@ import swe_mo.solver.FitnessFunction;
 
 public class DErand1 {
 	
-	FileGenerator g;
+	//FileGenerator g;
 	
 	
 	Convergence c;
@@ -90,7 +90,8 @@ public class DErand1 {
 		
 		//Bounds are created to be max.
 		
-
+		
+		/*
 		String header = "generation;";
 		for (int i=0; i<NP; i++) {
 			header=header+"P"+i+"solution;";
@@ -98,9 +99,9 @@ public class DErand1 {
 				header=header+"P"+i+"axis"+j+";";
 			}
 		}
+		*/
 		
-		
-		g = new FileGenerator("DE_Positions_FFID"+ffIndex, header);
+		//g = new FileGenerator("DE_Positions_FFID"+ffIndex, header);
 		
 		
 		this.upperBound=Double.MAX_VALUE;
@@ -148,7 +149,7 @@ public class DErand1 {
 		// Solver
 		for(this.generation=0; generation<this.maxGenerations; generation++) {
 			
-			csv = ""+generation+";";
+			//csv = ""+generation+";";
 			
 			SolverManager.updateStatus(solverID, (100*((double)generation)/((double)this.maxGenerations)));
 			if(SolverManager.checkTerminated(solverID)) {
@@ -163,11 +164,11 @@ public class DErand1 {
 				xPop.set(i, compare(i, crossOver(xPop.get(i), calculateV(i))));
 				
 			}
-			g.write(csv);
+			//g.write(csv);
 			boolean converged = c.update(sumOfDifferencesGlobal, best);
 			if (converged&&this.convergenceCrit!=0.0) {
 				c.file.close();
-				g.close();
+				//g.close();
 				return new SolverResult(best, bestParticle.position, fitCount);
 				
 
@@ -181,7 +182,7 @@ public class DErand1 {
 
 
 		c.file.close();
-		g.close();
+		//g.close();
 		return new SolverResult(best, bestParticle.position, fitCount);
 	}
 	
@@ -268,11 +269,12 @@ public class DErand1 {
 		
 		Particle_DE x = xPop.get(xIndex);
 
-		
+		/*
 		csv=csv+xRes+";";
 		for (int j=0; j<N; j++) {
 				csv=csv+x.position.get(j)+";";
 		}
+		*/
 		
 		
 		
