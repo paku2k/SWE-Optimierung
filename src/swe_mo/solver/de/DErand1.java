@@ -17,6 +17,8 @@ import swe_mo.solver.FitnessFunction;
 
 public class DErand1 {
 	
+	FileGenerator g;
+	
 	
 	Convergence c;
 	int N;
@@ -36,6 +38,8 @@ public class DErand1 {
 	double sumOfDifferencesGlobal;
 
 	double convergenceCrit;
+	
+	String csv;
 
 
 	Particle_DE bestParticle;
@@ -76,6 +80,10 @@ public class DErand1 {
 		return new SolverConfig(1,5,50,0.3,0.3,1000,5.14,-5.14, 1.0);
 	}
 	
+	protected DErand1(int N, int NP, double F, double CR, int maxGenerations, int ffIndex, int solverID, double convergence, boolean generateFile) throws IOException {
+		this(N, NP, F, CR, maxGenerations, N, N, ffIndex, solverID, convergence);
+	}
+	
 	public DErand1(int N, int NP, double F, double CR, int maxGenerations, int ffIndex, int solverID, double convergence) throws IOException {
 		//If, for whatever reason, the population should be populated manually, this constructor can be used
 		// it will initialize all NP particles with all dimensions to be zero
@@ -83,7 +91,17 @@ public class DErand1 {
 		//Bounds are created to be max.
 		
 
-		c= new Convergence("DErand1");
+		String header = "generation;";
+		for (int i=0; i<NP; i++) {
+			header=header+"P"+i+"solution;";
+			for (int j=0; j<N; j++) {
+				header=header+"P"+i+"axis"+j+";";
+			}
+		}
+		
+		
+		g = new FileGenerator("DE_Positions_FFID"+ffIndex, header);
+		
 		
 		this.upperBound=Double.MAX_VALUE;
 		this.lowerBound=-Double.MAX_VALUE;
@@ -129,6 +147,9 @@ public class DErand1 {
 
 		// Solver
 		for(this.generation=0; generation<this.maxGenerations; generation++) {
+			
+			csv = ""+generation+";";
+			
 			SolverManager.updateStatus(solverID, (100*((double)generation)/((double)this.maxGenerations)));
 			if(SolverManager.checkTerminated(solverID)) {
 				return new SolverResult(best, bestParticle.position, fitCount);
@@ -142,10 +163,11 @@ public class DErand1 {
 				xPop.set(i, compare(i, crossOver(xPop.get(i), calculateV(i))));
 				
 			}
+			g.write(csv);
 			boolean converged = c.update(sumOfDifferencesGlobal, best);
 			if (converged&&this.convergenceCrit!=0.0) {
 				c.file.close();
-
+				g.close();
 				return new SolverResult(best, bestParticle.position, fitCount);
 				
 
@@ -159,7 +181,7 @@ public class DErand1 {
 
 
 		c.file.close();
-			
+		g.close();
 		return new SolverResult(best, bestParticle.position, fitCount);
 	}
 	
@@ -228,7 +250,7 @@ public class DErand1 {
 	}
 	
 	
-	public Particle_DE compare(int xIndex, Particle_DE vectorU) {
+	public Particle_DE compare(int xIndex, Particle_DE vectorU) throws IOException {
 		//Compares vectorX and vectorU and returns the better one. If both give the same result, vectorU is returned
 		double xRes;
 
@@ -243,13 +265,25 @@ public class DErand1 {
 		else {
 			xRes=lastResult.get(xIndex);
 		}
+		
+		Particle_DE x = xPop.get(xIndex);
 
+		
+		csv=csv+xRes+";";
+		for (int j=0; j<N; j++) {
+				csv=csv+x.position.get(j)+";";
+		}
+		
+		
+		
+		
+		
 		
 		double uRes=FitnessFunction.solve(ffIndex, vectorU);
 		fitCount+=1;
-		System.out.println("current best: "+best);
-		System.out.println("xRes: "+xRes);
-		System.out.println("uRes: "+uRes);
+		//System.out.println("current best: "+best);
+		//System.out.println("xRes: "+xRes);
+		//System.out.println("uRes: "+uRes);
 
 		
 		if(xRes<uRes) {

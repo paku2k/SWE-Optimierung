@@ -88,6 +88,7 @@ public class FitnessFunction {
 		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
 	 }
 	 static double calculatef5(Particle_DE vector)	{
+		 //TODO:Simon
 		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
 	 }
 	 static double calculatef6(Particle_DE vector)	{
