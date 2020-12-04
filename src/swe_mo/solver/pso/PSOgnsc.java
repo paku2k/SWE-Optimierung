@@ -23,7 +23,7 @@ public class PSOgnsc extends PSOnsc {
 	
 	
 	@Override
-	public SolverResult solve() throws IOException {
+	public SolverResult solve() throws Exception {
 		// This method is the engine of the solver, that creates the swarm and updates / finds the globalBestPosition
 			
 			

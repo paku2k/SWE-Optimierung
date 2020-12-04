@@ -60,7 +60,7 @@
         
         
         <div id="tab_solver" class="tabcontent">
-            <h2 class="tbi">Solver Manager</h2>
+            <h2>Solver Manager</h2>
             <div>
                 <table>
                     <tr>
@@ -74,11 +74,11 @@
                                 <select id="algorithm">
                                     <option value="default">default</option>
                                 </select>
-                                <button class="solver_content_btn" onclick="createSolver();">Create</button>           
+                                <button class="solver_content_btn" onclick="createSolver();">Create</button>          
                                                           
                             </div>
                             
-                 <!--           
+                 <!--       
 <div id="solver_0" class="solver_content">
            <table class="solver_content_t1">
                <tr>
@@ -153,12 +153,29 @@
                            </tr>
                    </table>                           
             </div>          
-</div>
-                  -->     
+</div>-->     
+                      
                        
                         </td>
                     </tr>
                 </table>
+                <div id="solver_compare">
+                    <h3>Compare</h3>
+                    <table>
+                        <tr id="solver_compare_trsolver">
+                            <th>Solver</th>
+                        </tr>
+                        <tr id="solver_compare_trminimum">
+                            <th>Minimum</th>
+                        </tr>
+                        <tr id="solver_compare_triter">
+                            <th>Iterations</th>
+                        </tr>
+                        <tr id="solver_compare_trfc">
+                            <th>Function Calls</th>
+                        </tr>
+                    </table>                    
+                </div>
             </div>            
             
         </div>
@@ -224,7 +241,7 @@
                     </tr>
                     <tr>
                         <td>WebGUI Version</td>
-                        <td id="appinfo_wguiversion">0.1.0.1</td>
+                        <td id="appinfo_wguiversion">0.1.1.0</td>
                     </tr>
                     <tr>
                         <td>Release Date</td>
@@ -237,7 +254,7 @@
                 </table>    
                 <p>&copy; 2020</p>                
             </div>
-        </div>        
+        </div>   
         
 	</body>
 </html>

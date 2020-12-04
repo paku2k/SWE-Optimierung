@@ -32,9 +32,14 @@ function sendCmds(dataarray, timeout, callback) {
     for(i=0; i<dataarray.length; i++){
         dataarray[i] = dataarray[i].trim();
         if(dataarray[i] != "" && dataarray[i] != null){
-            if(data.length > 0) data += "&";
-            data += "cmd"+datacnt+"="+dataarray[i].trim();
-            datacnt++;
+            if(dataarray[i].trim() == "show me memes" && easterEggUnlock(3)){
+            } else if(dataarray[i].trim() == "memes" && easterEggUnlock(2)){
+            } else if(dataarray[i].trim() == "easteregg" && easterEggUnlock(1)){
+            } else {
+                if(data.length > 0) data += "&";
+                data += "cmd"+datacnt+"="+dataarray[i].trim();
+                datacnt++;                
+            }
         }
     }
     

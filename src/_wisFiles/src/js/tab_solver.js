@@ -117,7 +117,9 @@ function createOrChangeSolverListHTML(solver){
             if(!showDelSolvers) btn.parentElement.removeChild(btn);
             
             if(document.getElementById("solver_"+solver.id))
-                document.getElementById("solver_"+solver.id).innerHTML = "";
+                document.getElementById("solver_"+solver.id).innerHTML = "";   
+            
+            solverCompareRemove(solver.id);           
             
         } else if(showDelSolvers) { //does not exist in list
             var button = document.createElement("button");
@@ -438,9 +440,14 @@ function updateSolverResult(id, result, err){
             document.getElementById("solver_"+id+"_resultException").parentElement.style.display = "none";            
         }
         
+        if(!document.getElementById("solver_compare_trsolver_"+id))
+            document.getElementById("solver_"+id+"_compareBtn").style.display = "inherit";
+        
         document.getElementById("solver_"+id+"_result").style.display = "inherit";  
         
     } else {
+        solverCompareRemove(id);
+        document.getElementById("solver_"+id+"_compareBtn").style.display = "none";
         document.getElementById("solver_"+id+"_result").style.display = "none";            
     }    
 }
@@ -512,21 +519,13 @@ function newSolverContentDiv(id, algorithm){
         var div3 = document.createElement("div");
         div3.setAttribute("id", "solver_"+id+"_result");
         div3.setAttribute("style", "display: none;");
-        div3.innerHTML = '<h4>Result</h4><table class="solver_content_t4"><tr><td>Minimum: </td><td id="solver_'+id+'_resultMin"></td></tr><tr><td>Position: </td><td id="solver_'+id+'_resultPos"></td></tr><tr><td>Iterations: </td><td id="solver_'+id+'_resultIter"></td></tr><tr><td>Function Calls: </td><td id="solver_'+id+'_resultFC"></td></tr><tr><td>Exception: </td><td id="solver_'+id+'_resultException"></td></tr></table>';
+        div3.innerHTML = '<h4>Result</h4><table class="solver_content_t4"><tr><td>Minimum: </td><td id="solver_'+id+'_resultMin"></td></tr><tr><td>Position: </td><td id="solver_'+id+'_resultPos"></td></tr><tr><td>Iterations: </td><td id="solver_'+id+'_resultIter"></td></tr><tr><td>Function Calls: </td><td id="solver_'+id+'_resultFC"></td></tr><tr><td>Exception: </td><td id="solver_'+id+'_resultException"></td></tr></table><button class="solver_compareBtn" id="solver_'+id+'_compareBtn" onclick="solverCompare('+id+');">Compare</button>';
     
     div.appendChild(div3);
     
     
     document.getElementById("solver_contents").appendChild(div);
 }
-
-
-
-
-
-
-
-
 
 
 
@@ -544,8 +543,9 @@ function solverDuplicate(id){
 }
 
 function solverDelete(id){
-    if(window.confirm("Delete solver?"))
-        sendCmds(["sm delete "+id], 1000, tab_solver_responseHandler);        
+    if(window.confirm("Delete solver?")){
+        sendCmds(["sm delete "+id], 1000, tab_solver_responseHandler); 
+    }   
 }
 
 function solverCfgCopyFrom(id){
@@ -655,6 +655,9 @@ function solverClear(id){
 function createSolver(){
     var algorithm = document.getElementById("algorithm").value;
     var cmd = "sm create";
+    if(algorithm == "PSOeeg" && easterEggUnlock(0)){
+        return;
+    }
     if(algorithm != "default"){
         cmd += " "+algorithm;
     }
@@ -670,3 +673,86 @@ function createAlgorithmSelectHTML(algorithm){
     document.getElementById("algorithm").lastChild.after(option);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+/* solver compare */
+
+function solverCompare(id){
+    if(!document.getElementById("solver_compare_trsolver_"+id)){
+        var algorithm = "";
+        var minimum = document.getElementById("solver_"+id+"_resultMin").innerHTML;
+        var iterations = document.getElementById("solver_"+id+"_resultIter").innerHTML;
+        var ffc = document.getElementById("solver_"+id+"_resultFC").innerHTML;
+        
+        
+        for(var i = 0; i < currentSolverList_JSON.length; i++){
+            if(currentSolverList_JSON[i].id == id){
+                algorithm = currentSolverList_JSON[i].algorithm;
+                break;
+            }
+        }
+        
+        
+        var td = document.createElement("td");
+        
+        td.setAttribute("id", "solver_compare_trsolver_"+id);
+        td.innerHTML = id+": "+algorithm+" <span onclick='solverCompareRemove("+id+")'>&#x2717;</span>";
+        document.getElementById("solver_compare_trsolver").appendChild(td);
+        
+        
+        td = document.createElement("td");
+        
+        td.setAttribute("id", "solver_compare_trminimum_"+id);
+        td.innerHTML = minimum;
+        document.getElementById("solver_compare_trminimum").appendChild(td);
+        
+        
+        td = document.createElement("td");
+        
+        td.setAttribute("id", "solver_compare_triter_"+id);
+        td.innerHTML = iterations;
+        document.getElementById("solver_compare_triter").appendChild(td);
+        
+        
+        td = document.createElement("td");
+        
+        td.setAttribute("id", "solver_compare_trfc_"+id);
+        td.innerHTML = ffc;
+        document.getElementById("solver_compare_trfc").appendChild(td);
+        
+        
+    }
+    document.getElementById("solver_"+id+"_compareBtn").style.display = "none";
+}
+
+
+function solverCompareRemove(id){
+    if(document.getElementById("solver_"+id+"_compareBtn"))
+        document.getElementById("solver_"+id+"_compareBtn").style.display = "inherit";
+    
+    if(document.getElementById("solver_compare_trsolver_"+id)){
+        document.getElementById("solver_compare_trsolver").removeChild(document.getElementById("solver_compare_trsolver_"+id));
+    }
+    
+    if(document.getElementById("solver_compare_trminimum_"+id)){
+        document.getElementById("solver_compare_trminimum").removeChild(document.getElementById("solver_compare_trminimum_"+id));
+    }
+    
+    if(document.getElementById("solver_compare_triter_"+id)){
+        document.getElementById("solver_compare_triter").removeChild(document.getElementById("solver_compare_triter_"+id));
+    }    
+    
+    if(document.getElementById("solver_compare_trfc_"+id)){
+        document.getElementById("solver_compare_trfc").removeChild(document.getElementById("solver_compare_trfc_"+id));
+    }
+
+}
