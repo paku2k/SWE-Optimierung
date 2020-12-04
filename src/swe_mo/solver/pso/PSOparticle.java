@@ -118,7 +118,7 @@ public class PSOparticle extends Particle_DE {
 		}
 	}
 	
-	public void updatePersonalBestPosition(int ffID) {
+	public void updatePersonalBestPosition(int ffID) throws Exception {
 		double minimum = FitnessFunction.solve(ffID, this);
 		if(minimum < personalMinimum) {
 			personalMinimum = minimum;

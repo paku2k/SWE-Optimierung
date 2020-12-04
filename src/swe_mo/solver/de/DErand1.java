@@ -120,7 +120,7 @@ public class DErand1 {
 	    }
 	}
 	
-	public SolverResult solve() throws IOException  {
+	public SolverResult solve() throws Exception  {
 		
 		SolverManager.updateStatus(solverID, 0.0);
 		
@@ -226,7 +226,7 @@ public class DErand1 {
 	}
 	
 	
-	public Particle_DE compare(int xIndex, Particle_DE vectorU) {
+	public Particle_DE compare(int xIndex, Particle_DE vectorU) throws Exception {
 		//Compares vectorX and vectorU and returns the better one. If both give the same result, vectorU is returned
 		double xRes;
 

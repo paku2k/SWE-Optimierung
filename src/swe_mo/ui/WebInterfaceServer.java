@@ -229,11 +229,35 @@ public class WebInterfaceServer{
     	    	    httpExchange.getResponseHeaders().set("Content-Type", getContentType("json"));
     		        sendHttpResponse(httpExchange, 200, listjson.toJSONString().getBytes());
 
-    	    	    
+
     	    	} else if(requestParameters.getPath().equals("/con")) {    	
     	    	    httpExchange.getResponseHeaders().set("Content-Type", getContentType("txt"));
     		        sendHttpResponse(httpExchange, 200, "ok".getBytes());
-    	
+
+    	    	} else if(requestParameters.getPathSep().size() > 0 && requestParameters.getPathSep().peek().equals("getimg")) {   
+    	    		String dir = DIR_ANCH;
+    	    		String type = "";
+    	    		requestParameters.getPathSep().poll();
+	    			if(requestParameters.getPathSep().peek() != "") {
+	    				dir += "/img/"+requestParameters.getPathSep().poll();
+    	    		
+	    				String[] types = {"gif","jpg","jpeg","png"};
+	    				for(String t : types) {
+		    				try {
+		    					readFileBytes(dir+"."+t);
+		    					type = t;
+		    					break;
+		    				} catch(Exception e) {}
+	    				}
+	    				
+	    				if(!type.equals("")) {   	
+		    	    	    httpExchange.getResponseHeaders().set("Content-Type", getContentType(type));
+		    		        sendHttpResponse(httpExchange, 200, readFileBytes(dir+"."+type));
+		    		        return;
+	    				}
+	    			} 
+				    sendHttpResponse(httpExchange, 404, null);	 
+    		        
     	    	} else if(requestParameters.getPath().equals("/favicon.ico")){	
     	    	    httpExchange.getResponseHeaders().set("Content-Type", "text/x-icon");
     		        sendHttpResponse(httpExchange, 200, readFileBytes(DIR_ANCH+"/img/icon.ico"));	

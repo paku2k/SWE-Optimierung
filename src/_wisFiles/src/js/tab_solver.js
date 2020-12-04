@@ -655,6 +655,9 @@ function solverClear(id){
 function createSolver(){
     var algorithm = document.getElementById("algorithm").value;
     var cmd = "sm create";
+    if(algorithm == "PSOeeg" && easterEggUnlock(0)){
+        return;
+    }
     if(algorithm != "default"){
         cmd += " "+algorithm;
     }
