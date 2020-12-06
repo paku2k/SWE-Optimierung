@@ -1,4 +1,4 @@
-package swe_mo.solver;
+package swe_mo.optimizer;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -6,43 +6,37 @@ import java.util.Queue;
 import swe_mo.Settings;
 import swe_mo.ui.clogger;
 
-
-
-public class Solver {
-	final String AUTH = "SLV";
-
-	private int id;
-	private String creator;
-	private Thread solverThread;	
-	private String algorithm;
-	private double status;
-	private boolean terminated;
-	private SolverResult result = new SolverResult(); 																						
-	private SolverConfig config; 																						
-		
+public class Optimizer {
+	final String AUTH = "OPT";
 	
+	String algorithm;
+	int id;
+	String creator;
+	double status;
+	boolean terminated;
+	private Thread optimizerThread;
+	private OptimizerResult result = new OptimizerResult(); 																						
+	private OptimizerConfig config; 						
 
-	
-	public Solver(int id, String creator, String algorithm) throws Exception{
+	public Optimizer(int id, String creator, String algorithm) throws Exception{
 		this.algorithm = algorithm;
 		this.id = id;
 		this.creator = creator;
 		status = -2;
 		terminated = false;
-		config = SolverConfig.getDefault(algorithm);
+		
+		config = OptimizerConfig.getDefault(algorithm);
 	}
-	public Solver(int id, String creator) throws Exception {
-		this(id, creator, Settings.get("defaultAlgorithm").toString());
-	}																						
+	public Optimizer(int id, String creator) throws Exception {
+		this(id, creator, Settings.get("defaultOptimizer").toString());
+	}			
 	
-	
-
 	
 	public void configure(String configString) throws Exception{
 		Queue<String> configQueue = new LinkedList<String>();
 		String hyperparameterNotFound = "";
-					
-		for(String s : configString.replace(","," ").replace("\t"," ").replace("    "," ").replace("   "," ").replace("  "," ").replace("= ","=").replace(" =","=").split(" ")) {
+		
+		for(String s : configString.replace(","," ").replace("\t"," ").replace("    "," ").replace("   "," ").replace("  "," ").replace("= ","=").replace(" =","=").replace("|","|").replace("/ ","/").replace(" /","/").split(" ")) {
 			if(s != "" && s != null)
 				configQueue.offer(s);
 		}
@@ -50,7 +44,12 @@ public class Solver {
 		for(String s : configQueue) {
 			String[] split = s.split("=");
 			try{
-				config.set(split[0], split[1]);
+				if(split[1].contains("/")) {
+					String[] value = split[1].split("/");
+					config.set(split[0], value[0], value[1]);					
+				} else {
+					config.set(split[0], split[1]);	
+				}
 			} catch(Exception e) {
 				if(!hyperparameterNotFound.isEmpty()) hyperparameterNotFound += ", ";
 				hyperparameterNotFound += split[0];
@@ -68,15 +67,15 @@ public class Solver {
 	}
 	
 	public void resetConfig() throws Exception {
-		config = SolverConfig.getDefault(algorithm);
+		config = OptimizerConfig.getDefault(algorithm);
 		status = -2;
 	}
 	
-	public void setConfig(SolverConfig sc) throws Exception {
-		config = new SolverConfig(sc);
+	public void setConfig(OptimizerConfig oc) throws Exception {
+		config = new OptimizerConfig(oc);
 	}
 	
-	public SolverConfig getConfig() throws Exception {
+	public OptimizerConfig getConfig() throws Exception {
 		return config;
 	}																						
 	
@@ -84,21 +83,21 @@ public class Solver {
 
 	
 	public void start(){				
-		solverThread = new Thread(new Runnable() {	
+		optimizerThread = new Thread(new Runnable() {	
 			@Override
 			public void run() {
 				try {
 					status = 0;
-					result = SolverConfig.solveMethod(algorithm, id, config);
+					result = OptimizerConfig.solveMethod(algorithm, id, config);
 					if(status<=100) status = 101;
 				} catch(Exception e) {
 					result.e = e;
-					clogger.err(AUTH, "SolverThread "+id, e);
+					clogger.err(AUTH, "OptimizerThread "+id, e);
 					status = 103;
 				}
 			}
 		});
-		solverThread.start();
+		optimizerThread.start();
 	}
 	
 	public void terminate() {
@@ -114,12 +113,12 @@ public class Solver {
 	
 	public void joinThread(int tmax) {		
 		try {
-			solverThread.join(tmax);
+			optimizerThread.join(tmax);
 		} catch (InterruptedException e) {}					
 	}	
 	public void joinThread() {		
 		try {
-			solverThread.join();
+			optimizerThread.join();
 		} catch (InterruptedException e) {}					
 	}																						
 	
@@ -146,7 +145,7 @@ public class Solver {
 		}
 	}	
 	
-	public SolverResult getResult() throws InterruptedException {	
+	public OptimizerResult getResult() throws InterruptedException {	
 		joinThread(1000);
 		return result;
 	}

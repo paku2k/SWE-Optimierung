@@ -1,14 +1,13 @@
 package swe_mo.solver;
 
 import swe_mo.solver.de.DErand1;
+import swe_mo.solver.de.DEbest1;
+import swe_mo.solver.de.DEbest2;
+import swe_mo.solver.de.DErandToBest1;
 import swe_mo.solver.pso.PSOgnsc;
 import swe_mo.solver.pso.PSOgsc;
 import swe_mo.solver.pso.PSOgscDecay;
 import swe_mo.solver.pso.PSOnsc;
-import swe_mo.ui.clogger;
-import swe_mo.solver.de.DEbest1;
-import swe_mo.solver.de.DEbest2;
-import swe_mo.solver.de.DErandToBest1;
 
 import java.util.ArrayList;
 
@@ -21,7 +20,6 @@ import org.json.simple.parser.JSONParser;
 
 public class SolverConfig {
 
-	//test
 	public int ffid;
 	
 	public int N; //dimension
@@ -424,6 +422,7 @@ public class SolverConfig {
 		throw new Exception("Algorithm not specified or no solver method.");
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static String getAlgorithmList(boolean json, boolean pars, String algo) throws Exception {
 		ArrayList<String> algorithms = new ArrayList<String>();
 		

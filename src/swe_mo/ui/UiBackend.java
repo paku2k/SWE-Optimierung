@@ -7,6 +7,8 @@ import org.json.simple.JSONObject;
 
 import swe_mo.Main;
 import swe_mo.Settings;
+import swe_mo.optimizer.OptimizerConfig;
+import swe_mo.optimizer.OptimizerManager;
 import swe_mo.solver.SolverConfig;
 import swe_mo.solver.SolverManager;
 
@@ -853,13 +855,393 @@ public class UiBackend {
 
 			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
 				return     "om - List of commands\r"
-						 + "Not implemented yet.";
+						 + "\t" + "list   \tList all optimizers\r"
+						 + "\t" + "create \tCreate new optimizer-instance\r"
+						 + "\t" + "clone  \tCreate new optimizer-instance with cloned properties\r"
+						 + "\t" + "config \tConfigure optimizer\r"
+						 + "\t" + "start  \tStart optimizing\r"
+						 + "\t" + "term   \tTerminate optimizer\r"
+						 + "\t" + "status \tGet status of optimizer\r"
+						 + "\t" + "result \tGet result\r"
+						 + "\t" + "clear  \tClear optimizer-instance\r"
+						 + "\t" + "delete \tDelete optimizer-instance\r"
+				 		 + "\t" + "lsalgo \tList of implemented algorithms\r"
+				 		 + "\t" + "lspars \tList of parameters for algorithm\r";
+								
+			} else if(cmd_queue.peek().equals("list") || cmd_queue.peek().equals("lsit")) {
+				cmd_queue.remove();		
 				
-			}	
-			return "Not implemented yet.";
-			
-			
+				if(!cmd_queue.isEmpty()) {
+					boolean show_running = true;
+					boolean show_notrunning = true;
+					boolean json = false;
+					String type = "";
+					String creator = "";
+					double status = -5;
+					double status_max = 105;
+					int id = 0;
+					int id_max = Integer.MAX_VALUE;
+					
+					int i = 6;
+					while(cmd_queue.size()>0 && i>=0) {
+						if(cmd_queue.peek().equals("-r")) {
+							cmd_queue.remove();		
+							show_running = true;
+							show_notrunning = false;
+						} else if(cmd_queue.peek().equals("-nr")) {
+							cmd_queue.remove();		
+							show_running = false;
+							show_notrunning = true;
+						} else if(cmd_queue.peek().equals("-json")) {
+							cmd_queue.remove();		
+							json = true;
+						} else if(cmd_queue.peek().equals("-t")) {
+							cmd_queue.remove();		
+							
+							if(!cmd_queue.isEmpty()) {
+								type = cmd_queue.poll();					
+							} else {
+								throw new Exception("Specify optimizer type.");
+							}	
+						} else if(cmd_queue.peek().equals("-c")) {
+							cmd_queue.remove();		
+							
+							if(!cmd_queue.isEmpty()) {
+								creator = cmd_queue.poll();					
+							} else {
+								throw new Exception("Specify optimizer creator.");
+							}	
+						} else if(cmd_queue.peek().equals("-s")) {
+							cmd_queue.remove();		
+							
+							if(!cmd_queue.isEmpty()) {
+								try {
+									status = Double.parseDouble(cmd_queue.peek());
+									status_max = status;
+									cmd_queue.remove();
+									if(!cmd_queue.isEmpty()) {
+										try {
+											status_max = Double.parseDouble(cmd_queue.peek());
+											cmd_queue.remove();
+										} catch(Exception e) {}
+									}
+									if(status_max < status) {
+										double m = status;
+										status = status_max;
+										status_max = m;
+									}
+								} catch(Exception e) {}
+							}						
+						} else if(cmd_queue.peek().equals("-id")) {
+							cmd_queue.remove();		
+							
+							if(!cmd_queue.isEmpty()) {
+								try {
+									id = Integer.parseInt(cmd_queue.peek());
+									id_max = id;
+									cmd_queue.remove();
+									if(!cmd_queue.isEmpty()) {
+										try {
+											id_max = Integer.parseInt(cmd_queue.peek());
+											cmd_queue.remove();
+										} catch(Exception e) {}
+									}
+									if(id_max < id) {
+										int m = id;
+										id = id_max;
+										id_max = m;
+									}
+								} catch(Exception e) {}
+							}						
+						} else {
+							throw new Exception("No such parameter: "+cmd_queue.poll());
+						}
+						i--;
+					}					
+					return OptimizerManager.list(show_running, show_notrunning, type, creator, status, status_max, id, id_max, json);
+					
+				} else {
+					return OptimizerManager.list();
+				}
+				
+			} else if(cmd_queue.peek().equals("create")) {
+				cmd_queue.remove();		
+				
+				if(!cmd_queue.isEmpty()) {					
+					return OptimizerManager.create(auth, cmd_queue.poll());					
+				}
+				
+				return OptimizerManager.create(auth);
+				
+			} else if(cmd_queue.peek().equals("clone")) {
+				cmd_queue.remove();		
+				
+				int id = -1;
+				
+				if(!cmd_queue.isEmpty()) {	
+					try {
+						id = Integer.parseInt(cmd_queue.poll());		
+					} catch(Exception e) {						
+						throw new Exception("No valid clone id given.");
+					}
+				}
+				
+				if(id > -1) {
+					return OptimizerManager.cloneOptimizer(auth, id);
+				} else {
+					return OptimizerManager.cloneOptimizer(auth);
+				}
+				
+			} else if(cmd_queue.peek().equals("config")) {
+				cmd_queue.remove();		
 
+				try {
+
+					int id = -1;	
+					int id_max = -1;					
+					try {
+						id = Integer.parseInt(cmd_queue.peek());
+						cmd_queue.poll();						
+						try {
+							id_max = Integer.parseInt(cmd_queue.peek());
+							cmd_queue.poll();
+						} catch(Exception e) {}
+					} catch(Exception e) {}
+
+					if(cmd_queue.isEmpty()) throw new Exception("Not enough parameters. You need at least one.");
+
+							
+					if(cmd_queue.peek().equals("-get")) {
+						cmd_queue.poll();
+						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {	
+							if(id>-1)
+								return OptimizerManager.getConfig(id, true);
+							else
+								return OptimizerManager.getConfig(true);
+						} else {	
+							if(id>-1)
+								return OptimizerManager.getConfig(id, false);
+							else
+								return OptimizerManager.getConfig(false);						
+						}
+					} else if(cmd_queue.peek().equals("-reset")) {
+						if(id>-1) {
+							if(id_max>-1) {
+								OptimizerManager.resetConfig(id, id_max);		
+								return "Optimizers reset.";
+							} else {
+								OptimizerManager.resetConfig(id);
+							}
+						} else {
+							OptimizerManager.resetConfig();		
+						}
+						return "Optimizer reset.";
+					} else if(cmd_queue.peek().equals("-clone")) {	
+						cmd_queue.poll();
+						
+						if(!cmd_queue.isEmpty()) {	
+							int cloneId = -1;
+							
+							try {
+								cloneId = Integer.parseInt(cmd_queue.poll());
+								
+								if(id>-1) {
+									if(id_max>-1) {
+										OptimizerManager.cloneConfig(id, id_max, cloneId);	
+									} else {
+										OptimizerManager.cloneConfig(id, cloneId);
+									}
+								} else {
+									OptimizerManager.cloneConfig(cloneId);		
+								}	
+								return "Configuration cloned from "+cloneId+".";
+							} catch(Exception e) {}
+						}
+						
+						throw new Exception("No valid clone id given.");
+					}
+					
+					
+					
+					String config = "";
+					while(!cmd_queue.isEmpty()) {	
+						config += cmd_queue.poll()+" ";
+					}
+					if(id > -1) {
+						if(id_max > -1) {
+							OptimizerManager.configure(id, id_max, config);
+							return "Optimizers configured.";
+						} else {
+							OptimizerManager.configure(id, config);
+						}
+					} else {
+						OptimizerManager.configure(config);
+					}
+					return "Optimizer configured.";
+				} catch(Exception e) {
+					throw e;
+				}
+								
+			} else if(cmd_queue.peek().equals("start") || cmd_queue.peek().equals("optimize")) {
+				cmd_queue.remove();		
+				
+				try {
+					if(!cmd_queue.isEmpty()) {							
+						int id = Integer.parseInt(cmd_queue.poll());								
+						if(!cmd_queue.isEmpty()) {								
+							OptimizerManager.start(id, Integer.parseInt(cmd_queue.poll()));	
+							return "Optimizers started.";								
+						} else {
+							OptimizerManager.start(id);		
+							return "Optimizer started.";					
+						}
+					} else {					
+						OptimizerManager.start();
+						return "Optimizer started.";
+					}
+				} catch(Exception e) {
+					throw e;
+				}
+				
+			} else if(cmd_queue.peek().equals("term") || cmd_queue.peek().equals("terminate")) {
+				cmd_queue.remove();		
+				
+				try {
+					if(!cmd_queue.isEmpty()) {	
+						if(cmd_queue.peek().contains("-")) {
+							if(cmd_queue.poll().equals("-all")) {
+								OptimizerManager.terminateAll();
+								return "All Optimizers terminated.";
+							}
+						} else {			
+							int id = Integer.parseInt(cmd_queue.poll());								
+							if(!cmd_queue.isEmpty()) {								
+								OptimizerManager.terminate(id, Integer.parseInt(cmd_queue.poll()));	
+								return "Optimizers terminated.";								
+							} else {
+								OptimizerManager.terminate(id);		
+								return "Optimizer terminated.";					
+							}
+						}
+					} else {					
+						OptimizerManager.terminate();						
+						return "Optimizer terminated.";
+					}
+				} catch(Exception e) {
+					throw e;
+				}
+				
+			} else if(cmd_queue.peek().equals("status")) {
+				cmd_queue.remove();					
+				
+				if(!cmd_queue.isEmpty()) {		
+					return "Status: "+SolverManager.round(OptimizerManager.status(Integer.parseInt(cmd_queue.poll())),3);	
+				} else {	
+					return "Status: "+SolverManager.round(OptimizerManager.status(),3);	
+				}	
+				
+			} else if(cmd_queue.peek().equals("result")) {
+				cmd_queue.remove();	
+
+				int id = -1;					
+				try {
+					id = Integer.parseInt(cmd_queue.peek());
+					cmd_queue.poll();
+				} catch(Exception e) {}
+						
+				if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {	
+					if(id>-1)
+						return OptimizerManager.result(id).toJSON();
+					else
+						return OptimizerManager.result().toJSON();
+				} else {
+					if(id>-1)
+						return OptimizerManager.result(id).toString();
+					else
+						return OptimizerManager.result().toString();
+				}	
+				
+				
+			} else if(cmd_queue.peek().equals("clear")) {
+				cmd_queue.remove();		
+				
+				try {
+					if(!cmd_queue.isEmpty()) {	
+						if(cmd_queue.peek().contains("-")) {
+							if(cmd_queue.poll().equals("-all")) {
+								OptimizerManager.clearAll();
+								return "All Optimizers cleared (if possible).";
+							}
+						} else {	
+							int id = Integer.parseInt(cmd_queue.poll());								
+							if(!cmd_queue.isEmpty()) {	
+								OptimizerManager.clear(id, Integer.parseInt(cmd_queue.poll()));					
+								return "Optimizers cleared.";								
+							} else {
+								OptimizerManager.clear(id);					
+								return "Optimizer cleared.";					
+							}
+						}
+					} else {					
+						OptimizerManager.clear();						
+						return "Optimizer cleared.";
+					}
+				} catch(Exception e) {
+					throw e;
+				}
+				
+			} else if(cmd_queue.peek().equals("delete")) {
+				cmd_queue.remove();		
+				
+				try {
+					if(!cmd_queue.isEmpty()) {	
+						if(cmd_queue.peek().contains("-")) {
+							if(cmd_queue.poll().equals("-all")) {
+								OptimizerManager.deleteAll();
+								return "All Optimizers deleted.";
+							}
+						} else {	
+							int id = Integer.parseInt(cmd_queue.poll());								
+							if(!cmd_queue.isEmpty()) {	
+								OptimizerManager.delete(id, Integer.parseInt(cmd_queue.poll()));					
+								return "Optimizers deleted.";								
+							} else {
+								OptimizerManager.delete(id);					
+								return "Optimizer deleted.";					
+							}
+						}
+					} else {					
+						OptimizerManager.delete();						
+						return "Optimizer deleted.";
+					}
+				} catch(Exception e) {
+					throw e;
+				}
+				
+			} else if(cmd_queue.peek().equals("lsalgo")) {
+				cmd_queue.remove();	
+						
+				if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {	
+					return OptimizerConfig.getAlgorithmList(true, false, "");
+				} else {
+					return OptimizerConfig.getAlgorithmList(false, false, "");
+				}		
+				
+			} else if(cmd_queue.peek().equals("lspars")) {
+				cmd_queue.remove();	
+				
+				if(!cmd_queue.isEmpty() && !cmd_queue.peek().equals("-json")) {
+					String algo = cmd_queue.poll();
+					
+					if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {	
+						return OptimizerConfig.getAlgorithmList(true, true, algo);
+					} else {
+						return OptimizerConfig.getAlgorithmList(false, true, algo);
+					}					
+				} else {
+					throw new Exception("Specify algorithm.");
+				}
+			}
 		}
 
 		throw new Exception("Command unknown ("+cmd+"). Try help for list of commands.");		
