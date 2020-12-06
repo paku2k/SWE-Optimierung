@@ -79,7 +79,14 @@ public class FitnessFunction {
 		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
 	 }
 	 static double calculatef4(Particle_DE vector)	{
-		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
+		 double result = Double.MIN_VALUE;
+		 for(Double d : vector.position)
+		 {
+			 if(Math.abs(d)>result){
+				 result = d;
+			 }
+		 }
+		 return result;
 	 }
 	 static double calculatef5(Particle_DE vector)	{
 		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
