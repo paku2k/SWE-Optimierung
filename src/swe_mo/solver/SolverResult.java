@@ -2,30 +2,35 @@ package swe_mo.solver;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import swe_mo.solver.de.Particle_DE;
-
 import org.json.simple.JSONObject;
 
 
 public class SolverResult {
 	public double value;
 	public ArrayList<Double> returnPosition;
-	public int ffCounter;
+	public long ffCounter;
+	public long iterations;
 	//other messages (number of iterations until result, ...)
 	
 	Exception e; //bitte stehen lassen, hier speichere ich die Exception, falls ihr in der solve Methode eine werft
 	
 	
 	public SolverResult() {
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	public SolverResult(double value, ArrayList<Double> position, int ffCounter) {
 		this.value = value;
 		this.returnPosition = position;
 		this.ffCounter=ffCounter;
-		// TODO Auto-generated constructor stub
+		
+	}
+	
+	public SolverResult(double value, ArrayList<Double> position, long ffCounter, long iterations) {
+		this.value = value;
+		this.returnPosition = position;
+		this.ffCounter=ffCounter;
+		this.iterations = iterations;
 	}
 	
 	
@@ -33,16 +38,40 @@ public class SolverResult {
 
 	@Override
 	public String toString() {
-		return "Value: "+value+"\n Particle: "+Arrays.toString(returnPosition.toArray())+"\nFitness functions run: "+ffCounter;
+		String s = "";
+		
+		if(e == null) {
+			s += "Value: "+value+"\n";
+			if(returnPosition != null) {
+				s += "Particle: "+Arrays.toString(returnPosition.toArray());
+			} else {
+				s += "Particle: null";
+			}
+			s += "\nIterations: "+iterations;
+			s += "\nFitness functions run: "+ffCounter;
+		} else {
+			s += "Exception: "+e.getMessage();
+		}
+		
+		return s;
 	}
 	
 	public String toJSON() {
 		JSONObject json = new JSONObject();
-
-		json.put("value", value);
-		json.put("ffCounter", ffCounter);
-		json.put("particle", Arrays.toString(returnPosition.toArray()));
 		
+		if(e == null) {
+			json.put("value", value);
+			json.put("ffCounter", ffCounter);
+			json.put("iterations", iterations);
+			if(returnPosition != null) {
+				json.put("particle", Arrays.toString(returnPosition.toArray()));
+			} else {
+				json.put("particle", null);
+			}
+		} else {
+			json.put("exception", e.getMessage());
+		}
+
 		return json.toJSONString();
 	}
 }

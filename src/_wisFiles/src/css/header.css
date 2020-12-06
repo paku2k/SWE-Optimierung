@@ -1,0 +1,17 @@
+/* HEADER */
+
+#header {
+    padding: 1rem;
+    text-align: center;
+    
+    background-color: #ddd;
+}
+
+#header h1 {
+    color: rgb(100,0,0);
+}
+
+#header img {
+    width: 40px;
+    height: 40px;
+}

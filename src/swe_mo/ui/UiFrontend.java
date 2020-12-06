@@ -78,8 +78,10 @@ public class UiFrontend {
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
-		}	
-		display.dispose();
+		}
+
+		if(!shell.isDisposed()) display.dispose();	
+
 		shell = null;
 		clogger.info(AUTH, "run", "UiFrontend stopped");
 	}
@@ -294,7 +296,7 @@ public class UiFrontend {
 	private static VerifyKeyListener verifykeyadapter_cmd = new VerifyKeyListener() {
 		public void verifyKey(VerifyEvent e) {
 			if(specialKeys(e, true)) return; //if pressed key is special key
-							
+			
 			if (e.keyCode==99) { //c
 				if(CTRL_pressed) return; //allow ctrl+c
 				if(ALT_pressed) return;	//allow alt+c for direct copy
@@ -307,6 +309,14 @@ public class UiFrontend {
 					stCmd.setSelection(cmd_last, stCmd.getText().length());
 				}
 			}
+
+			if (stCmd.getSelection().x < cmd_last) {
+				if(stCmd.getSelection().y < cmd_last)
+					stCmd.setSelection(cmd_last, cmd_last);	
+				else
+					stCmd.setSelection(cmd_last, stCmd.getSelection().y);	
+			}
+			
 			if (e.keyCode==118) { //v
 				e.doit = false;
 				if(stCmd.getCaretOffset() >= cmd_last) 
@@ -663,6 +673,9 @@ public class UiFrontend {
 		stCmd.addVerifyKeyListener(verifykeyadapter_cmd);
 		stCmd.addKeyListener(keyadapter_fnkeys);
 		stCmd.addKeyListener(keyadapter_cmd);
+		
+		stCmd.forceFocus();
+		setCaretPosEnd("stCmd");
 		
 		cmd_last = stCmd.getText().length();
 		

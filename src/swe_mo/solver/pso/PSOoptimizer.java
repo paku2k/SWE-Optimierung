@@ -32,7 +32,7 @@ public class PSOoptimizer {
 		
 	}
 
-	public void psoGlobalLinear3DimensionalGridSearch(int resolution, double w_upper, double w_lower, double cc_upper, double cc_lower, double cs_upper, double cs_lower) throws IOException {
+	public void psoGlobalLinear3DimensionalGridSearch(int resolution, double w_upper, double w_lower, double cc_upper, double cc_lower, double cs_upper, double cs_lower) throws Exception {
 		
 		FileWriter author = new FileWriter(filename+".txt");
 		
@@ -44,7 +44,7 @@ public class PSOoptimizer {
 			for(int j=0; j<resolution; j++) {
 				for(int k=0; k<resolution; k++) {
 					
-					PSOgsc psoGlobalSolver = new PSOgsc(dimension, min, max, particleCount, (w_lower+i*w_step), (cc_lower+j*cc_step), (cs_lower+k*cs_step), dt, numIter, ffID, solverID);
+					PSOgsc psoGlobalSolver = new PSOgsc(dimension, min, max, particleCount, (w_lower+i*w_step), (cc_lower+j*cc_step), (cs_lower+k*cs_step), dt, numIter, ffID, 1.0, solverID);
 					SolverResult sr = psoGlobalSolver.solve();
 					author.write("Hyperparameter:	w="+(w_lower+i*w_step)+";cc="+(cc_lower+j*cc_step)+";cs="+(cs_lower+k*cs_step)+"	Minimum:	"+sr.value+"	Position:	"+sr.returnPosition.toString()+"\n");
 

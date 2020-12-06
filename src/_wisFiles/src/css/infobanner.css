@@ -1,0 +1,82 @@
+/* INFO BANNER */
+
+#info {
+    position: fixed;
+    top: 0;
+    width: 100%;    
+    min-width: 700px;
+    box-shadow: 0 0 0.5rem 0.2rem grey;
+    text-align: center;  
+    font-size: 1.1rem;
+    font-weight: bolder;
+    clear: both;
+    z-index: 100;
+}
+
+@keyframes fadeInfoIn {
+    from {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+    to {
+        opacity: 1; 
+        transform: translateY(0%);
+    }
+}
+
+@keyframes fadeInfoOut {
+    from {
+        opacity: 1;
+        transform: translateY(0%);
+    }
+    to {
+        opacity: 0; 
+        transform: translateY(-100%);
+    }
+}
+
+.suc {
+    background-color: rgb(122,215,80);    
+}
+
+.warn {
+    background-color: rgb(255,200,66);    
+}
+
+.err {
+    background-color: rgb(190,0,0);   
+}
+
+#info_text {
+    width: 80%;
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+#info > div{
+    float: right;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+#info_close_x{
+    padding-right: 1.5rem;
+    padding-left: 1rem;
+    font-size: 1rem;  
+    cursor: pointer;
+}
+
+.grey {
+    color: grey;    
+}
+
+.white {
+    color: white;    
+}
+
+
+
