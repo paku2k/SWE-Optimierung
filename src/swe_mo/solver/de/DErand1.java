@@ -80,7 +80,7 @@ public class DErand1 {
 		
 		//Bounds are created to be max.
 		
-		if(N<1 || NP<1 || F<=0 || CR<0 || CR>1 || ffIndex<1 || ffIndex>18 || convergence<0) {
+		if(N<1 || NP<3 || F<0 || CR<0 || CR>1 || ffIndex<1 || ffIndex>18 || convergence<0) {
 			throw new IOException("Please check your input parameters.");
 		}
 		
