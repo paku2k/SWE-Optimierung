@@ -6,6 +6,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import swe_mo.solver.FitnessFunction;
+
 
 
 public class OptimizerConfig {
@@ -71,6 +73,11 @@ public class OptimizerConfig {
 		switch(param) {
 			case "ffid":
 				ffid = Integer.parseInt(value);
+				Double bd = FitnessFunction.getBoundary("lower", ffid);
+				if(bd != null) {
+					lowerBound = bd;
+					upperBound = FitnessFunction.getBoundary("upper", ffid);					
+				}
 				return;
 			case "optiParA":
 				optiParA = Double.parseDouble(value);
