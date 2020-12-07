@@ -590,7 +590,7 @@ function solverCfgReset(id, name){
     for(var i=0; i < pars.length; i++){
         if(pars[i].name == name){
             if(document.getElementById("solver_"+id+"_cfg_"+pars[i].name).value != pars[i].default){
-                solverCfgChange(id, pars[i].name, pars[i].default);
+                solverCfgChange(id, pars[i].name, ""+pars[i].default);
             }
                 
             break;

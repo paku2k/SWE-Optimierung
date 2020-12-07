@@ -71,7 +71,7 @@ public class DErand1 {
 	}
 	
 	public static SolverConfig defaultConfig() {		
-		return new SolverConfig(1,5,50,0.3,0.3,1000,5.14,-5.14, 1.0);
+		return new SolverConfig(1,5,50,0.3,0.3,1000,5.12,-5.12, 1.0);
 	}
 	
 	public DErand1(int N, int NP, double F, double CR, int maxGenerations, int ffIndex, int solverID, double convergence) throws IOException {
