@@ -30,6 +30,7 @@ public class Settings {
 	public static void factorySettings() {		
 		//define all application settings here
 		settings.put("minUifOnWebguiOpen", true);
+		settings.put("openWebguiOnStartup", false);
 		settings.put("defaultAlgorithm", "DEbest1");
 		settings.put("defaultOptimizer", "DeepRand");
 		settings.put("WebGUIshowDelSolvers", true);

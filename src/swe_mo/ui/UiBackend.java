@@ -41,6 +41,7 @@ public class UiBackend {
 	 * start UiBackend
 	 * run it
 	 * stop it
+	 * @throws Exception 
 	 */
 	public static void start() {
 		if(exit) return;
@@ -51,8 +52,30 @@ public class UiBackend {
 		} catch(Exception e) {
 			clogger.err(AUTH, "start", e);
 		}
+		
+		try {
+			if((boolean) Settings.get("openWebguiOnStartup")) {
+				UiBackend.cmd(AUTH, "wis start");
+			}
+		} catch (Exception e) {}		
 
+		boolean webguiopenedonstartup = false;
 		while(running) {
+			try {
+				if(!webguiopenedonstartup && wis.status()) {
+					if((boolean) Settings.get("openWebguiOnStartup")) {
+						if((boolean) Settings.get("minUifOnWebguiOpen")) 
+							UiBackend.cmd(AUTH, "wis open -m");
+						else
+							UiBackend.cmd(AUTH, "wis open");
+						webguiopenedonstartup = true;
+					} else {
+						webguiopenedonstartup = true;
+					}
+				}
+			} catch (Exception e) {}
+			
+			
 			while_run();
 
 			try {
@@ -60,7 +83,7 @@ public class UiBackend {
 			} catch (Exception e) {
 				clogger.err(AUTH, "run", e);	
 			}
-		}		
+		}
 		
 		//stopping
 				
