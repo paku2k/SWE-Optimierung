@@ -1,5 +1,7 @@
 package swe_mo.solver;
 
+import java.util.Collections;
+
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 
 import swe_mo.solver.de.Particle_DE;
@@ -78,16 +80,16 @@ public class FitnessFunction {
 	 static double calculatef3(Particle_DE vector)	{
 		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
 	 }
+	 
 	 static double calculatef4(Particle_DE vector)	{
 		 double result = Double.MIN_VALUE;
-		 for(Double d : vector.position)
-		 {
-			 if(Math.abs(d)>result){
-				 result = d;
-			 }
+		 result = Math.abs(Collections.min(vector.position));
+		 if(Math.abs(Collections.max(vector.position))>result) {
+			 result = Math.abs(Collections.max(vector.position));
 		 }
 		 return result;
 	 }
+	 
 	 static double calculatef5(Particle_DE vector)	{
 		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
 	 }
@@ -114,8 +116,13 @@ public class FitnessFunction {
 	 }
 	 
 	 static double calculatef9(Particle_DE vector)	{
-		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
+		 double result = 0;
+		 for(Double d : vector.position){
+			 result = result + (Math.pow(d, 2)-(10*Math.cos(2*Math.PI*d))+10);
+		 }
+		 return result;
 	 }
+	 
 	 static double calculatef10(Particle_DE vector)	{
 		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
 	 }
@@ -136,8 +143,30 @@ public class FitnessFunction {
 		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
 	 }
 	 static double calculatef13(Particle_DE vector)	{
-		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
+		 double result = 0.0;
+		 double sum1 = 0.0;
+		 double sum2 = 0.0;
+		 int a = 10;
+		 int k = 100;
+		 int m = 4;
+		 
+		 for(int i=0; i<vector.position.size()-1;i++) {
+			 sum1 = sum1 + (Math.pow((vector.position.get(i)-1), 2)*(1+Math.pow(Math.sin(3*Math.PI*vector.position.get(i+1)), 2)));
+		 }
+		 
+		 for(Double d : vector.position){
+			 if(d<-a) {
+				 sum2 = sum2 + k*Math.pow((-d-a), m);
+			 }
+			 else if(d>a) {
+				 sum2 = sum2 + k*Math.pow((d-a), m);
+			 }
+		 }
+		 
+		 result = 0.1*(10*Math.pow(Math.sin(3*Math.PI*vector.position.get(0)), 2)+sum1+((vector.position.get(vector.position.size()-1)-1)*(1+Math.pow(Math.sin(2*Math.PI*vector.position.get(vector.position.size()-1)),2))))+sum2;
+		 return result;	 
 	 }
+	 
 	 static double calculatef14(Particle_DE vector)	{
 		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
 	 }
@@ -163,7 +192,13 @@ public class FitnessFunction {
 		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
 	 }
 	 static double calculatef17(Particle_DE vector)	{
-		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
+		 double result = Double.MAX_VALUE;
+		 
+		 result = Math.pow((vector.position.get(1)-(5.1/(4*Math.pow(Math.PI, 2)))*Math.pow(vector.position.get(0), 2)+(5/Math.PI)*vector.position.get(0)-6),2);
+		 result = result + 10*(1-(1/(8*Math.PI))*Math.cos(vector.position.get(0)));
+		 result = result + 10;
+		 
+		 return result;
 	 }
 	 
 	 static double calculatef18(Particle_DE vector)	{
