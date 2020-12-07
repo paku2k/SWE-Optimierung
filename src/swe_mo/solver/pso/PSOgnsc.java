@@ -35,8 +35,7 @@ public class PSOgnsc extends PSOnsc {
 			}
 			
 			
-			//for(int i=0; i<numIter && SolverManager.checkTerminated(solverID); i++) {
-			for(int i=0; i<numIter; i++) {
+			for(int i=0; i<numIter && !SolverManager.checkTerminated(solverID); i++) {
 				for(int j=0; j<particleCount; j++) {
 					updateGlobalBestPosition(swarm.get(j));
 					updateNC(swarm.get(j));

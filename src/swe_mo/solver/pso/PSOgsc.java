@@ -107,8 +107,8 @@ public class PSOgsc {
 				}
 				
 				
-				//for(int i=0; i<numIter && SolverManager.checkTerminated(solverID); i++) {
-				for(int i=0; i<numIter; i++) {
+				for(int i=0; i<numIter && !SolverManager.checkTerminated(solverID); i++) {
+				//for(int i=0; i<numIter; i++) {
 					sumOfDifferencesGlobal=0.0;
 					
 					for(int j=0; j<particleCount; j++) {

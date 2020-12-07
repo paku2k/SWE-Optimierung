@@ -47,8 +47,7 @@ public class PSOgscDecay extends PSOgsc{
 			}
 			
 			
-			//for(int i=0; i<numIter && SolverManager.checkTerminated(solverID); i++) {
-			for(int i=0; i<numIter; i++) {
+			for(int i=0; i<numIter && !SolverManager.checkTerminated(solverID); i++) {
 				for(int j=0; j<particleCount; j++) {
 					updateGlobalBestPosition(swarm.get(j));
 					swarm.get(j).updateVelocityDecay(globalBestPosition, numIter, i, decayStart, decayEnd);
