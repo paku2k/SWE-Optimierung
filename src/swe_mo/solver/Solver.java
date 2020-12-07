@@ -72,10 +72,6 @@ public class Solver {
 		status = -2;
 	}
 	
-	public void setConfig(SolverConfig sc) throws Exception {
-		config = new SolverConfig(sc);
-	}
-	
 	public SolverConfig getConfig() throws Exception {
 		return config;
 	}																						
@@ -159,6 +155,7 @@ public class Solver {
 
 	
 	public void updateStatus(double s) {
+		if(s > 0 && s <= 100 && terminated) return;
 		status = s;
 	}
 }
