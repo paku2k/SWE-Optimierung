@@ -239,7 +239,8 @@
     margin-left: 1rem;
     border-collapse: collapse;
     width: 90%;
-    max-width: 1000px;
+    max-width: 1300px;
+    min-width: 550px;
 }
 
 .tab_manager .manager_content_t3 tr{    
@@ -266,7 +267,7 @@
 
 .tab_manager .manager_content_t3 td:first-of-type, .tab_manager .manager_content_t3 th:first-of-type {
     border-left: 1px solid #444;  
-    width: 40%;
+    width: 30%;
     padding: .4rem 1rem;
     text-align: right;
 }

@@ -9,11 +9,21 @@ import org.json.simple.parser.JSONParser;
 
 
 public class OptimizerConfig {
-	
+
 	public int ffid;
+
+	public double optiParA;
+	public double optiParB;
+	public double optiParC;
+	public double optiParD;
+	public double optiParE;
+	
 	public String solvertype;
-	
-	
+	public int N;
+	public int maxGenerations;
+	public double lowerBound;
+	public double upperBound;
+		
 	//arrays for solver hyperparameters
 	public ArrayList<String> SHP_name = new ArrayList<String>();
 	public ArrayList<Double> SHP_min = new ArrayList<Double>();
@@ -28,12 +38,30 @@ public class OptimizerConfig {
 	
 	
 	//basic
-	public OptimizerConfig(int ffid, String solvertype) {
+	public OptimizerConfig(int ffid, double optiParA, double optiParB, double optiParC, double optiParD, double optiParE, String solvertype, int N, int maxGenerations, double lowerBound, double upperBound) {
 		this.ffid = ffid;	
-		this.solvertype = solvertype;		
+		this.optiParA = optiParA;
+		this.optiParB = optiParB;
+		this.optiParC = optiParC;
+		this.optiParD = optiParD;
+		this.optiParE = optiParE;
+		this.solvertype = solvertype;	
+		this.N = N;
+		this.maxGenerations = maxGenerations;
+		this.lowerBound = lowerBound;		
+		this.upperBound = upperBound;		
 
 		usedpars.add("ffid");
+		usedpars.add("optiParA");
+		usedpars.add("optiParB");
+		usedpars.add("optiParC");
+		usedpars.add("optiParD");
+		usedpars.add("optiParE");
 		usedpars.add("solvertype");
+		usedpars.add("N");
+		usedpars.add("maxGenerations");
+		usedpars.add("lowerBound");
+		usedpars.add("upperBound");
 		usedpars.add("SHP"); //solver hyperparameters
 	}
 	
@@ -44,8 +72,35 @@ public class OptimizerConfig {
 			case "ffid":
 				ffid = Integer.parseInt(value);
 				return;
+			case "optiParA":
+				optiParA = Double.parseDouble(value);
+				return;
+			case "optiParB":
+				optiParB = Double.parseDouble(value);
+				return;
+			case "optiParC":
+				optiParC = Double.parseDouble(value);
+				return;
+			case "optiParD":
+				optiParD = Double.parseDouble(value);
+				return;
+			case "optiParE":
+				optiParE = Double.parseDouble(value);
+				return;
 			case "solvertype":
 				solvertype = value;
+				return;
+			case "N":
+				N = Integer.parseInt(value);
+				return;
+			case "maxGenerations":
+				maxGenerations = Integer.parseInt(value);
+				return;
+			case "lowerBound":
+				lowerBound = Double.parseDouble(value);
+				return;
+			case "upperBound":
+				upperBound = Double.parseDouble(value);
 				return;
 		}
 		throw new Exception("No such hyperparameter ("+param+").");
@@ -86,9 +141,27 @@ public class OptimizerConfig {
 	public Object getValue(String param) {
 		switch(param) {
 			case "ffid": 
-				return ffid;
+				return ffid;			
+			case "optiParA": 
+				return optiParA;				
+			case "optiParB": 
+				return optiParB;				
+			case "optiParC": 
+				return optiParC;				
+			case "optiParD": 
+				return optiParD;				
+			case "optiParE": 
+				return optiParE;			
 			case "solvertype": 
 				return solvertype;
+			case "N":
+				return N;
+			case "maxGenerations":
+				return maxGenerations;
+			case "lowerBound": 
+				return lowerBound;
+			case "upperBound": 
+				return upperBound;	
 		}
 		
 		if(SHP_name.contains(param)) {
@@ -188,7 +261,7 @@ public class OptimizerConfig {
 	public static OptimizerConfig getDefault(String algorithm) throws Exception {
 		switch(algorithm) {
 			case "DeepRand":
-				return new OptimizerConfig(8, "DEbest1");
+				return new OptimizerConfig(8, 1,1,1,1,1, "DEbest1", 30, 10000, -500, 500);
 				//return DeepRandomSearch.defaultConfig();
 				
 		}	

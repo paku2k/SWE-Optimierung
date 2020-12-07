@@ -12,6 +12,7 @@
         <link rel="stylesheet" href="src/css/tab.css">
         <link rel="stylesheet" href="src/css/tab_manager.css">
         <link rel="stylesheet" href="src/css/tab_solver.css">
+        <link rel="stylesheet" href="src/css/tab_optimizer.css">
         <link rel="stylesheet" href="src/css/tab_cmd.css">
         <link rel="stylesheet" href="src/css/tab_settings.css">
         
@@ -76,88 +77,9 @@
                                 <select id="solvalgorithm">
                                     <option value="default">default</option>
                                 </select>
-                                <button class="solver_content_btn" onclick="createSolver();">Create</button>          
+                                <button class="solver_content_btn" onclick="createSolver();">Create</button>         
                                                           
-                            </div>
-                            
-                 <!--       
-<div id="solver_0" class="solver_content">
-           <table class="solver_content_t1">
-               <tr>
-                   <td>
-                        <h3>DErand1</h3>
-                   </td>
-                   <td>
-                       <span id="solver_0_status">initialized (-2)</span>   
-                   </td>
-                   <td>
-                       <button onclick="solverDuplicate(0);">Duplicate</button>
-                       <button onclick="solverDelete(0);">Delete</button>
-                   </td>
-               </tr>
-           </table>
-
-            <div>
-                <table class="solver_content_t2">
-                   <tr>
-                    <td>
-                        <h4>Configuration</h4>
-                    </td>
-                    <td>
-                        <button id="solver_0_copyfromBtn" onclick="solverCfgCopyFrom(0);">Copy from</button>
-                        <input type="text" value="0" id="solver_0_copyfrom">
-                    </td>
-                    </tr>
-                </table>
-                        
-                        
-                   <table class="solver_content_t3">
-                            <tr id="solver_config_tableheader">
-                                <th>Parameter</th>
-                                <th>Value</th>
-                            </tr>
-                           <tr>
-                               <td>ffid</td>
-                               <td><input type="text" value="1" id="solver_0_cfg_ffid" autocomplete="off" onchange="solverCfgChange(0,'ffid',this.value)"></td>
-                           </tr>
-                   </table>  
-
-            </div>
-
-            <div>
-                <button id="solver_0_solveBtn" onclick="solverSolve(0);">Solve</button>     
-                <button id="solver_0_termBtn" onclick="solverTerm(0);">Terminate</button>
-                <button id="solver_0_clearBtn" onclick="solverClear(0);">Clear</button>                                 
-            </div>
-
-            <div id="solver_0_result">
-                <h4>Result</h4>
-                   <table class="solver_content_t4">
-                           <tr>
-                               <td>Minimum: </td>
-                               <td id="solver_0_resultMin"></td>
-                           </tr>
-                           <tr>
-                               <td>Position: </td>
-                               <td id="solver_0_resultPos"></td>
-                           </tr>
-                           <tr>
-                               <td>Iterations: </td>
-                               <td id="solver_0_resultIter"></td>
-                           </tr>
-                           <tr>
-                               <td>Function Calls: </td>
-                               <td id="solver_0_resultFC"></td>
-                           </tr>
-                           <tr>
-                               <td>Exception: </td>
-                               <td id="solver_0_resultException"></td>
-                           </tr>
-                   </table>                           
-            </div>          
-</div>-->     
-                      
-                       
+                            </div>                       
                         </td>
                     </tr>
                 </table>

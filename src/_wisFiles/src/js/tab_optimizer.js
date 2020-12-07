@@ -276,7 +276,11 @@ function tab_optimizer_detail_responseHandler(){
             if(cmd_ans[i].cmd.includes("om config") && cmd_ans[i].cmd.includes("-get -json")){
                 // update configuration values
                 var id = cmd_ans[i].cmd.replace("om config ","").replace(" -get -json","");
-                updateOptimizerConfiguration(id, cmd_ans[i].ans.cfg, cmd_ans[i].err)
+                if(cmd_ans[i].ans !== undefined)
+                    var ans_cfg =  cmd_ans[i].ans.cfg;
+                else
+                    var ans_cfg = null;
+                updateOptimizerConfiguration(id, ans_cfg, cmd_ans[i].err)
                 
             } else if(cmd_ans[i].cmd.includes("om config") && cmd_ans[i].cmd.includes("-reset")){
                 // info successful reset
@@ -498,14 +502,14 @@ function newOptimizerContentDiv(id, algorithm){
 
             var table2 = document.createElement("table");
             table2.setAttribute("class", "manager_content_t2");
-            table2.innerHTML = '<tr><td><h4>Configuration (tbi)</h4></td><td><button id="optimizer_'+id+'_copyfromBtn" onclick="optimizerCfgCopyFrom('+id+');">Copy from</button><input type="text" value="" id="optimizer_'+id+'_copyfrom"></td></tr>';
+            table2.innerHTML = '<tr><td><h4>Configuration</h4></td><td><button id="optimizer_'+id+'_copyfromBtn" onclick="optimizerCfgCopyFrom('+id+');">Copy from</button><input type="text" autocomplete="off" value="" id="optimizer_'+id+'_copyfrom"></td></tr>';
 
         div1.appendChild(table2);
 
             var table3 = document.createElement("table");
             table3.setAttribute("class", "manager_content_t3");
             var table3a = document.createElement("table");
-            table3a.setAttribute("class", "manager_content_t3");
+            table3a.setAttribute("class", "manager_content_t3a");
 
                 var tr31 = document.createElement("tr");
                 tr31.setAttribute("id", "optimizer_"+id+"_config_tableheader")
@@ -516,7 +520,7 @@ function newOptimizerContentDiv(id, algorithm){
                 tr3a1.innerHTML = '<th>Solver Hyperparameter</th><th colspan="3">Value</th><th></th>';
                 var tr3a2 = document.createElement("tr");
                 tr3a2.setAttribute("id", "optimizer_"+id+"_config_solver_add")
-                tr3a2.innerHTML += '<th><input type="text" value="" id="optimizer_'+id+'_cfg_newSHP_name" autocomplete="off"></th><th><input type="text" value="0" id="optimizer_'+id+'_cfg_newSHP_min" autocomplete="off"></th><th>to</th><th><input type="text" value="1" id="optimizer_'+id+'_cfg_newSHP_max" autocomplete="off"></th><th><button id="optimizer_'+id+'_addSHPBtn" onclick="optimizerCfgAddSHP('+id+');">Add</button></th>';
+                tr3a2.innerHTML += '<th><input type="text" placeholder="name" value="" id="optimizer_'+id+'_cfg_newSHP_name" autocomplete="off"></th><th><input type="text" placeholder="min" value="" id="optimizer_'+id+'_cfg_newSHP_min" autocomplete="off"></th><th>to</th><th><input type="text" placeholder="max" value="" id="optimizer_'+id+'_cfg_newSHP_max" autocomplete="off"></th><th onclick="optimizerCfgAddSHP('+id+');">Add</th>';
            
 
             table3.appendChild(tr31);
@@ -664,6 +668,7 @@ function optimizerCfgReset(id, name){
 
 
 function optimizerCfgAddSHP(id){
+    if(document.getElementById("optimizer_"+id+"_cfg_newSHP_name").value.trim() == "") return;
     var s = document.getElementById("optimizer_"+id+"_cfg_newSHP_name").value.replace(",",".") + "=";
     s += document.getElementById("optimizer_"+id+"_cfg_newSHP_min").value.replace(",",".") + "/";
     s += document.getElementById("optimizer_"+id+"_cfg_newSHP_max").value.replace(",",".");
@@ -671,8 +676,8 @@ function optimizerCfgAddSHP(id){
     sendCmds(["om config "+id+" -addSHP "+s], 1000, tab_optimizer_detail_responseHandler);   
     
     document.getElementById("optimizer_"+id+"_cfg_newSHP_name").value = "";
-    document.getElementById("optimizer_"+id+"_cfg_newSHP_min").value = "0";
-    document.getElementById("optimizer_"+id+"_cfg_newSHP_max").value = "1";
+    document.getElementById("optimizer_"+id+"_cfg_newSHP_min").value = "";
+    document.getElementById("optimizer_"+id+"_cfg_newSHP_max").value = "";
 }
 
 

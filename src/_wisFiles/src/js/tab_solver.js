@@ -480,7 +480,7 @@ function newSolverContentDiv(id, algorithm){
 
             var table2 = document.createElement("table");
             table2.setAttribute("class", "manager_content_t2");
-            table2.innerHTML = '<tr><td><h4>Configuration</h4></td><td><button id="solver_'+id+'_copyfromBtn" onclick="solverCfgCopyFrom('+id+');">Copy from</button><input type="text" value="" id="solver_'+id+'_copyfrom"></td></tr>';
+            table2.innerHTML = '<tr><td><h4>Configuration</h4></td><td><button id="solver_'+id+'_copyfromBtn" onclick="solverCfgCopyFrom('+id+');">Copy from</button><input type="text" value="" autocomplete="off" id="solver_'+id+'_copyfrom"></td></tr>';
 
         div1.appendChild(table2);
 

@@ -35,7 +35,7 @@ public class Optimizer {
 	public void configure(String configString) throws Exception{
 		Queue<String> configQueue = new LinkedList<String>();
 		String hyperparameterNotFound = "";
-		
+
 		for(String s : configString.replace(","," ").replace("\t"," ").replace("    "," ").replace("   "," ").replace("  "," ").replace("= ","=").replace(" =","=").replace("|","/").replace("/ ","/").replace(" /","/").split(" ")) {
 			if(s != "" && s != null)
 				configQueue.offer(s);
@@ -69,7 +69,7 @@ public class Optimizer {
 	public void configAddSHP(String string) throws Exception {
 		Queue<String> configQueue = new LinkedList<String>();
 		String notAllRequiredSettings = "";
-		
+
 		for(String s : string.replace(","," ").replace("\t"," ").replace("    "," ").replace("   "," ").replace("  "," ").replace("= ","=").replace(" =","=").replace("|","/").replace("/ ","/").replace(" /","/").split(" ")) {
 			if(s != "" && s != null)
 				configQueue.offer(s);
@@ -77,12 +77,16 @@ public class Optimizer {
 		
 		for(String s : configQueue) {
 			String[] split = s.split("=");
-			if(split[1].contains("/")) {
-				String[] value = split[1].split("/");
-				config.addSHP(split[0], value[0], value[1]);	
-			} else {
+			try{
+				if(split[1].contains("/")) {
+					String[] value = split[1].split("/");					
+					config.addSHP(split[0], value[0], value[1]);	
+				} else {
+					throw new Exception();			
+				}
+			} catch(Exception e) {
 				if(!notAllRequiredSettings.isEmpty()) notAllRequiredSettings += ", ";
-				notAllRequiredSettings += split[0];				
+				notAllRequiredSettings += split[0];		
 			}
 		}	
 		
