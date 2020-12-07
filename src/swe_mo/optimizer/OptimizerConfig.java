@@ -273,7 +273,7 @@ public class OptimizerConfig {
 		switch(algorithm) {
 			case "DeepRand":
 				for(double i=0; i<Math.pow(10, 9); i++) {
-					if(i%2==0) 
+					if(i%100==0) 
 						OptimizerManager.updateStatus(id, i/Math.pow(10, 9)*100);
 					if(OptimizerManager.checkTerminated(id))
 						break;

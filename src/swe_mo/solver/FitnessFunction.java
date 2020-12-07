@@ -6,9 +6,8 @@ import swe_mo.solver.de.Particle_DE;
 
 public class FitnessFunction {
 	
-	public static double solve(int index, Particle_DE vector) throws Exception 
-	//the index refers to Papa Cakar's list of functions
-	{
+	public static double solve(int index, Particle_DE vector) throws Exception {
+	//the index refers to Cakar's list of functions	
 		switch(index) {
 		case 1:
 			return calculatef1(vector);
@@ -178,4 +177,57 @@ public class FitnessFunction {
 		 
 	 }
 	 
+	 
+
+		
+		public static double getBoundary(String t, int index) throws Exception {
+			switch(index) {
+			case 2:
+				if(t.equals("lower")) return -10;
+				if(t.equals("upper")) return 10;
+			case 3:
+			case 4:
+			case 6:
+				if(t.equals("lower")) return -100;
+				if(t.equals("upper")) return 100;
+			case 5:
+				if(t.equals("lower")) return -30;
+				if(t.equals("upper")) return 30;
+			case 7:
+				if(t.equals("lower")) return -1.28;
+				if(t.equals("upper")) return 1.28;
+			case 8:
+				if(t.equals("lower")) return -500;
+				if(t.equals("upper")) return 500;
+			case 10:
+				if(t.equals("lower")) return -32;
+				if(t.equals("upper")) return 32;
+			case 11:
+				if(t.equals("lower")) return -600;
+				if(t.equals("upper")) return 600;
+			case 12:
+				if(t.equals("lower")) return -50;
+				if(t.equals("upper")) return 50;
+			case 13:
+			case 15:
+			case 16:
+				if(t.equals("lower")) return -5;
+				if(t.equals("upper")) return 5;
+			case 14:
+				if(t.equals("lower")) return -65.54;
+				if(t.equals("upper")) return 65.54;
+			case 17:
+				if(t.equals("lower")) return -5;
+				if(t.equals("upper")) return 15;
+			case 18:
+				if(t.equals("lower")) return -2;
+				if(t.equals("upper")) return 2;
+			case 1:
+			case 9:
+			default:
+				if(t.equals("lower")) return -5.12;
+				if(t.equals("upper")) return 5.12;
+			}
+			return 1;
+		}
 }

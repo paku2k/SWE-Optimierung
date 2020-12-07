@@ -63,8 +63,8 @@ public class SolverConfig {
 		usedpars.add("N");
 		usedpars.add("NP");
 		usedpars.add("maxGenerations");
-		usedpars.add("upperBound");
 		usedpars.add("lowerBound");		
+		usedpars.add("upperBound");
 	}
 	
 	//with convergence
@@ -138,6 +138,8 @@ public class SolverConfig {
 		switch(param) {
 			case "ffid":
 				ffid = Integer.parseInt(value);
+				lowerBound = FitnessFunction.getBoundary("lower", ffid);
+				upperBound = FitnessFunction.getBoundary("upper", ffid);
 				return;
 			case "N":
 				N = Integer.parseInt(value);
