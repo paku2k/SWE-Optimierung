@@ -9,6 +9,7 @@ import swe_mo.Main;
 import swe_mo.Settings;
 import swe_mo.optimizer.OptimizerConfig;
 import swe_mo.optimizer.OptimizerManager;
+import swe_mo.solver.FitnessFunction;
 import swe_mo.solver.SolverConfig;
 import swe_mo.solver.SolverManager;
 
@@ -871,6 +872,9 @@ public class UiBackend {
 				} else {
 					throw new Exception("Specify algorithm.");
 				}
+				
+			} else if(cmd_queue.peek().equals("lsffbd")) {
+				return FitnessFunction.ffBoundariesJSON();
 			}
 			
 			

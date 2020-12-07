@@ -16,6 +16,10 @@ body {
     min-width: 950px;
 }
 
+h2 {
+    text-align: center;
+}
+
 .tbi {
     color: red;
     border: 1px solid red;

@@ -17,7 +17,7 @@
     cursor: pointer;    
     padding: 0.5rem 2rem;
     transition: 0.3s;
-    min-width: 25%;
+    min-width: 20%;
 }
 
 #tab button:hover {
