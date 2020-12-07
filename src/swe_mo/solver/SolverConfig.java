@@ -138,8 +138,11 @@ public class SolverConfig {
 		switch(param) {
 			case "ffid":
 				ffid = Integer.parseInt(value);
-				lowerBound = FitnessFunction.getBoundary("lower", ffid);
-				upperBound = FitnessFunction.getBoundary("upper", ffid);
+				Double bd = FitnessFunction.getBoundary("lower", ffid);
+				if(bd != null) {
+					lowerBound = bd;
+					upperBound = FitnessFunction.getBoundary("upper", ffid);					
+				}
 				return;
 			case "N":
 				N = Integer.parseInt(value);
