@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="src/css/header.css">
         <link rel="stylesheet" href="src/css/infobanner.css">
         <link rel="stylesheet" href="src/css/tab.css">
+        <link rel="stylesheet" href="src/css/tab_manager.css">
         <link rel="stylesheet" href="src/css/tab_solver.css">
         <link rel="stylesheet" href="src/css/tab_cmd.css">
         <link rel="stylesheet" href="src/css/tab_settings.css">
@@ -31,6 +32,7 @@
         <script language="javascript" type="text/javascript" src="src/js/filesaver.js"></script>
         <script language="javascript" type="text/javascript" src="src/js/tab_cmd.js"></script>
         <script language="javascript" type="text/javascript" src="src/js/tab_solver.js"></script>
+        <script language="javascript" type="text/javascript" src="src/js/tab_optimizer.js"></script>
         <script language="javascript" type="text/javascript" src="src/js/tab_settings.js"></script>
         <script language="javascript" type="text/javascript" src="src/js/tab.js"></script>
         <script language="javascript" type="text/javascript" src="src/js/global.js"></script>
@@ -50,8 +52,8 @@
             
         <div id="tab">
             <button class="tablinks" onclick="tab(event, 'tab_solver')" id="tab_defaultOpen">Solver</button>
-            <!--
             <button class="tablinks" onclick="tab(event, 'tab_optimizer')">Optimizer</button>
+            <!--
             <button class="tablinks" onclick="tab(event, 'tab_functions')">Functions</button>
             -->
             <button class="tablinks" onclick="tab(event, 'tab_cmd')">CMD Editor</button>
@@ -59,19 +61,19 @@
         </div>
         
         
-        <div id="tab_solver" class="tabcontent">
+        <div id="tab_solver" class="tabcontent tab_manager">
             <h2>Solver Manager</h2>
             <div>
                 <table>
                     <tr>
-                        <td id="solver_list">                            
-                            <label id="solver_add" onclick="switch_solver(event, 'add_solver')">add solver</label>                                 
+                        <td id="solver_list" class="manager_list">                            
+                            <label id="solver_add" class="add_manager" onclick="switch_solver(event, 'add_solver')">add solver</label>                                 
                         </td>
                         <td id="solver_contents">      
-                            <div id="add_solver" class="solver_content">
+                            <div id="add_solver" class="solver_content manager_content">
                                 <h3>Add Solver</h3><br>  
-                                <label for="algorithm">Algorithm:</label>
-                                <select id="algorithm">
+                                <label for="solvalgorithm">Algorithm:</label>
+                                <select id="solvalgorithm">
                                     <option value="default">default</option>
                                 </select>
                                 <button class="solver_content_btn" onclick="createSolver();">Create</button>          
@@ -181,8 +183,39 @@
         </div>
         
         
-        <div id="tab_optimizer" class="tabcontent">
-            <h2 contextmenu="to be implemented" class="tbi">TBI</h2>
+        <div id="tab_optimizer" class="tabcontent tab_manager">
+            <h2>Optimizer Manager</h2>
+            <div>
+                <table>
+                    <tr>
+                        <td id="optimizer_list" class="manager_list">                            
+                            <label id="optimizer_add" class="add_manager" onclick="switch_optimizer(event, 'add_optimizer')">add optimizer</label>                                 
+                        </td>
+                        <td id="optimizer_contents">      
+                            <div id="add_optimizer" class="optimizer_content manager_content">
+                                <h3>Add Optimizer</h3><br>  
+                                <label for="optialgorithm">Algorithm:</label>
+                                <select id="optialgorithm">
+                                    <option value="default">default</option>
+                                </select>
+                                <button class="optimizer_content_btn" onclick="createOptimizer();">Create</button>          
+                                                          
+                            </div>                    
+                       
+                        </td>
+                    </tr>
+                </table>
+                <!--
+                <div id="optimizer_compare">
+                    <h3>Compare</h3>
+                    <table>
+                        <tr id="optimizer_compare_trsolver">
+                            <th>Optimizer</th>
+                        </tr>
+                    </table>                    
+                </div>
+                -->
+            </div>            
             
         </div>   
         

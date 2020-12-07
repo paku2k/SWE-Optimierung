@@ -82,7 +82,7 @@ function tab_solver_responseHandler(){
                     Algorithms_JSON = algorithms;
                     
                     for(var j=0; j < algorithms.length; j++){
-                        createAlgorithmSelectHTML(algorithms[j].algorithm);
+                        createSolvAlgorithmSelectHTML(algorithms[j].algorithm);
                     }
                 } 
             } else if(cmd_ans[i].err){
@@ -154,8 +154,12 @@ function createOrChangeSolverListHTML(solver){
                 document.getElementById("solver_list").insertBefore(button, document.getElementById("solver_list").firstChild);
             }
             
-            newSolverContentDiv(solver.id, solver.algorithm);
         }
+        
+        
+        if(document.getElementById("solver_"+solver.id) == null) 
+            newSolverContentDiv(solver.id, solver.algorithm);
+        
         
         
         //update status color
@@ -463,10 +467,10 @@ function updateSolverResult(id, result, err){
 function newSolverContentDiv(id, algorithm){
     var div = document.createElement("div");
     div.setAttribute("id", "solver_"+id);
-    div.setAttribute("class", "solver_content");
+    div.setAttribute("class", "solver_content manager_content");
     
         var table1 = document.createElement("table");
-        table1.setAttribute("class", "solver_content_t1");
+        table1.setAttribute("class", "manager_content_t1");
         table1.innerHTML = '<tr><td><h3>'+algorithm+'</h3></td><td><span id="solver_'+id+'_status">initialized</span></td><td><button onclick="solverDuplicate('+id+');">Duplicate</button><button onclick="solverDelete('+id+');">Delete</button></td></tr>';
             
     div.appendChild(table1);
@@ -475,13 +479,13 @@ function newSolverContentDiv(id, algorithm){
         var div1 = document.createElement("div");
 
             var table2 = document.createElement("table");
-            table2.setAttribute("class", "solver_content_t2");
+            table2.setAttribute("class", "manager_content_t2");
             table2.innerHTML = '<tr><td><h4>Configuration</h4></td><td><button id="solver_'+id+'_copyfromBtn" onclick="solverCfgCopyFrom('+id+');">Copy from</button><input type="text" value="" id="solver_'+id+'_copyfrom"></td></tr>';
 
         div1.appendChild(table2);
 
             var table3 = document.createElement("table");
-            table3.setAttribute("class", "solver_content_t3");
+            table3.setAttribute("class", "manager_content_t3");
 
                 var tr31 = document.createElement("tr");
                 tr31.setAttribute("id", "solver_"+id+"_config_tableheader")
@@ -519,7 +523,7 @@ function newSolverContentDiv(id, algorithm){
         var div3 = document.createElement("div");
         div3.setAttribute("id", "solver_"+id+"_result");
         div3.setAttribute("style", "display: none;");
-        div3.innerHTML = '<h4>Result</h4><table class="solver_content_t4"><tr><td>Minimum: </td><td id="solver_'+id+'_resultMin"></td></tr><tr><td>Position: </td><td id="solver_'+id+'_resultPos"></td></tr><tr><td>Iterations: </td><td id="solver_'+id+'_resultIter"></td></tr><tr><td>Function Calls: </td><td id="solver_'+id+'_resultFC"></td></tr><tr><td>Exception: </td><td id="solver_'+id+'_resultException"></td></tr></table><button class="solver_compareBtn" id="solver_'+id+'_compareBtn" onclick="solverCompare('+id+');">Compare</button>';
+        div3.innerHTML = '<h4>Result</h4><table class="manager_content_t4"><tr><td>Minimum: </td><td id="solver_'+id+'_resultMin"></td></tr><tr><td>Position: </td><td id="solver_'+id+'_resultPos"></td></tr><tr><td>Iterations: </td><td id="solver_'+id+'_resultIter"></td></tr><tr><td>Function Calls: </td><td id="solver_'+id+'_resultFC"></td></tr><tr><td>Exception: </td><td id="solver_'+id+'_resultException"></td></tr></table><button class="solver_compareBtn" id="solver_'+id+'_compareBtn" onclick="solverCompare('+id+');">Compare</button>';
     
     div.appendChild(div3);
     
@@ -554,41 +558,8 @@ function solverCfgCopyFrom(id){
 }
 
 function solverCfgChange(id, name, value){
-    sendCmds(["sm config "+id+" "+name+"="+value], 1000, tab_solver_responseHandler);   
+    sendCmds(["sm config "+id+" "+name.replace(",",".")+"="+value.replace(",",".")], 1000, tab_solver_responseHandler);   
 }
-
-/*
-function solverCfgSave(id){
-    var cfgstring = "";
-    
-    var solver = currentSolverList_JSON[id];
-    
-   if(currentSolverList_JSON[id].id != id){
-         for(var i=0; i < currentSolverList_JSON.length; i++){
-            if(currentSolverList_JSON[i].id == id){
-                solver = currentSolverList_JSON[i];
-                break;
-            }
-        }
-    }
-    
-    
-    var pars;
-    
-    for(var i=0; i < Algorithms_JSON.length; i++){
-        if(Algorithms_JSON[i].algorithm == solver.algorithm){
-            pars = Algorithms_JSON[i].parameters;
-        }
-    }
-    
-    for(var i=0; i < pars.length; i++){
-        if(document.getElementById("solver_"+id+"_cfg_"+pars[i].name)){
-            cfgstring += pars[i].name +"="+ document.getElementById("solver_"+id+"_cfg_"+pars[i].name).value +", ";
-        }
-    }
-    
-    sendCmds(["sm config "+id+" "+cfgstring], 2000, tab_solver_responseHandler);   
-}*/
 
 function solverCfgResetAll(id){
     if(window.confirm("Reset configuration?"))
@@ -653,7 +624,7 @@ function solverClear(id){
 /* add solver */
 
 function createSolver(){
-    var algorithm = document.getElementById("algorithm").value;
+    var algorithm = document.getElementById("solvalgorithm").value;
     var cmd = "sm create";
     if(algorithm == "PSOeeg" && easterEggUnlock(0)){
         return;
@@ -665,12 +636,12 @@ function createSolver(){
 }
 
 
-function createAlgorithmSelectHTML(algorithm){
+function createSolvAlgorithmSelectHTML(algorithm){
     var option = document.createElement("option");
     option.setAttribute("value", algorithm);
     option.innerHTML = algorithm;
     
-    document.getElementById("algorithm").lastChild.after(option);
+    document.getElementById("solvalgorithm").lastChild.after(option);
 }
 
 

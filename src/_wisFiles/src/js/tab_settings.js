@@ -63,6 +63,9 @@ function tab_settings_responseHandler(){
 function createOrChangeSettingHTML(key, value){    
     if(key == "WebGUIshowDelSolvers"){
         setShowDelSolvers(value);
+    }  
+    if(key == "WebGUIshowDelOptims"){
+        setShowDelOptimizers(value);
     }
     
     if(document.getElementById("settings_"+key)){

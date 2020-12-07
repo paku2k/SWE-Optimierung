@@ -33,6 +33,7 @@ public class Settings {
 		settings.put("defaultAlgorithm", "DEbest1");
 		settings.put("defaultOptimizer", "DeepRand");
 		settings.put("WebGUIshowDelSolvers", true);
+		settings.put("WebGUIshowDelOptims", true);
 		
 	}
 	

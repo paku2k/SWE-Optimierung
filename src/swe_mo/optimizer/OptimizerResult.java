@@ -5,8 +5,7 @@ import org.json.simple.JSONObject;
 
 public class OptimizerResult {
 	public double value;
-	//other messages (number of iterations until result, ...)
-	
+	//other messages (number of iterations until result, ...)	
 	Exception e;
 	
 	
@@ -35,6 +34,7 @@ public class OptimizerResult {
 		return s;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public String toJSON() {
 		JSONObject json = new JSONObject();
 		

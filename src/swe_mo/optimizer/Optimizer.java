@@ -36,7 +36,7 @@ public class Optimizer {
 		Queue<String> configQueue = new LinkedList<String>();
 		String hyperparameterNotFound = "";
 		
-		for(String s : configString.replace(","," ").replace("\t"," ").replace("    "," ").replace("   "," ").replace("  "," ").replace("= ","=").replace(" =","=").replace("|","|").replace("/ ","/").replace(" /","/").split(" ")) {
+		for(String s : configString.replace(","," ").replace("\t"," ").replace("    "," ").replace("   "," ").replace("  "," ").replace("= ","=").replace(" =","=").replace("|","/").replace("/ ","/").replace(" /","/").split(" ")) {
 			if(s != "" && s != null)
 				configQueue.offer(s);
 		}
@@ -66,13 +66,52 @@ public class Optimizer {
 		}
 	}
 	
+	public void configAddSHP(String string) throws Exception {
+		Queue<String> configQueue = new LinkedList<String>();
+		String notAllRequiredSettings = "";
+		
+		for(String s : string.replace(","," ").replace("\t"," ").replace("    "," ").replace("   "," ").replace("  "," ").replace("= ","=").replace(" =","=").replace("|","/").replace("/ ","/").replace(" /","/").split(" ")) {
+			if(s != "" && s != null)
+				configQueue.offer(s);
+		}
+		
+		for(String s : configQueue) {
+			String[] split = s.split("=");
+			if(split[1].contains("/")) {
+				String[] value = split[1].split("/");
+				config.addSHP(split[0], value[0], value[1]);	
+			} else {
+				if(!notAllRequiredSettings.isEmpty()) notAllRequiredSettings += ", ";
+				notAllRequiredSettings += split[0];				
+			}
+		}	
+		
+		status = -1;
+
+		if(!notAllRequiredSettings.isEmpty()) {
+			if(notAllRequiredSettings.contains(","))
+				throw new Exception("Configured without parameters: "+notAllRequiredSettings+" (no valid configuration given)");
+			else
+				throw new Exception("Configured without parameter: "+notAllRequiredSettings+" (no valid configuration given)");	
+		}
+	}
+	
+	public void configRemoveSHP(String string) throws Exception {
+		Queue<String> configQueue = new LinkedList<String>();
+		
+		for(String s : string.replace(","," ").replace("\t"," ").replace("    "," ").replace("   "," ").replace("  "," ").split(" ")) {
+			if(s != "" && s != null)
+				configQueue.offer(s);
+		}
+		
+		for(String s : configQueue) {
+			config.removeSHP(s);	
+		}	
+	}
+	
 	public void resetConfig() throws Exception {
 		config = OptimizerConfig.getDefault(algorithm);
 		status = -2;
-	}
-	
-	public void setConfig(OptimizerConfig oc) throws Exception {
-		config = new OptimizerConfig(oc);
 	}
 	
 	public OptimizerConfig getConfig() throws Exception {
@@ -99,7 +138,7 @@ public class Optimizer {
 		});
 		optimizerThread.start();
 	}
-	
+
 	public void terminate() {
 		terminated = true;
 		status = 102;
@@ -158,7 +197,6 @@ public class Optimizer {
 
 	
 	public void updateStatus(double s) {
-		if(s > 0 && s <= 100 && terminated) return;
 		status = s;
 	}
 }

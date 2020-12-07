@@ -78,6 +78,9 @@ public class UiBackend {
 		SolverManager.terminateAll();
 		SolverManager.joinAllThreads();
 		
+		OptimizerManager.terminateAll();
+		OptimizerManager.joinAllThreads();
+		
 		clogger.info(AUTH, "run", "UiBackend stopped");
 	}
 	
@@ -1024,6 +1027,7 @@ public class UiBackend {
 							else
 								return OptimizerManager.getConfig(false);						
 						}
+						
 					} else if(cmd_queue.peek().equals("-reset")) {
 						if(id>-1) {
 							if(id_max>-1) {
@@ -1036,6 +1040,7 @@ public class UiBackend {
 							OptimizerManager.resetConfig();		
 						}
 						return "Optimizer reset.";
+						
 					} else if(cmd_queue.peek().equals("-clone")) {	
 						cmd_queue.poll();
 						
@@ -1059,6 +1064,46 @@ public class UiBackend {
 						}
 						
 						throw new Exception("No valid clone id given.");
+						
+					} else if(cmd_queue.peek().equals("-addSHP") || cmd_queue.peek().equals("-addshp")) {	
+						cmd_queue.poll();
+						
+						String s = "";	
+						while(!cmd_queue.isEmpty()) {	
+							s += cmd_queue.poll()+" ";
+						}
+
+						if(id>-1) {
+							if(id_max>-1) {
+								OptimizerManager.configAddSHP(id, id_max, s);	
+								return "SHP added to optimizers.";
+							} else {
+								OptimizerManager.configAddSHP(id, s);
+							}
+						} else {
+							OptimizerManager.configAddSHP(s);		
+						}
+						return "SHP added to optimizer.";
+						
+					} else if(cmd_queue.peek().equals("-rmvSHP") || cmd_queue.peek().equals("-rmvshp")) {	
+						cmd_queue.poll();
+						
+						String s = "";	
+						while(!cmd_queue.isEmpty()) {	
+							s += cmd_queue.poll()+" ";
+						}
+
+						if(id>-1) {
+							if(id_max>-1) {
+								OptimizerManager.configRemoveSHP(id, id_max, s);	
+								return "SHP removed from optimizers.";
+							} else {
+								OptimizerManager.configRemoveSHP(id, s);
+							}
+						} else {
+							OptimizerManager.configRemoveSHP(s);		
+						}
+						return "SHP remove from optimizer.";
 					}
 					
 					

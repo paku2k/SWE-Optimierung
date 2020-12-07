@@ -49,32 +49,6 @@ public class SolverConfig {
 	
 	
 	
-
-	public SolverConfig() {};
-	
-	//for cloning
-	public SolverConfig(SolverConfig s) {
-		this.ffid = s.ffid;
-		this.N = s.N;
-		this.NP = s.NP;
-		this.F = s.F;
-		this.CR = s.CR;
-		this.maxGenerations = s.maxGenerations;
-		this.upperBound = s.upperBound;
-		this.lowerBound = s.lowerBound;
-		this.lambda = s.lambda;
-		this.w = s.w;
-		this.cc = s.cc;
-		this.cs = s.cs;
-		this.dt = s.dt;
-		this.decayStart = s.decayStart;
-		this.decayEnd = s.decayEnd;
-		this.neighbors=s.neighbors;
-		this.convergence=s.convergence;
-		this.usedpars = s.usedpars;
-	};
-	
-	
 	//basic
 	public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound) {
 		this.ffid = ffid;
@@ -256,7 +230,7 @@ public class SolverConfig {
 				return neighbors;
 				
 		}
-		return "nd";
+		return "(not defined)";
 	}
 	
 	

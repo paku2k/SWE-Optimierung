@@ -73,7 +73,8 @@ public class OptimizerManager {
 		if(status(id) == -3) {
 			throw new Exception("No Optimizer with this ID.");
 		} else if(status(id) == -1) {
-			clogger.warn(AUTH, "start", "Overwriting existing configuration.");		
+			if(runningOptimizers.get(id).getCreator().equals("UiF"))
+				clogger.warn(AUTH, "start", "Overwriting existing configuration.");		
 		} else if(status(id) == 100) {
 			throw new Exception("Optimizing finished, preparing Results.");	
 		} else if(status(id) == 101) {
@@ -89,6 +90,96 @@ public class OptimizerManager {
 		}
 
 		runningOptimizers.get(id).configure(config);
+	}		
+
+	
+	
+	
+	public static void configAddSHP(String config) throws Exception {
+		configAddSHP(runningOptimizers.size()-1, config);
+	}
+	
+	public static void configAddSHP(int id1, int id2, String config) throws Exception {
+		if(id1>id2) {
+			int m = id1;
+			id1 = id2;
+			id2 = m;
+		}
+		if(id1<0) id1=0;
+		if(id2>runningOptimizers.size()-1) id2 = runningOptimizers.size()-1;
+		
+		for(int i=id1; i<=id2; i++) {
+			if(status(i)<0 && status(i)>-3)
+				configAddSHP(i, config);			
+		}		
+	}
+	
+	public static void configAddSHP(int id, String config) throws Exception {
+		if(status(id) == -3) {
+			throw new Exception("No Optimizer with this ID.");
+		} else if(status(id) == -1) {
+			if(runningOptimizers.get(id).getCreator().equals("UiF"))
+				clogger.warn(AUTH, "start", "Overwriting existing configuration.");		
+		} else if(status(id) == 100) {
+			throw new Exception("Optimizing finished, preparing Results.");	
+		} else if(status(id) == 101) {
+			throw new Exception("Optimizing finished, Results already available.");	
+		} else if(status(id) == 102) {
+			throw new Exception("Optimizing terminated.");	
+		} else if(status(id) == 103) {
+			throw new Exception("Optimizing terminated with failure.");		
+		} else if(status(id) == 104) {
+			throw new Exception("Optimizer not found (deleted).");			
+		} else if(status(id) >= 0 && status(id) < 100) {
+			throw new Exception("Optimizer already running.");						
+		}
+
+		runningOptimizers.get(id).configAddSHP(config);
+	}	
+
+	
+	
+	
+	public static void configRemoveSHP(String config) throws Exception {
+		configRemoveSHP(runningOptimizers.size()-1, config);
+	}
+	
+	public static void configRemoveSHP(int id1, int id2, String config) throws Exception {
+		if(id1>id2) {
+			int m = id1;
+			id1 = id2;
+			id2 = m;
+		}
+		if(id1<0) id1=0;
+		if(id2>runningOptimizers.size()-1) id2 = runningOptimizers.size()-1;
+		
+		for(int i=id1; i<=id2; i++) {
+			if(status(i)<0 && status(i)>-3)
+				configRemoveSHP(i, config);			
+		}		
+	}
+	
+	public static void configRemoveSHP(int id, String config) throws Exception {
+		if(status(id) == -3) {
+			throw new Exception("No Optimizer with this ID.");
+		} else if(status(id) == -1) {
+			if(runningOptimizers.get(id).getCreator().equals("UiF"))
+				clogger.warn(AUTH, "start", "Overwriting existing configuration.");		
+		} else if(status(id) == 100) {
+			throw new Exception("Optimizing finished, preparing Results.");	
+		} else if(status(id) == 101) {
+			throw new Exception("Optimizing finished, Results already available.");	
+		} else if(status(id) == 102) {
+			throw new Exception("Optimizing terminated.");	
+		} else if(status(id) == 103) {
+			throw new Exception("Optimizing terminated with failure.");		
+		} else if(status(id) == 104) {
+			throw new Exception("Optimizer not found (deleted).");			
+		} else if(status(id) >= 0 && status(id) < 100) {
+			throw new Exception("Optimizer already running.");						
+		}
+
+		runningOptimizers.get(id).configRemoveSHP(config);
 	}																						
 	
 	
@@ -197,10 +288,17 @@ public class OptimizerManager {
 		
 		for(int i=0; i < usedpars.size(); i++) {
 			if(usedparsClone.contains(usedpars.get(i))) {
+				if(usedpars.get(i).equals("SHP")) break;
+				
 				runningOptimizers.get(id).configure(usedpars.get(i)+"="+runningOptimizers.get(cloneId).getConfig().getValue(usedpars.get(i)));
 			}
-		}
+		}		
+		
+		String s = runningOptimizers.get(cloneId).getConfig().SHPgetString();
+		if(!s.equals(""))
+			runningOptimizers.get(id).configAddSHP(s);
 
+		
 		if(status(cloneId) > -2)
 			runningOptimizers.get(id).updateStatus(-1);
 	}																						
@@ -231,7 +329,8 @@ public class OptimizerManager {
 		if(status(id) == -3) {
 			throw new Exception("No Optimizer with this ID.");
 		} else if(status(id) == -2) {
-			clogger.warn(AUTH, "start", "Optimizer not configured, using default values.");		
+			if(runningOptimizers.get(id).getCreator().equals("UiF"))
+				clogger.warn(AUTH, "start", "Optimizer not configured, using default values.");		
 		} else if(status(id) == 100) {
 			throw new Exception("Optimizing finished, preparing Results.");	
 		} else if(status(id) == 101) {
@@ -580,7 +679,7 @@ public class OptimizerManager {
 			status = 0;
 		if(status > 100)
 			status = 100;
-		
+			
 		if(status(id) >= 0 && status(id) <= 100)
 			runningOptimizers.get(id).updateStatus(status);
 	}
