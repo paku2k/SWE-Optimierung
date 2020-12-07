@@ -278,7 +278,7 @@ public class OptimizerConfig {
 					if(OptimizerManager.checkTerminated(id))
 						break;
 				};
-				return new OptimizerResult();	
+				return new OptimizerResult("test (tbi)");	
 				//return new DeepRandomSearch(config).solve();
 		}
 		throw new Exception("Algorithm not specified or no optimizer method.");

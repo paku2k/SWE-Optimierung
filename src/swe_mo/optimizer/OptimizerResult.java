@@ -4,7 +4,7 @@ import org.json.simple.JSONObject;
 
 
 public class OptimizerResult {
-	public double value;
+	public String bestParameterset;
 	//other messages (number of iterations until result, ...)	
 	Exception e;
 	
@@ -13,8 +13,8 @@ public class OptimizerResult {
 		
 	}
 	
-	public OptimizerResult(double value) {
-		this.value = value;
+	public OptimizerResult(String bestParameterset) {
+		this.bestParameterset = bestParameterset;
 		
 	}
 	
@@ -26,7 +26,7 @@ public class OptimizerResult {
 		String s = "";
 		
 		if(e == null) {
-			s += "Value: "+value+"\n";
+			s += "Best Parameterset: "+bestParameterset+"\n";
 		} else {
 			s += "Exception: "+e.getMessage();
 		}
@@ -39,7 +39,7 @@ public class OptimizerResult {
 		JSONObject json = new JSONObject();
 		
 		if(e == null) {
-			json.put("value", value);
+			json.put("bestPS", bestParameterset);
 		} else {
 			json.put("exception", e.getMessage());
 		}

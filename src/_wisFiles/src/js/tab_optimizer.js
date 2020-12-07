@@ -452,11 +452,11 @@ function lockOptimizerConfiguration(id, lock){
 
 function updateOptimizerResult(id, result, err){   
     if(!err && result){
-        if(result.value != null){
-            document.getElementById("optimizer_"+id+"_resultMin").innerHTML = result.value;
-            document.getElementById("optimizer_"+id+"_resultMin").parentElement.style.display = "inherit";
+        if(result.bestPS != null){
+            document.getElementById("optimizer_"+id+"_resultBestPS").innerHTML = result.bestPS;
+            document.getElementById("optimizer_"+id+"_resultBestPS").parentElement.style.display = "inherit";
         } else {
-            document.getElementById("optimizer_"+id+"_resultMin").parentElement.style.display = "none";            
+            document.getElementById("optimizer_"+id+"_resultBestPS").parentElement.style.display = "none";            
         }
         
         if(result.exception != null){
@@ -520,7 +520,7 @@ function newOptimizerContentDiv(id, algorithm){
                 tr3a1.innerHTML = '<th>Solver Hyperparameter</th><th colspan="3">Value</th><th></th>';
                 var tr3a2 = document.createElement("tr");
                 tr3a2.setAttribute("id", "optimizer_"+id+"_config_solver_add")
-                tr3a2.innerHTML += '<th><input type="text" placeholder="name" value="" id="optimizer_'+id+'_cfg_newSHP_name" autocomplete="off"></th><th><input type="text" placeholder="min" value="" id="optimizer_'+id+'_cfg_newSHP_min" autocomplete="off"></th><th>to</th><th><input type="text" placeholder="max" value="" id="optimizer_'+id+'_cfg_newSHP_max" autocomplete="off"></th><th onclick="optimizerCfgAddSHP('+id+');">Add</th>';
+                tr3a2.innerHTML += '<th><input type="text" placeholder="name" value="" id="optimizer_'+id+'_cfg_newSHP_name" autocomplete="off"></th><th><input type="text" placeholder="min" value="" id="optimizer_'+id+'_cfg_newSHP_min" autocomplete="off"></th><th>to</th><th><input type="text" placeholder="max" value="" id="optimizer_'+id+'_cfg_newSHP_max" autocomplete="off"></th><th onclick="optimizerCfgAddSHP('+id+');">add</th>';
            
 
             table3.appendChild(tr31);
@@ -572,7 +572,7 @@ function newOptimizerContentDiv(id, algorithm){
         var div3 = document.createElement("div");
         div3.setAttribute("id", "optimizer_"+id+"_result");
         div3.setAttribute("style", "display: none;");
-        div3.innerHTML = '<h4>Result (tbi)</h4><table class="manager_content_t4"><tr><td>Value: </td><td id="optimizer_'+id+'_resultMin"></td></tr><tr><td>Exception: </td><td id="optimizer_'+id+'_resultException"></td></tr></table>';
+        div3.innerHTML = '<h4>Result</h4><table class="manager_content_t4"><tr><td>Best Parameterset: </td><td id="optimizer_'+id+'_resultBestPS"></td></tr><tr><td>Exception: </td><td id="optimizer_'+id+'_resultException"></td></tr></table>';
         //div3.innerHTML += '<button class="optimizer_compareBtn" id="optimizer_'+id+'_compareBtn" onclick="optimizerCompare('+id+');">Compare</button>';
     
     div.appendChild(div3);
@@ -748,9 +748,7 @@ function createOptiAlgorithmSelectHTML(algorithm){
 function optimizerCompare(id){
     if(!document.getElementById("optimizer_compare_troptimizer_"+id)){
         var algorithm = "";
-        var minimum = document.getElementById("optimizer_"+id+"_resultMin").innerHTML;
-        var iterations = document.getElementById("optimizer_"+id+"_resultIter").innerHTML;
-        var ffc = document.getElementById("optimizer_"+id+"_resultFC").innerHTML;
+        var minimum = document.getElementById("optimizer_"+id+"_resultBestPS").innerHTML;
         
         
         for(var i = 0; i < currentOptimizerList_JSON.length; i++){
