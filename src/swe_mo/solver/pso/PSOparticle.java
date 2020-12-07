@@ -161,7 +161,7 @@ public class PSOparticle extends Particle_DE {
 	public void setNeighbors(int neighbors){
 		for(int i=0; i<(neighbors-1);i++) {
 			Random r = new Random();
-			neighborhood.add(r.nextInt(particleCount));
+			neighborhood.add(r.nextInt(particleCount-1));
 		}
 	}
 }
