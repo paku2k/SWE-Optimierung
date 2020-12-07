@@ -60,8 +60,8 @@ public class PSOgsc {
 
 			this.sumOfDifferencesGlobal=Double.MIN_VALUE;
 
-			if(dimension < 2) {
-				throw new Exception("You need at least 2 dimensions");
+			if(dimension < 1) {
+				throw new Exception("You need at least 1 dimensions");
 				}
 			if(min >= max) {
 				throw new Exception("Ranges are set incorrectly. Maximum must be greater than the minimum");
@@ -78,8 +78,8 @@ public class PSOgsc {
 			if(cs < 0 || cs > 1) {
 				throw new Exception("cs has to be between 0 and 1");
 				}
-			if(dt < 0 || dt > 3) {
-				throw new Exception("dt has to be between 0 and 3");
+			if(dt < 0 || dt > 2) {
+				throw new Exception("dt has to be between 0 and 2");
 				}
 			if(numIter < 1) {
 				throw new Exception("You need at least 1 Iteration");
@@ -91,7 +91,7 @@ public class PSOgsc {
 
 			public static SolverConfig defaultConfig() {
 				//int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, 
-				return new SolverConfig(1, 2, 10, 100, 5, -5, 0.9, 0.5, 0.5, 1, 1.0);
+				return new SolverConfig(1, 30, 100, 50000, 500, -500, 0.9, 0.5, 0.9, 1, 1.0);
 			}
 			
 	
