@@ -18,7 +18,7 @@ public class PSOgnsc extends PSOnsc {
 	
 	public static SolverConfig defaultConfig() {
 		//int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, neighbors, convergence
-		return new SolverConfig(1, 30, 100, 5000, 500, -500, 0.9, 0.5, 0.9, 1, 10, 1.0);
+		return new SolverConfig(1, 30, 100, 5000, 5.12, -5.12, 0.9, 0.5, 0.9, 1, 10, 1.0);
 	}
 	
 	
