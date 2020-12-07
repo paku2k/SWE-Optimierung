@@ -36,7 +36,7 @@ public class PSOgscDecay extends PSOgsc{
 	
 	
 	@Override
-	public SolverResult solve() throws IOException {
+	public SolverResult solve() throws Exception {
 		// This method is the engine of the solver, that creates the swarm and updates / finds the globalBestPosition
 			
 			int counter = 0;
@@ -67,7 +67,7 @@ public class PSOgscDecay extends PSOgsc{
 				
 				if(converged&&convergence!=0.0) {
 					c.file.close();
-					return new SolverResult(globalMinimum, globalBestPosition, counter);
+					return new SolverResult(globalMinimum, globalBestPosition, counter, i);
 				}
 			}
 			ArrayList<Double> ret = new ArrayList<Double>();
@@ -75,6 +75,6 @@ public class PSOgscDecay extends PSOgsc{
 			ret.addAll(globalBestPosition);
 			
 			c.file.close();
-			return new SolverResult(val, ret, counter);
+			return new SolverResult(val, ret, counter, numIter);
 		}
 }

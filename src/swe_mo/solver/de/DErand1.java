@@ -1,12 +1,10 @@
 package swe_mo.solver.de;
 import swe_mo.solver.SolverManager;
-import swe_mo.solver.FileGenerator;
 import swe_mo.solver.SolverResult;
 import swe_mo.solver.SolverConfig;
 import swe_mo.solver.Convergence;
 
 import java.io.IOException;
-import java.math.*;
 
 
 import java.util.ArrayList;
@@ -62,7 +60,7 @@ public class DErand1 {
 		this.convergenceCrit=NP*N*(upperBound-lowerBound)*10E-5*convergence;
 		this.bestParticle  = new Particle_DE(N, upperBound,lowerBound);
 
-		System.out.println("particle before everything "+xPop.get(2).toString());
+		//System.out.println("particle before everything "+xPop.get(2).toString());
 
 
 		
@@ -81,6 +79,10 @@ public class DErand1 {
 		// it will initialize all NP particles with all dimensions to be zero
 		
 		//Bounds are created to be max.
+		
+		if(N<1 || NP<3 || F<0 || CR<0 || CR>1 || ffIndex<1 || ffIndex>18 || convergence<0) {
+			throw new IOException("Please check your input parameters.");
+		}
 		
 
 		c= new Convergence("DErand1");
@@ -122,7 +124,7 @@ public class DErand1 {
 	    }
 	}
 	
-	public SolverResult solve() throws IOException  {
+	public SolverResult solve() throws Exception  {
 		
 		SolverManager.updateStatus(solverID, 0.0);
 		
@@ -146,7 +148,7 @@ public class DErand1 {
 			if (converged&&this.convergenceCrit!=0.0) {
 				c.file.close();
 
-				return new SolverResult(best, bestParticle.position, fitCount);
+				return new SolverResult(best, bestParticle.position, fitCount, generation);
 				
 
 			}
@@ -160,7 +162,7 @@ public class DErand1 {
 
 		c.file.close();
 			
-		return new SolverResult(best, bestParticle.position, fitCount);
+		return new SolverResult(best, bestParticle.position, fitCount, generation);
 	}
 	
 	public Particle_DE calculateV(int index) {
@@ -228,7 +230,7 @@ public class DErand1 {
 	}
 	
 	
-	public Particle_DE compare(int xIndex, Particle_DE vectorU) {
+	public Particle_DE compare(int xIndex, Particle_DE vectorU) throws Exception {
 		//Compares vectorX and vectorU and returns the better one. If both give the same result, vectorU is returned
 		double xRes;
 
@@ -247,9 +249,9 @@ public class DErand1 {
 		
 		double uRes=FitnessFunction.solve(ffIndex, vectorU);
 		fitCount+=1;
-		System.out.println("current best: "+best);
+		/*System.out.println("current best: "+best);
 		System.out.println("xRes: "+xRes);
-		System.out.println("uRes: "+uRes);
+		System.out.println("uRes: "+uRes);*/
 
 		
 		if(xRes<uRes) {
