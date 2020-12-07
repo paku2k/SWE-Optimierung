@@ -31,7 +31,7 @@ public class PSOnsc extends PSOgsc {
 	
 	public static SolverConfig defaultConfig() {
 		//int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, neighbors, convergence
-		return new SolverConfig(1, 30, 100, 50000, 500, -500, 0.9, 0.5, 0.9, 1, 20, 1.0);
+		return new SolverConfig(1, 30, 100, 5000, 500, -500, 0.9, 0.5, 0.9, 1, 20, 1.0);
 	}
 	
 	
