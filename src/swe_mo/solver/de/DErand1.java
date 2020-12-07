@@ -79,11 +79,55 @@ public class DErand1 {
 		// it will initialize all NP particles with all dimensions to be zero
 		
 		//Bounds are created to be max.
-		
-		if(N<1 || NP<3 || F<0 || CR<0 || CR>1 || ffIndex<1 || ffIndex>18 || convergence<0) {
-			throw new IOException("Please check your input parameters.");
+		String s="";
+		if(N<1) {
+			s += "N";
 		}
-		
+		if(NP<3) {
+			if(!s.equals("")) {
+				s+=", ";
+			}
+			s+="NP";
+		}
+		if(F<0) {
+			if(!s.equals("")) {
+				s+=", ";
+			}
+			s+="F";
+		}
+		if(CR<0) {
+			if(!s.equals("")) {
+				s+=", ";
+			}
+			s+="CR";
+		}
+		if(CR>1) {
+			if(!s.equals("")) {
+				s+=", ";
+			}
+			s+="CR";
+		}
+		if(ffIndex<1) {
+			if(!s.equals("")) {
+				s+=", ";
+			}
+			s+="ffid";
+		}
+		if(ffIndex>18) {
+			if(!s.equals("")) {
+				s+=", ";
+			}
+			s+="ffid";
+		}
+		if(convergence<0) {
+			if(!s.equals("")) {
+				s+=", ";
+			}
+			s+="convergence";
+		}
+		if(!s.equals("")) {
+			throw new IOException("Please check your input parameters ("+s+").");
+		}
 
 		c= new Convergence("DErand1");
 		

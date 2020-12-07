@@ -142,28 +142,37 @@ public class FitnessFunction {
 	 static double calculatef12(Particle_DE vector)	{
 		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
 	 }
-	 static double calculatef13(Particle_DE vector)	{
+	 static double calculatef13(Particle_DE vector)	throws Exception	{
+		 if(vector.position.size() < 3) {
+			 throw new Exception("Fitness function 13 only allows dimension N>=3!");
+		 }
 		 double result = 0.0;
 		 double sum1 = 0.0;
 		 double sum2 = 0.0;
 		 int a = 10;
 		 int k = 100;
 		 int m = 4;
+		 double xn = vector.position.get(vector.position.size()-1);
+		 double x1 = vector.position.get(1);
 		 
 		 for(int i=0; i<vector.position.size()-1;i++) {
 			 sum1 = sum1 + (Math.pow((vector.position.get(i)-1), 2)*(1+Math.pow(Math.sin(3*Math.PI*vector.position.get(i+1)), 2)));
 		 }
 		 
-		 for(Double d : vector.position){
-			 if(d<-a) {
-				 sum2 = sum2 + k*Math.pow((-d-a), m);
+		 for(Double xi : vector.position){
+			 if(xi<-a) {
+				 sum2 = sum2 + k*Math.pow((-xi-a), m);
 			 }
-			 else if(d>a) {
-				 sum2 = sum2 + k*Math.pow((d-a), m);
+			 else if(xi>a) {
+				 sum2 = sum2 + k*Math.pow((xi-a), m);
 			 }
 		 }
 		 
-		 result = 0.1*(10*Math.pow(Math.sin(3*Math.PI*vector.position.get(0)), 2)+sum1+((vector.position.get(vector.position.size()-1)-1)*(1+Math.pow(Math.sin(2*Math.PI*vector.position.get(vector.position.size()-1)),2))))+sum2;
+		 result = (10*Math.pow(Math.sin(3*Math.PI*x1), 2));
+		 result += sum1;
+		 result += ((xn-1)*(1+Math.pow(Math.sin(2*Math.PI*xn),2)));
+		 result *= 0.1;
+		 result += sum2;
 		 return result;	 
 	 }
 	 
@@ -191,12 +200,18 @@ public class FitnessFunction {
 	 static double calculatef16(Particle_DE vector)	{
 		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
 	 }
-	 static double calculatef17(Particle_DE vector)	{
+	 static double calculatef17(Particle_DE vector)	throws Exception	{
+		 if(vector.position.size() != 2) {
+			 throw new Exception("Fitness function 17 only allows dimension N=2!");
+		 }
 		 double result = Double.MAX_VALUE;
+		 double x1 = vector.position.get(1);
+		 double x0 = vector.position.get(0);
 		 
-		 result = Math.pow((vector.position.get(1)-(5.1/(4*Math.pow(Math.PI, 2)))*Math.pow(vector.position.get(0), 2)+(5/Math.PI)*vector.position.get(0)-6),2);
-		 result = result + 10*(1-(1/(8*Math.PI))*Math.cos(vector.position.get(0)));
-		 result = result + 10;
+		 
+		 result = Math.pow((x1-(5.1/(4.0*Math.pow(Math.PI, 2)))*Math.pow(x0, 2)+(5.0/Math.PI)*x0-6.0),2);
+		 result = result + 10.0*(1.0-(1.0/(8.0*Math.PI)))*Math.cos(x0);
+		 result = result + 10.0;
 		 
 		 return result;
 	 }
