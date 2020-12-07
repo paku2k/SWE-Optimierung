@@ -17,8 +17,10 @@ function onload(){
     loadAppSettings();
     
     loadSolverInitial();
-    loadOptimizerInitial();
-    easterEggInitTs();
+    loadOptimizerInitial();    
+    
+    ffLoadBoundaries();
+    easterEggInitTs();      
 }
 
 

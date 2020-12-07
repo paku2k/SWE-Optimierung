@@ -1,6 +1,8 @@
 package swe_mo.solver;
 
 import org.apache.poi.ss.formula.eval.NotImplementedException;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import swe_mo.solver.de.Particle_DE;
 
@@ -45,6 +47,7 @@ public class FitnessFunction {
 			return calculatef17(vector);
 		case 18:
 			return calculatef18(vector);
+		case 0:
 		default:
 			return calculateRastrigin(vector);
 		}
@@ -180,54 +183,75 @@ public class FitnessFunction {
 	 
 
 		
-		public static Double getBoundary(String t, int index) throws Exception {
-			switch(index) {
-			case 2:
-				if(t.equals("lower")) return -10.0;
-				if(t.equals("upper")) return 10.0;
-			case 3:
-			case 4:
-			case 6:
-				if(t.equals("lower")) return -100.0;
-				if(t.equals("upper")) return 100.0;
-			case 5:
-				if(t.equals("lower")) return -30.0;
-				if(t.equals("upper")) return 30.0;
-			case 7:
-				if(t.equals("lower")) return -1.28;
-				if(t.equals("upper")) return 1.28;
-			case 8:
-				if(t.equals("lower")) return -500.0;
-				if(t.equals("upper")) return 500.0;
-			case 10:
-				if(t.equals("lower")) return -32.0;
-				if(t.equals("upper")) return 32.0;
-			case 11:
-				if(t.equals("lower")) return -600.0;
-				if(t.equals("upper")) return 600.0;
-			case 12:
-				if(t.equals("lower")) return -50.0;
-				if(t.equals("upper")) return 50.0;
-			case 13:
-			case 15:
-			case 16:
-				if(t.equals("lower")) return -5.0;
-				if(t.equals("upper")) return 5.0;
-			case 14:
-				if(t.equals("lower")) return -65.54;
-				if(t.equals("upper")) return 65.54;
-			case 17:
-				if(t.equals("lower")) return -5.0;
-				if(t.equals("upper")) return 15.0;
-			case 18:
-				if(t.equals("lower")) return -2.0;
-				if(t.equals("upper")) return 2.0;
-			case 1:
-			case 9:
-				if(t.equals("lower")) return -5.12;
-				if(t.equals("upper")) return 5.12;
-			default:
-				return null;
+	 public static Double getBoundary(String t, int index) throws Exception {
+		 switch(index) {
+		 	case 0:
+		 	case 1:
+		 	case 9:
+		 		if(t.equals("lower")) return -5.12;
+		 		if(t.equals("upper")) return 5.12;
+		 	case 2:
+		 		if(t.equals("lower")) return -10.0;
+		 		if(t.equals("upper")) return 10.0;
+		 	case 3:
+		 	case 4:
+		 	case 6:
+		 		if(t.equals("lower")) return -100.0;
+		 		if(t.equals("upper")) return 100.0;
+		 	case 5:
+		 		if(t.equals("lower")) return -30.0;
+		 		if(t.equals("upper")) return 30.0;
+		 	case 7:
+		 		if(t.equals("lower")) return -1.28;
+		 		if(t.equals("upper")) return 1.28;
+		 	case 8:
+		 		if(t.equals("lower")) return -500.0;
+		 		if(t.equals("upper")) return 500.0;
+		 	case 10:
+		 		if(t.equals("lower")) return -32.0;
+		 		if(t.equals("upper")) return 32.0;
+		 	case 11:
+		 		if(t.equals("lower")) return -600.0;
+		 		if(t.equals("upper")) return 600.0;
+		 	case 12:
+		 		if(t.equals("lower")) return -50.0;
+		 		if(t.equals("upper")) return 50.0;
+		 	case 13:
+		 	case 15:
+		 	case 16:
+		 		if(t.equals("lower")) return -5.0;
+		 		if(t.equals("upper")) return 5.0;
+		 	case 14:
+		 		if(t.equals("lower")) return -65.54;
+		 		if(t.equals("upper")) return 65.54;
+		 	case 17:
+		 		if(t.equals("lower")) return -5.0;
+		 		if(t.equals("upper")) return 15.0;
+		 	case 18:
+		 		if(t.equals("lower")) return -2.0;
+		 		if(t.equals("upper")) return 2.0;
+		 	default:
+		 		return null;
+		 }
+	 }
+	 
+	 @SuppressWarnings("unchecked")
+	public static String ffBoundariesJSON() throws Exception {
+			JSONArray jarr = new JSONArray();
+			
+			for(int i = 0; i <= 18; i++) {
+				JSONObject j = new JSONObject();		
+				
+				j.put("ffid", i);
+				j.put("lower", FitnessFunction.getBoundary("lower", i));
+				j.put("upper", FitnessFunction.getBoundary("upper", i));
+								
+				jarr.add(j);				
 			}
-		}
+
+			JSONObject json = new JSONObject();
+			json.put("ffBoundaries", jarr);
+			
+			return json.toJSONString();
+	 }
 }
