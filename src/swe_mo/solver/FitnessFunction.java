@@ -4,7 +4,6 @@ package swe_mo.solver;
 import java.util.Random;
 import java.util.Collections;
 
-import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -15,45 +14,46 @@ public class FitnessFunction {
 	public static double solve(int index, Particle_DE vector) throws Exception {
 	//the index refers to Cakar's list of functions	
 		switch(index) {
-		case 1:
-			return calculatef1(vector);
-		case 2:
-			return calculatef2(vector);
-		case 3:
-			return calculatef3(vector);
-		case 4:
-			return calculatef4(vector);
-		case 5:
-			return calculatef5(vector);
-		case 6:
-			return calculatef6(vector);
-		case 7:
-			return calculatef7(vector);
-		case 8:
-			return calculatef8(vector);
-		case 9:
-			return calculatef9(vector);
-		case 10:
-			return calculatef10(vector);
-		case 11:
-			return calculatef11(vector);
-		case 12:
-			return calculatef12(vector);
-		case 13:
-			return calculatef13(vector);
-		case 14:
-			return calculatef14(vector);
-		case 15:
-			return calculatef15(vector);
-		case 16:
-			return calculatef16(vector);
-		case 17:
-			return calculatef17(vector);
-		case 18:
-			return calculatef18(vector);
-		case 0:
-		default:
-			return calculateRastrigin(vector);
+			case 0:
+				return calculateRastrigin(vector);
+			case 1:
+				return calculatef1(vector);
+			case 2:
+				return calculatef2(vector);
+			case 3:
+				return calculatef3(vector);
+			case 4:
+				return calculatef4(vector);
+			case 5:
+				return calculatef5(vector);
+			case 6:
+				return calculatef6(vector);
+			case 7:
+				return calculatef7(vector);
+			case 8:
+				return calculatef8(vector);
+			case 9:
+				return calculatef9(vector);
+			case 10:
+				return calculatef10(vector);
+			case 11:
+				return calculatef11(vector);
+			case 12:
+				return calculatef12(vector);
+			case 13:
+				return calculatef13(vector);
+			case 14:
+				return calculatef14(vector);
+			case 15:
+				return calculatef15(vector);
+			case 16:
+				return calculatef16(vector);
+			case 17:
+				return calculatef17(vector);
+			case 18:
+				return calculatef18(vector);
+			default:
+				throw new Exception("Cannot find fitnessfunction "+index);
 		}
 		
 	}
