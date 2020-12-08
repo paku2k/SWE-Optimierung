@@ -11,7 +11,7 @@ public class Debug {
 	public static void main(String[] args) throws Exception {
 
 		// Test a new implementation here:
-		double convergence = 1.0;
+		double convergence = 0.0;
 
 		
 		int dimension = 30;
@@ -32,7 +32,7 @@ public class Debug {
 		//PSOgscDecay psoGlobalSolver = new PSOgscDecay(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID, decayStart, decayEnd);
 		SolverResult sr = new PSOnsc(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID, neighbors, convergence).solve();
 		//SolverResult sr = new PSOgsc(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID).solve();
-		//SolverResult sr = new PSOgnsc(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID, neighbors).solve();
+		//SolverResult sr = new PSOgnsc(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID, neighbors, convergence).solve();
 		
 		
 		System.out.println(sr.toString());
