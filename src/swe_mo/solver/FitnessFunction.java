@@ -1,16 +1,19 @@
 package swe_mo.solver;
 
+
+import java.util.Random;
 import java.util.Collections;
 
 import org.apache.poi.ss.formula.eval.NotImplementedException;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import swe_mo.solver.de.Particle_DE;
 
 public class FitnessFunction {
 	
-	public static double solve(int index, Particle_DE vector) throws Exception 
-	//the index refers to Cakar's list of functions
-	{
+	public static double solve(int index, Particle_DE vector) throws Exception {
+	//the index refers to Cakar's list of functions	
 		switch(index) {
 		case 1:
 			return calculatef1(vector);
@@ -48,6 +51,7 @@ public class FitnessFunction {
 			return calculatef17(vector);
 		case 18:
 			return calculatef18(vector);
+		case 0:
 		default:
 			return calculateRastrigin(vector);
 		}
@@ -78,7 +82,16 @@ public class FitnessFunction {
 	 }	 
 	
 	 static double calculatef3(Particle_DE vector)	{
-		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
+		 double sum = 0.0;
+		 double sum1 = 0.0;
+		 for(int i=0; i<vector.position.size(); i++ ) {
+			 for(int j=0; j<=i; j++) {
+				 sum1 = 0.0;
+				 sum1 += vector.position.get(j);
+			 }
+			 sum += Math.pow(sum1, 2);
+		 }
+		 return sum;
 	 }
 	 
 	 static double calculatef4(Particle_DE vector)	{
@@ -91,7 +104,14 @@ public class FitnessFunction {
 	 }
 	 
 	 static double calculatef5(Particle_DE vector)	{
-		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
+		 double sum = 0;
+		 
+		 for (int i = 0; i<vector.position.size()-1; i++) {
+			 sum += 100.0*Math.pow((vector.position.get(i+1) - Math.pow(vector.position.get(i), 2)),2) + Math.pow(vector.position.get(i)-1.0 ,2);
+		 }
+		 
+		 return sum;
+		 
 	 }
 	 
 	 static double calculatef6(Particle_DE vector)	{
@@ -103,7 +123,11 @@ public class FitnessFunction {
 	 }
 	 
 	 static double calculatef7(Particle_DE vector)	{
-		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
+		double sum = 0.0;
+		for(int i=0; i<vector.position.size(); i++) {
+			sum += (i+1) * Math.pow(vector.position.get(i), 4);
+		}
+		return sum + Math.random();
 	 }
 	 
 	 static double calculatef8(Particle_DE vector)	{
@@ -124,7 +148,20 @@ public class FitnessFunction {
 	 }
 	 
 	 static double calculatef10(Particle_DE vector)	{
-		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
+		 double sum1 = 0.0;
+		 for (double f : vector.position) {
+			 sum1+=Math.pow(f,2);
+		 }
+		 
+		 double sum2=0.0;
+		 for (double f : vector.position) {
+			 sum2+=Math.cos(2.0*Math.PI*f);
+		 }
+		 
+		 
+		 double d = -20.0*Math.exp(-0.2*Math.sqrt((1.0/vector.position.size())*sum1))-Math.exp((1.0/vector.position.size())*sum2)+20.0+Math.exp(1);
+		 return d;
+	 
 	 }
 	 
 	 static double calculatef11(Particle_DE vector)	{
@@ -140,7 +177,25 @@ public class FitnessFunction {
 	 }
 	 
 	 static double calculatef12(Particle_DE vector)	{
-		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
+		 double sum = 0.0;
+		 double sum1 = 0.0;
+		 double sum2 = 0.0;
+		 for(int i=0; i<vector.position.size()-1; i++) {
+			 sum1 += Math.pow(vector.position.get(i)-1, 2)*Math.pow(1+10*Math.sin(Math.PI*vector.position.get(i+1)),2);
+		 }
+		 sum1 += 10*Math.pow(Math.sin(Math.PI*vector.position.get(0)),2) + Math.pow(vector.position.get(vector.position.size()-1)-1,2); 
+				 ;
+		 for(int i=0; i<vector.position.size(); i++) {
+			 if(vector.position.get(i) > 10) {
+				 sum2 += 100*Math.pow(vector.position.get(i)-10, 4);				 
+			 }else if(vector.position.get(i) >= -10) {
+				 sum2 += 0;				 
+			 }else {
+				 sum2 += 100*Math.pow(-vector.position.get(i)-10, 4);
+			 }
+		 }
+		 sum = Math.PI/(vector.position.size()-1) * sum1 + sum2;
+		 return sum;
 	 }
 	 static double calculatef13(Particle_DE vector)	throws Exception	{
 		 if(vector.position.size() < 3) {
@@ -177,7 +232,24 @@ public class FitnessFunction {
 	 }
 	 
 	 static double calculatef14(Particle_DE vector)	{
-		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
+		 
+		 double a[][] = {{-32,-16,0,16,32,-32,-16,0,16,32,-32,-16,0,16,32,-32,-16,0,16,32,-32,-16,0,16,32}, {-32,-32,-32,-32,-32,-16,-16,-16,-16,-16,0,0,0,0,0,16,16,16,16,16,32,32,32,32,32}};
+		 
+		 double sum = 0.0;
+		 for(int j = 0; j<25; j++) {
+			 
+			 double sum2 = 0.0;
+			 for (int i = 0; i<2; i++) {
+				 sum2+=Math.pow((vector.position.get(i))-a[i][j], 6);
+			 }
+			 
+			 
+			 sum+=Math.pow(j+1.0+sum2, -1);
+			 
+		 } 
+		 
+		 return Math.pow(((1.0/500.0)+sum), -1);
+		 
 	 }
 	 
 	 static double calculatef15(Particle_DE vector) throws Exception	{
@@ -197,8 +269,14 @@ public class FitnessFunction {
 		 return sum;
 	 }
 	 
-	 static double calculatef16(Particle_DE vector)	{
-		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
+	 static double calculatef16(Particle_DE vector) throws Exception	{
+		 if(vector.position.size() != 2) {
+			 throw new Exception("Fitness function 16 only allows dimension N=2!");
+		 }
+		 double x0 = vector.position.get(0);
+		 double x1 = vector.position.get(1);
+		 double sum = 4*Math.pow(x0, 2) - 2.1*Math.pow(x0, 4) + (1.0/3.0)*Math.pow(x0, 6) + x0*x1 - 4*Math.pow(x1, 2) + 4*Math.pow(x1, 4);
+		 return sum;
 	 }
 	 static double calculatef17(Particle_DE vector)	throws Exception	{
 		 if(vector.position.size() != 2) {
@@ -217,7 +295,15 @@ public class FitnessFunction {
 	 }
 	 
 	 static double calculatef18(Particle_DE vector)	{
-		 throw new NotImplementedException("\nDiese Fitness Funktion wurde noch nicht geschrieben!\nSei ein Ehrenmann und schreib sie");
+		 if (vector.position.size()>2) {
+			// throw new Exception("Too many dimensions for this function");
+		 }
+		 
+		 double x0=vector.position.get(0);
+		 double x1=vector.position.get(1);
+
+		 
+		 return (1+Math.pow((x0+x1+1),2)*(19-14*x0+3*x0*x0-14*x1+6*x0*x1+3*x1*x1))*(30+Math.pow(2*x0-3*x1,2)*(18-32*x0+12*x0*x0+48*x1-36*x0*x1+27*x1*x1));
 	 }
 	 
 	 
@@ -235,4 +321,78 @@ public class FitnessFunction {
 		 
 	 }
 	 
+	 
+
+		
+	 public static Double getBoundary(String t, int index) throws Exception {
+		 switch(index) {
+		 	case 0:
+		 	case 1:
+		 	case 9:
+		 		if(t.equals("lower")) return -5.12;
+		 		if(t.equals("upper")) return 5.12;
+		 	case 2:
+		 		if(t.equals("lower")) return -10.0;
+		 		if(t.equals("upper")) return 10.0;
+		 	case 3:
+		 	case 4:
+		 	case 6:
+		 		if(t.equals("lower")) return -100.0;
+		 		if(t.equals("upper")) return 100.0;
+		 	case 5:
+		 		if(t.equals("lower")) return -30.0;
+		 		if(t.equals("upper")) return 30.0;
+		 	case 7:
+		 		if(t.equals("lower")) return -1.28;
+		 		if(t.equals("upper")) return 1.28;
+		 	case 8:
+		 		if(t.equals("lower")) return -500.0;
+		 		if(t.equals("upper")) return 500.0;
+		 	case 10:
+		 		if(t.equals("lower")) return -32.0;
+		 		if(t.equals("upper")) return 32.0;
+		 	case 11:
+		 		if(t.equals("lower")) return -600.0;
+		 		if(t.equals("upper")) return 600.0;
+		 	case 12:
+		 		if(t.equals("lower")) return -50.0;
+		 		if(t.equals("upper")) return 50.0;
+		 	case 13:
+		 	case 15:
+		 	case 16:
+		 		if(t.equals("lower")) return -5.0;
+		 		if(t.equals("upper")) return 5.0;
+		 	case 14:
+		 		if(t.equals("lower")) return -65.54;
+		 		if(t.equals("upper")) return 65.54;
+		 	case 17:
+		 		if(t.equals("lower")) return -5.0;
+		 		if(t.equals("upper")) return 15.0;
+		 	case 18:
+		 		if(t.equals("lower")) return -2.0;
+		 		if(t.equals("upper")) return 2.0;
+		 	default:
+		 		return null;
+		 }
+	 }
+	 
+	 @SuppressWarnings("unchecked")
+	public static String ffBoundariesJSON() throws Exception {
+			JSONArray jarr = new JSONArray();
+			
+			for(int i = 0; i <= 18; i++) {
+				JSONObject j = new JSONObject();		
+				
+				j.put("ffid", i);
+				j.put("lower", FitnessFunction.getBoundary("lower", i));
+				j.put("upper", FitnessFunction.getBoundary("upper", i));
+								
+				jarr.add(j);				
+			}
+
+			JSONObject json = new JSONObject();
+			json.put("ffBoundaries", jarr);
+			
+			return json.toJSONString();
+	 }
 }

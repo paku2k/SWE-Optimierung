@@ -1,14 +1,13 @@
 package swe_mo.solver;
 
 import swe_mo.solver.de.DErand1;
+import swe_mo.solver.de.DEbest1;
+import swe_mo.solver.de.DEbest2;
+import swe_mo.solver.de.DErandToBest1;
 import swe_mo.solver.pso.PSOgnsc;
 import swe_mo.solver.pso.PSOgsc;
 import swe_mo.solver.pso.PSOgscDecay;
 import swe_mo.solver.pso.PSOnsc;
-import swe_mo.ui.clogger;
-import swe_mo.solver.de.DEbest1;
-import swe_mo.solver.de.DEbest2;
-import swe_mo.solver.de.DErandToBest1;
 
 import java.util.ArrayList;
 
@@ -21,7 +20,6 @@ import org.json.simple.parser.JSONParser;
 
 public class SolverConfig {
 
-	//test
 	public int ffid;
 	
 	public int N; //dimension
@@ -51,32 +49,6 @@ public class SolverConfig {
 	
 	
 	
-
-	public SolverConfig() {};
-	
-	//for cloning
-	public SolverConfig(SolverConfig s) {
-		this.ffid = s.ffid;
-		this.N = s.N;
-		this.NP = s.NP;
-		this.F = s.F;
-		this.CR = s.CR;
-		this.maxGenerations = s.maxGenerations;
-		this.upperBound = s.upperBound;
-		this.lowerBound = s.lowerBound;
-		this.lambda = s.lambda;
-		this.w = s.w;
-		this.cc = s.cc;
-		this.cs = s.cs;
-		this.dt = s.dt;
-		this.decayStart = s.decayStart;
-		this.decayEnd = s.decayEnd;
-		this.neighbors=s.neighbors;
-		this.convergence=s.convergence;
-		this.usedpars = s.usedpars;
-	};
-	
-	
 	//basic
 	public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound) {
 		this.ffid = ffid;
@@ -91,8 +63,8 @@ public class SolverConfig {
 		usedpars.add("N");
 		usedpars.add("NP");
 		usedpars.add("maxGenerations");
-		usedpars.add("upperBound");
 		usedpars.add("lowerBound");		
+		usedpars.add("upperBound");
 	}
 	
 	//with convergence
@@ -166,6 +138,11 @@ public class SolverConfig {
 		switch(param) {
 			case "ffid":
 				ffid = Integer.parseInt(value);
+				Double bd = FitnessFunction.getBoundary("lower", ffid);
+				if(bd != null) {
+					lowerBound = bd;
+					upperBound = FitnessFunction.getBoundary("upper", ffid);					
+				}
 				return;
 			case "N":
 				N = Integer.parseInt(value);
@@ -258,7 +235,7 @@ public class SolverConfig {
 				return neighbors;
 				
 		}
-		return "nd";
+		return "(not defined)";
 	}
 	
 	
@@ -424,6 +401,7 @@ public class SolverConfig {
 		throw new Exception("Algorithm not specified or no solver method.");
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static String getAlgorithmList(boolean json, boolean pars, String algo) throws Exception {
 		ArrayList<String> algorithms = new ArrayList<String>();
 		

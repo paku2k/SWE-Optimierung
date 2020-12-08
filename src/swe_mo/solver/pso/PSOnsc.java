@@ -30,8 +30,8 @@ public class PSOnsc extends PSOgsc {
 	
 	
 	public static SolverConfig defaultConfig() {
-		//int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt
-		return new SolverConfig(1, 2, 30, 100, 5, -5, 0.9, 0.5, 0.5, 1, 10, 1.0);
+		//int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, neighbors, convergence
+		return new SolverConfig(1, 30, 100, 5000, 5.12, -5.12, 0.9, 0.5, 0.9, 1, 20, 1.0);
 	}
 	
 	
@@ -48,8 +48,7 @@ public class PSOnsc extends PSOgsc {
 			}
 			
 			
-			//for(int i=0; i<numIter && SolverManager.checkTerminated(solverID); i++) {
-			for(int i=0; i<numIter; i++) {
+			for(int i=0; i<numIter && !SolverManager.checkTerminated(solverID); i++) {
 				for(int j=0; j<particleCount; j++) {
 					updateGlobalBestPosition(swarm.get(j));
 					updateNC(swarm.get(j));

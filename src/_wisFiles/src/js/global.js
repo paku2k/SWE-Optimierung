@@ -6,6 +6,7 @@ function onload(){
     document.addEventListener("keydown", cmd_keylistener, false);
     document.getElementById('tab_defaultOpen').click();
     document.getElementById('solver_add').click();
+    document.getElementById('optimizer_add').click();
    
     
     openInfoNWcon("Connected.");
@@ -16,7 +17,10 @@ function onload(){
     loadAppSettings();
     
     loadSolverInitial();
-    easterEggInitTs();
+    loadOptimizerInitial();    
+    
+    ffLoadBoundaries();
+    easterEggInitTs();      
 }
 
 

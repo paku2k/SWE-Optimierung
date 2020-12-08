@@ -76,7 +76,8 @@ public class SolverManager {
 		if(status(id) == -3) {
 			throw new Exception("No Solver with this ID.");
 		} else if(status(id) == -1) {
-			clogger.warn(AUTH, "start", "Overwriting existing configuration.");		
+			if(runningSolvers.get(id).getCreator().equals("UiF"))
+				clogger.warn(AUTH, "start", "Overwriting existing configuration.");		
 		} else if(status(id) == 100) {
 			throw new Exception("Solving finished, preparing Results.");	
 		} else if(status(id) == 101) {
@@ -234,7 +235,8 @@ public class SolverManager {
 		if(status(id) == -3) {
 			throw new Exception("No Solver with this ID.");
 		} else if(status(id) == -2) {
-			clogger.warn(AUTH, "start", "Solver not configured, using default values.");		
+			if(runningSolvers.get(id).getCreator().equals("UiF"))
+				clogger.warn(AUTH, "start", "Solver not configured, using default values.");		
 		} else if(status(id) == 100) {
 			throw new Exception("Solving finished, preparing Results.");	
 		} else if(status(id) == 101) {
@@ -515,7 +517,7 @@ public class SolverManager {
 				list += i + "\t";
 				try {
 					list += runningSolvers.get(i).getAlgorithm() + "\t\t";
-					list += runningSolvers.get(i).getCreator() + "\t\t\t";
+					list += runningSolvers.get(i).getCreator() + "\t\t";
 					list += round(runningSolvers.get(i).getStatus(),3);	
 				} catch(Exception e) {
 					list += "--------- deleted ---------";
@@ -557,7 +559,8 @@ public class SolverManager {
 	public static boolean checkTerminated(int id){
 		try {
 			if(status(id) == -3) {
-				throw new Exception("No Solver with this ID.");
+				return false; //allows debugging solvers directly
+				//throw new Exception("No Solver with this ID.");
 			} else if(status(id) == -2) {
 				throw new Exception("Solver not configured");	
 			} else if(status(id) == -1) {

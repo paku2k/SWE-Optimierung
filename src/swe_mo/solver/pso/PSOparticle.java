@@ -129,9 +129,9 @@ public class PSOparticle extends Particle_DE {
 	
 	public void updatePosition() {
 		for(int i=0; i<position.size(); i++) {																	//This method only resets the position if the position remains within the bounds. 
-			if((position.get(i) + velocity.get(i)*dt) < min) {
+			if((position.get(i) + velocity.get(i)*dt) <= min) {
 				//System.out.println("out of bounds: " + (position.get(i) + velocity.get(i)*dt));				
-			}else if((position.get(i) + velocity.get(i)*dt) > max) {
+			}else if((position.get(i) + velocity.get(i)*dt) >= max) {
 				//System.out.println("out of bounds: " + (position.get(i) + velocity.get(i)*dt));
 			}else {
 			position.set(i, position.get(i) + velocity.get(i)*dt);
@@ -161,7 +161,7 @@ public class PSOparticle extends Particle_DE {
 	public void setNeighbors(int neighbors){
 		for(int i=0; i<(neighbors-1);i++) {
 			Random r = new Random();
-			neighborhood.add(r.nextInt(particleCount));
+			neighborhood.add(r.nextInt(particleCount-1));
 		}
 	}
 }

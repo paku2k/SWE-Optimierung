@@ -13,6 +13,7 @@ public class DEbest1 extends DErand1{
 		super(N, NP, F, CR, maxGenerations, upperBound, lowerBound, ffIndex, solverID, convergence);
 		c= new Convergence("DEbest1");
 
+
 		
 	}
 	
@@ -20,7 +21,7 @@ public class DEbest1 extends DErand1{
 	public DEbest1(int N, int NP, double F, double CR, int maxGenerations, 
 			int ffIndex, int solverID, double convergence) throws IOException {
 		super(N, NP, F, CR, maxGenerations,  ffIndex, solverID, convergence);
-		c= new Convergence("DEbest");
+		c= new Convergence("DEbest1");
 
 		
 	}
