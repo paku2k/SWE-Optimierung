@@ -158,7 +158,7 @@ function createOrChangeSolverListHTML(solver){
         
         
         if(document.getElementById("solver_"+solver.id) == null) 
-            newSolverContentDiv(solver.id, solver.algorithm);
+            newSolverContentDiv(solver.id, solver.algorithm, solver.creator);
         
         
         
@@ -464,14 +464,14 @@ function updateSolverResult(id, result, err){
 
 
 
-function newSolverContentDiv(id, algorithm){
+function newSolverContentDiv(id, algorithm, creator){
     var div = document.createElement("div");
     div.setAttribute("id", "solver_"+id);
     div.setAttribute("class", "solver_content manager_content");
     
         var table1 = document.createElement("table");
         table1.setAttribute("class", "manager_content_t1");
-        table1.innerHTML = '<tr><td><h3>'+algorithm+'</h3></td><td><span id="solver_'+id+'_status">initialized</span></td><td><button onclick="solverDuplicate('+id+');">Duplicate</button><button onclick="solverDelete('+id+');">Delete</button></td></tr>';
+        table1.innerHTML = '<tr><td><h3>'+algorithm+'</h3></td><td>'+creator+'</td><td><span id="solver_'+id+'_status">initialized</span></td><td><button onclick="solverDuplicate('+id+');">Duplicate</button><button onclick="solverDelete('+id+');">Delete</button></td></tr>';
             
     div.appendChild(table1);
 

@@ -188,6 +188,13 @@
 
 .tab_manager .manager_content_t1 td:nth-of-type(2) {
     padding-left: 1rem;
+    padding-top: 0.1rem;
+    min-width: 3rem;
+    color: #aaa;
+}
+
+.tab_manager .manager_content_t1 td:nth-of-type(3) {
+    padding-left: 1rem;
     min-width: 7rem;
     color: #777;
     font-size: 1.1rem;

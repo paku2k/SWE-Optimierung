@@ -154,7 +154,7 @@ function createOrChangeOptimizerListHTML(optimizer){
         }
         
         if(document.getElementById("optimizer_"+optimizer.id) == null) 
-            newOptimizerContentDiv(optimizer.id, optimizer.algorithm);
+            newOptimizerContentDiv(optimizer.id, optimizer.algorithm, optimizer.creator);
         
         
         //update status color
@@ -492,14 +492,14 @@ function updateOptimizerResult(id, result, err){
 
 
 
-function newOptimizerContentDiv(id, algorithm){    
+function newOptimizerContentDiv(id, algorithm, creator){    
     var div = document.createElement("div");
     div.setAttribute("id", "optimizer_"+id);
     div.setAttribute("class", "optimizer_content manager_content");
     
         var table1 = document.createElement("table");
         table1.setAttribute("class", "manager_content_t1");
-        table1.innerHTML = '<tr><td><h3>'+algorithm+'</h3></td><td><span id="optimizer_'+id+'_status">initialized</span></td><td><button onclick="optimizerDuplicate('+id+');">Duplicate</button><button onclick="optimizerDelete('+id+');">Delete</button></td></tr>';
+        table1.innerHTML = '<tr><td><h3>'+algorithm+'</h3></td><td>'+creator+'</td><td><span id="optimizer_'+id+'_status">initialized</span></td><td><button onclick="optimizerDuplicate('+id+');">Duplicate</button><button onclick="optimizerDelete('+id+');">Delete</button></td></tr>';
             
     div.appendChild(table1);
 
