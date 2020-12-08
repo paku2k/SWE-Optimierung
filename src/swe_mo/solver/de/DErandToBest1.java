@@ -12,13 +12,16 @@ public class DErandToBest1 extends DEbest1 {
 	public DErandToBest1(int N, int NP, double F, double CR, double lambda, int maxGenerations, double upperBound, double lowerBound,
 			int ffIndex, int solverID, double convergence) throws Exception {
 		super(N, NP, F, CR, maxGenerations, upperBound, lowerBound, ffIndex, solverID, convergence);
-		this.lambda = lambda;
-		c= new Convergence("DErtb");
-
-		
 		if(NP < 4) {
-			throw new Exception("You need at least 4 particles");
+			throw new Exception("You need at least 4 particles.");
 		}
+		if(lambda<0) {
+			throw new Exception("Lambda ist out of bounds.");
+		}
+		else{
+			this.lambda = lambda;
+		}
+		c= new Convergence("DErtb");
 	}
 
 	
