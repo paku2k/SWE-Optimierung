@@ -131,7 +131,7 @@ public class Optimizer {
 			public void run() {
 				try {
 					status = 0;
-					result = OptimizerConfig.solveMethod(algorithm, id, config);
+					result = OptimizerConfig.optimizeMethod(algorithm, id, config);
 					if(status<=100) status = 101;
 				} catch(Exception e) {
 					result.e = e;

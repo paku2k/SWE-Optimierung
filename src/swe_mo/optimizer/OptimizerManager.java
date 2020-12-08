@@ -653,7 +653,8 @@ public class OptimizerManager {
 	public static boolean checkTerminated(int id){
 		try {
 			if(status(id) == -3) {
-				throw new Exception("No Optimizer with this ID.");
+				return false; //for debugging
+				//throw new Exception("No Optimizer with this ID.");
 			} else if(status(id) == -2) {
 				throw new Exception("Optimizer not configured");	
 			} else if(status(id) == -1) {

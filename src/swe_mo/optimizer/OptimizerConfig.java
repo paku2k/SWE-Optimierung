@@ -7,15 +7,15 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import swe_mo.solver.FitnessFunction;
-
+import swe_mo.Settings;
 
 
 public class OptimizerConfig {
 
 	public int ffid;
 
-	public double optiParA;
-	public double optiParB;
+	public double levels;
+	public double levelGuesses;
 	public double optiParC;
 	public double optiParD;
 	public double optiParE;
@@ -42,8 +42,8 @@ public class OptimizerConfig {
 	//basic
 	public OptimizerConfig(int ffid, double optiParA, double optiParB, double optiParC, double optiParD, double optiParE, String solvertype, int N, int maxGenerations, double lowerBound, double upperBound) {
 		this.ffid = ffid;	
-		this.optiParA = optiParA;
-		this.optiParB = optiParB;
+		this.levels = optiParA;
+		this.levelGuesses = optiParB;
 		this.optiParC = optiParC;
 		this.optiParD = optiParD;
 		this.optiParE = optiParE;
@@ -54,8 +54,8 @@ public class OptimizerConfig {
 		this.upperBound = upperBound;		
 
 		usedpars.add("ffid");
-		usedpars.add("optiParA");
-		usedpars.add("optiParB");
+		usedpars.add("levels");
+		usedpars.add("levelGuesses");
 		usedpars.add("optiParC");
 		usedpars.add("optiParD");
 		usedpars.add("optiParE");
@@ -79,11 +79,11 @@ public class OptimizerConfig {
 					upperBound = FitnessFunction.getBoundary("upper", ffid);					
 				}
 				return;
-			case "optiParA":
-				optiParA = Double.parseDouble(value);
+			case "levels":
+				levels = Double.parseDouble(value);
 				return;
-			case "optiParB":
-				optiParB = Double.parseDouble(value);
+			case "levelGuesses":
+				levelGuesses = Double.parseDouble(value);
 				return;
 			case "optiParC":
 				optiParC = Double.parseDouble(value);
@@ -149,10 +149,10 @@ public class OptimizerConfig {
 		switch(param) {
 			case "ffid": 
 				return ffid;			
-			case "optiParA": 
-				return optiParA;				
-			case "optiParB": 
-				return optiParB;				
+			case "levels": 
+				return levels;				
+			case "levelGuesses": 
+				return levelGuesses;				
 			case "optiParC": 
 				return optiParC;				
 			case "optiParD": 
@@ -268,25 +268,23 @@ public class OptimizerConfig {
 	public static OptimizerConfig getDefault(String algorithm) throws Exception {
 		switch(algorithm) {
 			case "DeepRand":
-				return new OptimizerConfig(8, 1,1,1,1,1, "DEbest1", 30, 10000, -500, 500);
+				return new OptimizerConfig(1, 1,1,1,1,1, (String)Settings.get("defaultAlgorithm"), 30, 10000, -5.12, 5.12);
 				//return DeepRandomSearch.defaultConfig();
 				
 		}	
 		throw new Exception("Algorithm not specified.");
 	}
 	
-	public static OptimizerResult solveMethod(String algorithm, int id, OptimizerConfig config) throws Exception {
+	public static OptimizerResult optimizeMethod(String algorithm, int id, OptimizerConfig config) throws Exception {
 
 		switch(algorithm) {
 			case "DeepRand":
-				for(double i=0; i<Math.pow(10, 9); i++) {
+				for(double i=0; i<Math.pow(10, 9) && !OptimizerManager.checkTerminated(id); i++) {
 					if(i%100==0) 
 						OptimizerManager.updateStatus(id, i/Math.pow(10, 9)*100);
-					if(OptimizerManager.checkTerminated(id))
-						break;
 				};
-				return new OptimizerResult("test (tbi)");	
-				//return new DeepRandomSearch(config).solve();
+				return new OptimizerResult("F=0.1212, CR=4.5");	
+				//return new DeepRandomSearch(config).optimize();
 		}
 		throw new Exception("Algorithm not specified or no optimizer method.");
 	}
@@ -342,6 +340,7 @@ public class OptimizerConfig {
 				return p;
 			} else {
 				JSONArray jsonarr = new JSONArray();
+				
 				
 				for(String u : up) {
 					JSONObject jsonobj = new JSONObject();
