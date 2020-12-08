@@ -20,14 +20,14 @@ public class SolverManager {
 	
 
 	
-	public static String create(String creator) throws Exception{
+	public static int create(String creator) throws Exception{
 		runningSolvers.add(new Solver(runningSolvers.size(), creator));	
-		return "Solver created (default) with ID "+(runningSolvers.size()-1);
+		return runningSolvers.size()-1;
 	}
 
-	public static String create(String creator, String algorithm) throws Exception {
+	public static int create(String creator, String algorithm) throws Exception {
 		runningSolvers.add(new Solver(runningSolvers.size(), creator, algorithm));
-		return "Solver created ("+algorithm+") with ID "+(runningSolvers.size()-1);
+		return runningSolvers.size()-1;
 	}																						
 	
 	
@@ -91,7 +91,6 @@ public class SolverManager {
 		} else if(status(id) >= 0 && status(id) < 100) {
 			throw new Exception("Solver already running.");						
 		}
-
 		runningSolvers.get(id).configure(config);
 	}																						
 	

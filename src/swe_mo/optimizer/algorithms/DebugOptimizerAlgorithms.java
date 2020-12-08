@@ -27,13 +27,13 @@ public class DebugOptimizerAlgorithms {
 			parametersName.add("cs");
 
 		
-		DeepRandomSearch DRS = new DeepRandomSearch(ffID, numberIterations, parametersMin, parametersMax, parametersName, levels, levelGuesses);
+		/*DeepRandomSearch DRS = new DeepRandomSearch(ffID, numberIterations, parametersMin, parametersMax, parametersName, levels, levelGuesses);
 		
 		try {
 			DRS.optimize();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 		
 	}
 	

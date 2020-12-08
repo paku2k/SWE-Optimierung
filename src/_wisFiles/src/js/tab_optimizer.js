@@ -458,6 +458,12 @@ function updateOptimizerResult(id, result, err){
         } else {
             document.getElementById("optimizer_"+id+"_resultBestPS").parentElement.style.display = "none";            
         }
+        if(result.minimum != null){
+            document.getElementById("optimizer_"+id+"_resultMinimum").innerHTML = result.minimum;
+            document.getElementById("optimizer_"+id+"_resultMinimum").parentElement.style.display = "inherit";
+        } else {
+            document.getElementById("optimizer_"+id+"_resultMinimum").parentElement.style.display = "none";            
+        }
         
         if(result.exception != null){
             document.getElementById("optimizer_"+id+"_resultException").innerHTML = result.exception;
@@ -572,7 +578,7 @@ function newOptimizerContentDiv(id, algorithm){
         var div3 = document.createElement("div");
         div3.setAttribute("id", "optimizer_"+id+"_result");
         div3.setAttribute("style", "display: none;");
-        div3.innerHTML = '<h4>Result</h4><table class="manager_content_t4"><tr><td>Best Parameterset: </td><td id="optimizer_'+id+'_resultBestPS"></td></tr><tr><td>Exception: </td><td id="optimizer_'+id+'_resultException"></td></tr></table>';
+        div3.innerHTML = '<h4>Result</h4><table class="manager_content_t4"><tr><td>Best Parameterset: </td><td id="optimizer_'+id+'_resultBestPS"></td></tr><tr><td>Minimum: </td><td id="optimizer_'+id+'_resultMinimum"></td></tr><tr><td>Exception: </td><td id="optimizer_'+id+'_resultException"></td></tr></table>';
         //div3.innerHTML += '<button class="optimizer_compareBtn" id="optimizer_'+id+'_compareBtn" onclick="optimizerCompare('+id+');">Compare</button>';
     
     div.appendChild(div3);

@@ -145,10 +145,10 @@ public class SolverConfig {
 				}
 				return;
 			case "N":
-				N = Integer.parseInt(value);
+				N = (int)Double.parseDouble(value);
 				return;
 			case "NP":
-				NP = Integer.parseInt(value);
+				NP = (int)Double.parseDouble(value);
 				return;
 			case "F":
 				F = Double.parseDouble(value);
@@ -157,7 +157,7 @@ public class SolverConfig {
 				CR = Double.parseDouble(value);
 				return;
 			case "maxGenerations":
-				maxGenerations = Integer.parseInt(value);
+				maxGenerations = (int)Double.parseDouble(value);
 				return;
 			case "upperBound":
 				upperBound = Double.parseDouble(value);
@@ -190,7 +190,7 @@ public class SolverConfig {
 				convergence = Double.parseDouble(value);
 				return;
 			case "neighbors":
-				neighbors = Integer.parseInt(value);
+				neighbors = (int)Double.parseDouble(value);
 				return;
 		}
 		throw new Exception("No such hyperparameter ("+param+").");
