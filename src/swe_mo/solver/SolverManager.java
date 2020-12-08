@@ -559,7 +559,8 @@ public class SolverManager {
 	public static boolean checkTerminated(int id){
 		try {
 			if(status(id) == -3) {
-				throw new Exception("No Solver with this ID.");
+				return false; //allows debugging solvers directly
+				//throw new Exception("No Solver with this ID.");
 			} else if(status(id) == -2) {
 				throw new Exception("Solver not configured");	
 			} else if(status(id) == -1) {

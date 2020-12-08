@@ -3,7 +3,7 @@ function ffLoadBoundaries(){
 }
 
 function tab_functions_responseHandler(){   
-    console.log("tab_functions: \n"+this.responseText);
+    //console.log("tab_functions: \n"+this.responseText);
     var response = JSON.parse(this.responseText);
     
     if(response.cmd_ans){
