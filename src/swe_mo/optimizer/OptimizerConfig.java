@@ -7,18 +7,15 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import swe_mo.solver.FitnessFunction;
-import swe_mo.Settings;
+import swe_mo.optimizer.algorithms.DeepRandomSearch;
 
 
 public class OptimizerConfig {
 
 	public int ffid;
 
-	public double levels;
-	public double levelGuesses;
-	public double optiParC;
-	public double optiParD;
-	public double optiParE;
+	public int levels;
+	public int levelGuesses;
 	
 	public String solvertype;
 	public int N;
@@ -39,14 +36,11 @@ public class OptimizerConfig {
 	
 	
 	
-	//basic
-	public OptimizerConfig(int ffid, double optiParA, double optiParB, double optiParC, double optiParD, double optiParE, String solvertype, int N, int maxGenerations, double lowerBound, double upperBound) {
+	//DeepRandomSearch
+	public OptimizerConfig(int ffid, int levels, int levelGuesses, String solvertype, int N, int maxGenerations, double lowerBound, double upperBound) {
 		this.ffid = ffid;	
-		this.levels = optiParA;
-		this.levelGuesses = optiParB;
-		this.optiParC = optiParC;
-		this.optiParD = optiParD;
-		this.optiParE = optiParE;
+		this.levels = levels;
+		this.levelGuesses = levelGuesses;
 		this.solvertype = solvertype;	
 		this.N = N;
 		this.maxGenerations = maxGenerations;
@@ -80,19 +74,10 @@ public class OptimizerConfig {
 				}
 				return;
 			case "levels":
-				levels = Double.parseDouble(value);
+				levels = Integer.parseInt(value);
 				return;
 			case "levelGuesses":
-				levelGuesses = Double.parseDouble(value);
-				return;
-			case "optiParC":
-				optiParC = Double.parseDouble(value);
-				return;
-			case "optiParD":
-				optiParD = Double.parseDouble(value);
-				return;
-			case "optiParE":
-				optiParE = Double.parseDouble(value);
+				levelGuesses = Integer.parseInt(value);
 				return;
 			case "solvertype":
 				solvertype = value;
@@ -152,13 +137,7 @@ public class OptimizerConfig {
 			case "levels": 
 				return levels;				
 			case "levelGuesses": 
-				return levelGuesses;				
-			case "optiParC": 
-				return optiParC;				
-			case "optiParD": 
-				return optiParD;				
-			case "optiParE": 
-				return optiParE;			
+				return levelGuesses;						
 			case "solvertype": 
 				return solvertype;
 			case "N":
@@ -268,8 +247,7 @@ public class OptimizerConfig {
 	public static OptimizerConfig getDefault(String algorithm) throws Exception {
 		switch(algorithm) {
 			case "DeepRand":
-				return new OptimizerConfig(1, 1,1,1,1,1, (String)Settings.get("defaultAlgorithm"), 30, 10000, -5.12, 5.12);
-				//return DeepRandomSearch.defaultConfig();
+				return DeepRandomSearch.defaultConfig();
 				
 		}	
 		throw new Exception("Algorithm not specified.");
@@ -279,12 +257,12 @@ public class OptimizerConfig {
 
 		switch(algorithm) {
 			case "DeepRand":
-				for(double i=0; i<Math.pow(10, 9) && !OptimizerManager.checkTerminated(id); i++) {
+				/*for(double i=0; i<Math.pow(10, 9) && !OptimizerManager.checkTerminated(id); i++) {
 					if(i%100==0) 
 						OptimizerManager.updateStatus(id, i/Math.pow(10, 9)*100);
 				};
-				return new OptimizerResult("F=0.1212, CR=4.5");	
-				//return new DeepRandomSearch(config).optimize();
+				return new OptimizerResult("F=0.1212, CR=4.5");*/
+				return new DeepRandomSearch(config.ffid, config.solvertype, config.maxGenerations, config.lowerBound, config.upperBound, config.SHP_min, config.SHP_max, config.SHP_name, config.levels, config.levelGuesses, id).optimize();
 		}
 		throw new Exception("Algorithm not specified or no optimizer method.");
 	}

@@ -4,6 +4,11 @@ import swe_mo.solver.SolverResult;
 import swe_mo.solver.de.CRN;
 import swe_mo.solver.pso.PSOgsc;
 import java.util.ArrayList;
+
+import swe_mo.Settings;
+import swe_mo.optimizer.OptimizerConfig;
+import swe_mo.optimizer.OptimizerManager;
+import swe_mo.optimizer.OptimizerResult;
 import swe_mo.solver.*;
 
 public class DeepRandomSearch extends BaseOptimizer{
@@ -13,8 +18,17 @@ public class DeepRandomSearch extends BaseOptimizer{
 	ArrayList<String> parametersName = new ArrayList<String>();
 	int levels;
 	int levelGuesses;
+	int dimensions;
+	int optimizerID;
+	double lowerBound;
+	double upperBound;
+	String solverType;
 
-	public DeepRandomSearch(int ffID, int numberIterations, ArrayList<Double> parametersMin, ArrayList<Double> parametersMax, ArrayList<String> parametersName, int levels, int levelGuesses) {
+	public static OptimizerConfig defaultConfig() throws Exception {
+		return new OptimizerConfig(1, 3, 50, (String)Settings.get("defaultAlgorithm"), 30, 10000, FitnessFunction.getBoundary("lower", 1), FitnessFunction.getBoundary("upper", 1));
+	}
+	
+	public DeepRandomSearch(int ffID, String solverType, int numberIterations, double lowerBound, double upperBound, ArrayList<Double> parametersMin, ArrayList<Double> parametersMax, ArrayList<String> parametersName, int levels, int levelGuesses, int optimizerID) {
 		
 		super(ffID, numberIterations);
 		this.parametersMin = parametersMin;
@@ -22,10 +36,14 @@ public class DeepRandomSearch extends BaseOptimizer{
 		this.parametersName = parametersName;
 		this.levels = levels;
 		this.levelGuesses = levelGuesses;
+		this.lowerBound = lowerBound;
+		this.upperBound = upperBound;
+		this.solverType = solverType;
+		this.optimizerID = optimizerID;
 		
 	}
 	
-		public void optimize() throws Exception {
+		public OptimizerResult optimize() throws Exception {
 			
 			FileGenerator file = new FileGenerator("Test_PSOgsc_DeepRandomSearch", "iteration; ffCalls; minimum; p1; p2; p3");
 			ArrayList<Double> tempParametersMin = new ArrayList<Double>(parametersMin);
@@ -35,7 +53,7 @@ public class DeepRandomSearch extends BaseOptimizer{
 			double [] bestSolution = new double[tempParametersName.size()+1];
 			
 			for(int i = 0; i < levels; i++) {
-				for(int j = 0; j < levelGuesses; j++) {
+				for(int j = 0; j < levelGuesses && !OptimizerManager.checkTerminated(optimizerID); j++) {
 					
 					// define parameters for search
 					for(int k = 0; k < tempParametersName.size(); k++) {
@@ -62,6 +80,8 @@ public class DeepRandomSearch extends BaseOptimizer{
 						}
 					}
 					
+					OptimizerManager.updateStatus(optimizerID, (((double)i*levelGuesses+j)/((double)levels*levelGuesses)*100));
+					
 				}
 				
 				// update boundaries of search space
@@ -81,8 +101,8 @@ public class DeepRandomSearch extends BaseOptimizer{
 			for(int o = 0; o < bestSolution.length; o++) {
 				s += bestSolution[o]+" ";
 			}
-			System.out.println(s);
-			
+			//System.out.println(s);
+			return new OptimizerResult(s);
 		}
 	
 	
