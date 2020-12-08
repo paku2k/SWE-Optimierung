@@ -15,27 +15,25 @@ public class Debug {
 
 		
 		int dimension = 30;
-		double min = -100;
-		double max = 100;
+		double min = -5.12;
+		double max = 5.12;
 		int particleCount = 100;
 		double w = 0.9;
-		double cc = 0.5;
-		double cs = 0.9;
-		double dt = 1;
+		double cc = 0.65;
+		double cs = 0.65;
+		double dt = 0.5;
 		int numIter = 50000;
 		int solverID = 1;
 		int ffID = 3;
 		double decayStart = 0.9;
 		double decayEnd = 0.4;
-		int neighbors = 20;
-		
+
+		int neighbors = 50;
 		//PSOgscDecay psoGlobalSolver = new PSOgscDecay(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID, decayStart, decayEnd);
-
-		//SolverResult sr = new PSOnsc(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID, neighbors, convergence).solve();
-
-		SolverResult sr = new PSOgsc(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, convergence, solverID).solve();
-		//SolverResult sr = new PSOgnsc(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID, neighbors, convergence).solve();
-		//SolverResult sr = new PSOgscDecay(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID, decayStart, decayEnd).solve();
+		SolverResult sr = new PSOnsc(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID, neighbors, convergence).solve();
+		//SolverResult sr = new PSOgsc(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID).solve();
+		//SolverResult sr = new PSOgnsc(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID, neighbors).solve();
+		
 		
 		System.out.println(sr.toString());
 		
