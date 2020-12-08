@@ -66,7 +66,7 @@ public class DErand1 {
 		this.convergenceCrit=NP*N*(upperBound-lowerBound)*10E-5*convergence;
 		this.bestParticle  = new Particle_DE(N, upperBound,lowerBound);
 
-		System.out.println("particle before everything "+xPop.get(2).toString());
+	//	System.out.println("particle before everything "+xPop.get(2).toString());
 
 
 		
@@ -251,7 +251,7 @@ public class DErand1 {
 	}
 	
 	
-	public Particle_DE compare(int xIndex, Particle_DE vectorU) throws IOException {
+	public Particle_DE compare(int xIndex, Particle_DE vectorU) {
 		//Compares vectorX and vectorU and returns the better one. If both give the same result, vectorU is returned
 		double xRes;
 
