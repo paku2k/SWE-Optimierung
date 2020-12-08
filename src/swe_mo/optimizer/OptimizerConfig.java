@@ -28,6 +28,7 @@ public class OptimizerConfig {
 	public ArrayList<Double> SHP_min = new ArrayList<Double>();
 	public ArrayList<Double> SHP_max = new ArrayList<Double>();
 	
+	public boolean printfile;
 	
 	//list of used parameters
 	public ArrayList<String> usedpars = new ArrayList<String>();
@@ -37,7 +38,7 @@ public class OptimizerConfig {
 	
 	
 	//DeepRandomSearch
-	public OptimizerConfig(int ffid, int levels, int levelGuesses, String solvertype, int N, int maxGenerations, double lowerBound, double upperBound) {
+	public OptimizerConfig(int ffid, int levels, int levelGuesses, String solvertype, int N, int maxGenerations, double lowerBound, double upperBound, boolean printfile) {
 		this.ffid = ffid;	
 		this.levels = levels;
 		this.levelGuesses = levelGuesses;
@@ -46,6 +47,8 @@ public class OptimizerConfig {
 		this.maxGenerations = maxGenerations;
 		this.lowerBound = lowerBound;		
 		this.upperBound = upperBound;		
+		
+		this.printfile = printfile;
 
 		usedpars.add("ffid");
 		usedpars.add("levels");
@@ -55,6 +58,7 @@ public class OptimizerConfig {
 		usedpars.add("maxGenerations");
 		usedpars.add("lowerBound");
 		usedpars.add("upperBound");
+		usedpars.add("printfile");
 		usedpars.add("SHP"); //solver hyperparameters
 	}
 	
@@ -90,6 +94,9 @@ public class OptimizerConfig {
 				return;
 			case "upperBound":
 				upperBound = Double.parseDouble(value);
+				return;
+			case "printfile":
+				printfile = Boolean.parseBoolean(value);
 				return;
 		}
 		throw new Exception("No such hyperparameter ("+param+").");
@@ -145,6 +152,8 @@ public class OptimizerConfig {
 				return lowerBound;
 			case "upperBound": 
 				return upperBound;	
+			case "printfile": 
+				return printfile;	
 		}
 		
 		if(SHP_name.contains(param)) {
@@ -259,7 +268,7 @@ public class OptimizerConfig {
 						OptimizerManager.updateStatus(id, i/Math.pow(10, 9)*100);
 				};
 				return new OptimizerResult("F=0.1212, CR=4.5");*/
-				return new DeepRandomSearch(config.ffid, config.solvertype, config.N, config.maxGenerations, config.lowerBound, config.upperBound, config.SHP_min, config.SHP_max, config.SHP_name, config.levels, config.levelGuesses, id).optimize();
+				return new DeepRandomSearch(config.ffid, config.solvertype, config.N, config.maxGenerations, config.lowerBound, config.upperBound, config.SHP_min, config.SHP_max, config.SHP_name, config.levels, config.levelGuesses, config.printfile, id).optimize();
 		}
 		throw new Exception("Algorithm not specified or no optimizer method.");
 	}

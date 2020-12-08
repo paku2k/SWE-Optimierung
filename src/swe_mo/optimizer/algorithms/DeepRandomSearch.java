@@ -23,12 +23,13 @@ public class DeepRandomSearch extends BaseOptimizer{
 	double lowerBound;
 	double upperBound;
 	String solverType;
+	boolean printfile;
 
 	public static OptimizerConfig defaultConfig() throws Exception {
-		return new OptimizerConfig(1, 3, 50, (String)Settings.get("defaultAlgorithm"), 30, 10000, FitnessFunction.getBoundary("lower", 1), FitnessFunction.getBoundary("upper", 1));
+		return new OptimizerConfig(1, 3, 50, (String)Settings.get("defaultAlgorithm"), 30, 10000, FitnessFunction.getBoundary("lower", 1), FitnessFunction.getBoundary("upper", 1), false);
 	}
 	
-	public DeepRandomSearch(int ffID, String solverType, int dimensions, int numberIterations, double lowerBound, double upperBound, ArrayList<Double> parametersMin, ArrayList<Double> parametersMax, ArrayList<String> parametersName, int levels, int levelGuesses, int optimizerID) throws Exception {
+	public DeepRandomSearch(int ffID, String solverType, int dimensions, int numberIterations, double lowerBound, double upperBound, ArrayList<Double> parametersMin, ArrayList<Double> parametersMax, ArrayList<String> parametersName, int levels, int levelGuesses, boolean printfile, int optimizerID) throws Exception {
 		
 		super(ffID, numberIterations);
 		this.parametersMin = parametersMin;
@@ -41,6 +42,7 @@ public class DeepRandomSearch extends BaseOptimizer{
 		this.dimensions = dimensions;
 		this.solverType = solverType;
 		this.optimizerID = optimizerID;
+		this.printfile = printfile;
 		
 		if(parametersName.size()<1) {
 			throw new Exception("No solver hyperparameter given.");
@@ -49,12 +51,14 @@ public class DeepRandomSearch extends BaseOptimizer{
 	}
 	
 		public OptimizerResult optimize() throws Exception {
-
-			String fileheader = "iteration; ffCalls; minimum";
-			for(int a = 0; a < parametersName.size(); a++) {
-				fileheader += "; "+parametersName.get(a);
+			FileGenerator file = null;
+			if(printfile) {
+				String fileheader = "iteration; ffCalls; minimum";
+				for(int a = 0; a < parametersName.size(); a++) {
+					fileheader += "; "+parametersName.get(a);
+				}
+				file = new FileGenerator("Test_PSOgsc_DeepRandomSearch", fileheader);				
 			}
-			FileGenerator file = new FileGenerator("Test_PSOgsc_DeepRandomSearch", fileheader);
 			ArrayList<Double> tempParametersMin = new ArrayList<Double>(parametersMin);
 			ArrayList<Double> tempParametersMax = new ArrayList<Double>(parametersMax);
 			double [] p = new double[parametersName.size()];
@@ -99,7 +103,8 @@ public class DeepRandomSearch extends BaseOptimizer{
 					for(int a = 0; a < parametersName.size(); a++) {
 						filecontent += "; "+p[a];
 					}
-					file.write(filecontent);
+					if(printfile)
+						file.write(filecontent);
 					
 					// track best solution
 					if(j==0 && i==0) {
@@ -136,8 +141,9 @@ public class DeepRandomSearch extends BaseOptimizer{
 			}
 			
 			SolverManager.delete(solverID);
-			
-			file.close();
+
+			if(printfile)
+				file.close();
 			String s = "";
 			for(int i = 0; i < parametersName.size(); i++) {
 				if(!s.equals("")) s+= ", ";
