@@ -63,14 +63,6 @@ public class DErand1 {
 	    }
 		this.convergenceCrit=NP*N*(upperBound-lowerBound)*10E-5*convergence;
 		this.bestParticle  = new Particle_DE(N, upperBound,lowerBound);
-
-
-
-
-		
-		//System.out.println("upper Bound: "+this.upperBound+"lowerBound: "+this.lowerBound);
-		//file=new FileGenerator("DErand1", "Generation;SumOfDifference;dSumOfDifference;Minimum" );
-		
 		
 	}
 	
@@ -115,18 +107,6 @@ public class DErand1 {
 				s+=", ";
 			}
 			s+="CR";
-		}
-		if(ffIndex<1) {
-			if(!s.equals("")) {
-				s+=", ";
-			}
-			s+="ffid";
-		}
-		if(ffIndex>18) {
-			if(!s.equals("")) {
-				s+=", ";
-			}
-			s+="ffid";
 		}
 		if(convergence<0) {
 			if(!s.equals("")) {
@@ -246,14 +226,9 @@ public class DErand1 {
 		//calculates the Vector V for current generation
 		Particle_DE p=this.calculateRandomDifference(index);
 		
-		
-
 		p.multiply(this.F);
 		
-
-
 		p.add(xPop.get(index));
-
 	
 		for (int i = 0; i < p.position.size(); i++) {
 			if(p.position.get(i)>this.upperBound) {
@@ -264,11 +239,7 @@ public class DErand1 {
 			}
 		}
 		
-		//System.out.println("v: "+p);
-		//System.out.println("x: "+xPop.get(index));
-
-
-		
+	
 		return p;
 	}
 	
@@ -299,10 +270,7 @@ public class DErand1 {
 			}
 			
 		}
-
-		//System.out.println("u: "+u)
-
-		
+	
 		return u;
 	}
 	
@@ -340,21 +308,13 @@ public class DErand1 {
 		double uRes=FitnessFunction.solve(ffIndex, vectorU);
 		fitCount+=1;
 
-		/*System.out.println("current best: "+best);
-		System.out.println("xRes: "+xRes);
-		System.out.println("uRes: "+uRes);*/
-
-
 		
 		if(xRes<uRes) {
 			if(xRes<this.best) {
 				this.best = xRes;
 				bestParticle = new Particle_DE(xPop.get(xIndex));
-				//System.out.println("Best Value:"+ best);
-				//System.out.println("In generation: "+ generation);
-				//System.out.println("BestX: "+bestParticle);
+
 			}
-			
 
 			return new Particle_DE(xPop.get(xIndex));
 		}
@@ -391,9 +351,7 @@ public class DErand1 {
 		while (index2 == skip || index2 == index1);
 		
 		newP = new Particle_DE(xPop.get(index1));
-		//System.out.println("Test vor subtraktion: "+xPop.get(index1).toString());
 		newP.substract(xPop.get(index2));
-		//System.out.println("Test nach subtraktion: "+xPop.get(index1).toString());
 
 
 		double sumOfDifferences=0.0;
@@ -405,8 +363,6 @@ public class DErand1 {
 
 		this.sumOfDifferencesGlobal+=Math.sqrt(sumOfDifferences);
 
-		
-		
 		return newP;
 	}
 	
