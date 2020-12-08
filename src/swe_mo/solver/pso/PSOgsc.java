@@ -126,7 +126,7 @@ public class PSOgsc {
 						
 						counter++;
 					}
-					//SolverManager.updateStatus(solverID, (100*((double)i)/((double)numIter)));
+					SolverManager.updateStatus(solverID, (100*((double)i)/((double)numIter)));
 					boolean converged = c.update(sumOfDifferencesGlobal, globalMinimum);	
 					
 					if(converged&&convergence!=0.0) {
