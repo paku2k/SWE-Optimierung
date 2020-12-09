@@ -122,7 +122,7 @@ public class RandomSearch extends BaseOptimizer{
 					}
 				}
 				
-				OptimizerManager.updateStatus(optimizerID, ((double)(j/guesses)*100));
+				OptimizerManager.updateStatus(optimizerID, (((double)j/guesses)*100));
 			}
 		}
 
