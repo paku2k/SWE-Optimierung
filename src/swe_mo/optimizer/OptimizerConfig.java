@@ -316,6 +316,7 @@ public class OptimizerConfig {
 		ArrayList<String> algorithms = new ArrayList<String>();
 		
 		algorithms.add("DeepRand");
+		algorithms.add("Rand");
 		
 		
 		if(!pars) {
