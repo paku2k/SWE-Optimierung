@@ -177,6 +177,8 @@ function createOrChangeSolverListHTML(solver){
             btn.className += " initialized"
             if(was_active) btn.className += " active";
             
+            easterEgg_sfxControl("solver",solver.id,false); 
+            
         } else if(solver.status == -1){
             //configured
             was_active = btn.className.includes("active");
@@ -185,6 +187,8 @@ function createOrChangeSolverListHTML(solver){
             btn.className += " configured"
             if(was_active) btn.className += " active";
             
+            easterEgg_sfxControl("solver",solver.id,false); 
+            
         } else if(solver.status >= 0 && solver.status <= 100){
             //running
             was_active = btn.className.includes("active");
@@ -192,7 +196,9 @@ function createOrChangeSolverListHTML(solver){
             btn.className = "solver_list_elem";
             if(was_active) btn.className += " active";
             
-            btn.style = "background-image: linear-gradient(to right, green 0%, green "+solver.status+"%, #eee "+solver.status+"%, #eee 100%);";   
+            btn.style = "background-image: linear-gradient(to right, green 0%, green "+solver.status+"%, #eee "+solver.status+"%, #eee 100%);"; 
+            
+            easterEgg_sfxControl("solver",solver.id,true);  
             
         } else if(solver.status == 101){
             //result ready
@@ -202,6 +208,8 @@ function createOrChangeSolverListHTML(solver){
             btn.className += " finished"
             if(was_active) btn.className += " active";
             
+            easterEgg_sfxControl("solver",solver.id,false); 
+            
         } else if(solver.status == 102){
             //terminated
             was_active = btn.className.includes("active");
@@ -210,14 +218,17 @@ function createOrChangeSolverListHTML(solver){
             btn.className += " error"
             if(was_active) btn.className += " active";
             
+            easterEgg_sfxControl("solver",solver.id,false); 
+            
         } else if(solver.status == 103){
             //error
             was_active = btn.className.includes("active");
             
             btn.className = "solver_list_elem";
             btn.className += " error"
-            if(was_active) btn.className += " active";
+            if(was_active) btn.className += " active";    
             
+            easterEgg_sfxControl("solver",solver.id,false);         
         }
     }
 }

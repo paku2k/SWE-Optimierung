@@ -172,6 +172,8 @@ function createOrChangeOptimizerListHTML(optimizer){
             btn.className += " initialized"
             if(was_active) btn.className += " active";
             
+            easterEgg_sfxControl("optimizer",optimizer.id,false);
+            
         } else if(optimizer.status == -1){
             //configured
             was_active = btn.className.includes("active");
@@ -179,6 +181,8 @@ function createOrChangeOptimizerListHTML(optimizer){
             btn.className = "optimizer_list_elem";
             btn.className += " configured"
             if(was_active) btn.className += " active";
+            
+            easterEgg_sfxControl("optimizer",optimizer.id,false);
             
         } else if(optimizer.status >= 0 && optimizer.status <= 100){
             //running
@@ -189,6 +193,8 @@ function createOrChangeOptimizerListHTML(optimizer){
             
             btn.style = "background-image: linear-gradient(to right, green 0%, green "+optimizer.status+"%, #eee "+optimizer.status+"%, #eee 100%);";   
             
+            easterEgg_sfxControl("optimizer",optimizer.id,true);
+            
         } else if(optimizer.status == 101){
             //result ready
             was_active = btn.className.includes("active");
@@ -196,6 +202,8 @@ function createOrChangeOptimizerListHTML(optimizer){
             btn.className = "optimizer_list_elem";
             btn.className += " finished"
             if(was_active) btn.className += " active";
+            
+            easterEgg_sfxControl("optimizer",optimizer.id,false);
             
         } else if(optimizer.status == 102){
             //terminated
@@ -205,6 +213,8 @@ function createOrChangeOptimizerListHTML(optimizer){
             btn.className += " error"
             if(was_active) btn.className += " active";
             
+            easterEgg_sfxControl("optimizer",optimizer.id,false);
+            
         } else if(optimizer.status == 103){
             //error
             was_active = btn.className.includes("active");
@@ -212,6 +222,8 @@ function createOrChangeOptimizerListHTML(optimizer){
             btn.className = "optimizer_list_elem";
             btn.className += " error"
             if(was_active) btn.className += " active";
+            
+            easterEgg_sfxControl("optimizer",optimizer.id,false);
             
         }
     }

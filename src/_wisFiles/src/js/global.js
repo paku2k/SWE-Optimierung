@@ -16,11 +16,12 @@ function onload(){
     loadAppInfo();
     loadAppSettings();
     
-    loadSolverInitial();
-    loadOptimizerInitial();    
+    loadOptimizerInitial();  
+    loadSolverInitial();  
     
     ffLoadBoundaries();
-    easterEggInitTs();      
+    easterEggInitTs();   
+    
 }
 
 
@@ -66,7 +67,7 @@ function closeInfoNWcon(){
 
 
 
-/* easter egg */
+/* easter egg (memes)*/
 
 var easterEgg_unlock_time = 1000;
 var easterEgg_lvl = 5;
@@ -290,5 +291,112 @@ function easterEgg_imgMouseAction(type){
         easterEgg_imgMouseIsDown = true;
     } else {
         easterEgg_imgMouseIsDown = false;        
+    } 
+}
+
+
+
+/* easter egg (sfx)*/
+
+var sfxVolume = 0.2;
+function easterEgg_sfxVolume(increase){
+    if(increase){
+        sfxVolume += 0.1;
+        if(sfxVolume > 1) sfxVolume = 1;
+    } else {
+        sfxVolume -= 0.1;
+        if(sfxVolume < 0) sfxVolume = 0;        
     }
+    if(document.getElementById("sfxAudio")) document.getElementById("sfxAudio").volume = sfxVolume;   
+}
+
+
+
+
+
+var sfx_enabled = false;
+function easterEgg_sfxEnable(){
+    solversrunning = new Array();
+    optimizersrunning = new Array();
+    sfx_enabled = true;
+}
+function easterEgg_sfxDisable(){
+    sfx_enabled = false;
+    easterEgg_sfxStop();
+}
+
+
+var solversrunning = new Array();
+var optimizersrunning = new Array();
+function easterEgg_sfxControl(type, id, start){    
+    if(start){
+        var sfxName = "";
+        if(type == "optimizer"){
+            optimizersrunning[id] = true;
+            sfxName = "sf_long";
+        } else if(type == "solver"){
+            solversrunning[id] = true;
+            sfxName = "sf_short";
+        }
+        
+        if(sfxName != ""){
+            if(!document.getElementById("sfxAudio")) easterEgg_sfxStart(sfxName, easterEgg_sfxCheckQueue);
+        }
+    } else {
+        if(type == "optimizer"){
+            optimizersrunning[id] = false;
+        } else if(type == "solver"){
+            solversrunning[id] = false;
+        }
+        easterEgg_sfxCheckQueue();
+    }    
+}
+
+function easterEgg_sfxCheckQueue(){
+    var s = false;
+    for(var i=0; i<solversrunning.length; i++){
+        if(solversrunning[i]) s=true;
+    }
+    var o = false;
+    for(var i=0; i<optimizersrunning.length; i++){
+        if(optimizersrunning[i]) o=true;
+    }   
+    if(o){
+        if(easterEgg_currentSfx != "sf_long") easterEgg_sfxStart("sf_long", easterEgg_sfxCheckQueue);    
+    }else if(s){
+        if(easterEgg_currentSfx != "sf_short") easterEgg_sfxStart("sf_short", easterEgg_sfxCheckQueue);         
+    }else{
+        easterEgg_sfxStop();
+    }
+}
+
+
+
+var easterEgg_sfxEndTimeout;
+var easterEgg_currentSfx = "";
+function easterEgg_sfxStart(sfxName, callback){    
+    if(document.getElementById("sfxAudio")) easterEgg_sfxStop();    
+    if(!sfx_enabled) return;
+    var audio = document.createElement("audio");
+    audio.setAttribute("id", "sfxAudio");
+    audio.setAttribute("src", "sfx/"+sfxName+".mp3");
+    audio.setAttribute("type", "audio/mp3");
+    document.body.appendChild(audio);         
+    document.getElementById("sfxAudio").volume = sfxVolume;   
+    document.getElementById("sfxAudio").play();      
+    easterEgg_currentSfx = sfxName;
+    setTimeout(function(){ //wait 250ms for audio to load
+        if(document.getElementById("sfxAudio")){
+            var dur = document.getElementById("sfxAudio").duration*1000-250;
+            if(dur < 0) dur = 0;
+            easterEgg_sfxEndTimeout = setTimeout(function(){easterEgg_sfxStop(); callback.apply()}, dur);
+        }
+    },250);
+}
+function easterEgg_sfxStop(){    
+    var audio = document.getElementById("sfxAudio");    
+    if(audio)
+        audio.parentElement.removeChild(audio);
+    clearTimeout(easterEgg_sfxEndTimeout);
+    easterEgg_currentSfx = "";
 }
