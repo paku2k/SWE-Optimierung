@@ -100,6 +100,8 @@ function tab_solver_responseHandler(){
 function createOrChangeSolverListHTML(solver){
     if(solver.deleted == true){
         if(document.getElementById("solverBtn_"+solver.id)){ //exists in list
+            easterEgg_sfxControl("solver",solver.id,false); 
+            
             var btn = document.getElementById("solverBtn_"+solver.id);
             if(btn.className.includes("active")){
                 if(btn.nextElementSibling && btn.nextElementSibling !== document.getElementById('solver_add')){

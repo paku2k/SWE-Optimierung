@@ -97,7 +97,9 @@ function tab_optimizer_responseHandler(){
 
 function createOrChangeOptimizerListHTML(optimizer){
     if(optimizer.deleted == true){
-        if(document.getElementById("optimizerBtn_"+optimizer.id)){ //exists in list
+        if(document.getElementById("optimizerBtn_"+optimizer.id)){ //exists in list            
+            easterEgg_sfxControl("optimizer",optimizer.id,false); 
+            
             var btn = document.getElementById("optimizerBtn_"+optimizer.id);
             if(btn.className.includes("active")){
                 if(btn.nextElementSibling && btn.nextElementSibling !== document.getElementById('optimizer_add')){

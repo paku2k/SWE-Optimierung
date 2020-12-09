@@ -70,6 +70,7 @@ public class DeepRandomSearch extends BaseOptimizer{
 			
 			for(int i = 0; i < levels; i++) {
 				for(int j = 0; j < levelGuesses && !OptimizerManager.checkTerminated(optimizerID); j++) {
+					System.gc();
 
 					// define parameters for search
 					for(int k = 0; k < parametersName.size(); k++) {	
@@ -95,34 +96,36 @@ public class DeepRandomSearch extends BaseOptimizer{
 						s = ""+status;
 						if (status >= 100) {break;}
 					}
-					
-					SolverResult sr = SolverManager.result(solverID);
-					
-					
-					String filecontent = sr.iterations+"; "+sr.ffCounter+"; "+sr.value;
-					for(int a = 0; a < parametersName.size(); a++) {
-						filecontent += "; "+p[a];
-					}
-					if(printfile)
-						file.write(filecontent);
-					
-					// track best solution
-					if(j==0 && i==0) {
-						bestSolution[0] = sr.value; 
-						for(int l = 0; l < parametersName.size(); l++) {
-							bestSolution[l+1] = p[l];
+
+					if(!OptimizerManager.checkTerminated(optimizerID)) {
+						SolverResult sr = SolverManager.result(solverID);
+						
+						
+						String filecontent = sr.iterations+"; "+sr.ffCounter+"; "+sr.value;
+						for(int a = 0; a < parametersName.size(); a++) {
+							filecontent += "; "+p[a];
 						}
-					}
-					else {
-						if(sr.value<bestSolution[0]) {
+						if(printfile)
+							file.write(filecontent);
+						
+						// track best solution
+						if(j==0 && i==0) {
 							bestSolution[0] = sr.value; 
-							for(int m = 0; m < parametersName.size(); m++) {
-								bestSolution[m+1] = p[m];
+							for(int l = 0; l < parametersName.size(); l++) {
+								bestSolution[l+1] = p[l];
 							}
 						}
+						else {
+							if(sr.value<bestSolution[0]) {
+								bestSolution[0] = sr.value; 
+								for(int m = 0; m < parametersName.size(); m++) {
+									bestSolution[m+1] = p[m];
+								}
+							}
+						}
+						
+						OptimizerManager.updateStatus(optimizerID, (((double)i*levelGuesses+j)/((double)levels*levelGuesses)*100));
 					}
-					
-					OptimizerManager.updateStatus(optimizerID, (((double)i*levelGuesses+j)/((double)levels*levelGuesses)*100));
 				}
 				
 				// update boundaries of search space
@@ -139,7 +142,8 @@ public class DeepRandomSearch extends BaseOptimizer{
 				}
 				
 			}
-			
+
+			if(OptimizerManager.checkTerminated(optimizerID)) SolverManager.terminate(solverID);
 			SolverManager.delete(solverID);
 
 			if(printfile)
@@ -149,6 +153,7 @@ public class DeepRandomSearch extends BaseOptimizer{
 				if(!s.equals("")) s+= ", ";
 				s += parametersName.get(i)+"="+bestSolution[i+1];
 			}
+			System.gc();
 			return new OptimizerResult(s, bestSolution[0]);
 		}
 	

@@ -460,6 +460,7 @@ public class SolverManager {
 			throw new Exception("Solver is running. Try terminating.");						
 		}
 		runningSolvers.set(id, null);
+		System.gc();
 	}
 	
 	public static void deleteAll() {	
