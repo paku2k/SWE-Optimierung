@@ -97,7 +97,9 @@ function tab_optimizer_responseHandler(){
 
 function createOrChangeOptimizerListHTML(optimizer){
     if(optimizer.deleted == true){
-        if(document.getElementById("optimizerBtn_"+optimizer.id)){ //exists in list
+        if(document.getElementById("optimizerBtn_"+optimizer.id)){ //exists in list            
+            easterEgg_sfxControl("optimizer",optimizer.id,false); 
+            
             var btn = document.getElementById("optimizerBtn_"+optimizer.id);
             if(btn.className.includes("active")){
                 if(btn.nextElementSibling && btn.nextElementSibling !== document.getElementById('optimizer_add')){
@@ -154,7 +156,7 @@ function createOrChangeOptimizerListHTML(optimizer){
         }
         
         if(document.getElementById("optimizer_"+optimizer.id) == null) 
-            newOptimizerContentDiv(optimizer.id, optimizer.algorithm);
+            newOptimizerContentDiv(optimizer.id, optimizer.algorithm, optimizer.creator);
         
         
         //update status color
@@ -172,6 +174,8 @@ function createOrChangeOptimizerListHTML(optimizer){
             btn.className += " initialized"
             if(was_active) btn.className += " active";
             
+            easterEgg_sfxControl("optimizer",optimizer.id,false);
+            
         } else if(optimizer.status == -1){
             //configured
             was_active = btn.className.includes("active");
@@ -179,6 +183,8 @@ function createOrChangeOptimizerListHTML(optimizer){
             btn.className = "optimizer_list_elem";
             btn.className += " configured"
             if(was_active) btn.className += " active";
+            
+            easterEgg_sfxControl("optimizer",optimizer.id,false);
             
         } else if(optimizer.status >= 0 && optimizer.status <= 100){
             //running
@@ -189,6 +195,8 @@ function createOrChangeOptimizerListHTML(optimizer){
             
             btn.style = "background-image: linear-gradient(to right, green 0%, green "+optimizer.status+"%, #eee "+optimizer.status+"%, #eee 100%);";   
             
+            easterEgg_sfxControl("optimizer",optimizer.id,true);
+            
         } else if(optimizer.status == 101){
             //result ready
             was_active = btn.className.includes("active");
@@ -196,6 +204,8 @@ function createOrChangeOptimizerListHTML(optimizer){
             btn.className = "optimizer_list_elem";
             btn.className += " finished"
             if(was_active) btn.className += " active";
+            
+            easterEgg_sfxControl("optimizer",optimizer.id,false);
             
         } else if(optimizer.status == 102){
             //terminated
@@ -205,6 +215,8 @@ function createOrChangeOptimizerListHTML(optimizer){
             btn.className += " error"
             if(was_active) btn.className += " active";
             
+            easterEgg_sfxControl("optimizer",optimizer.id,false);
+            
         } else if(optimizer.status == 103){
             //error
             was_active = btn.className.includes("active");
@@ -212,6 +224,8 @@ function createOrChangeOptimizerListHTML(optimizer){
             btn.className = "optimizer_list_elem";
             btn.className += " error"
             if(was_active) btn.className += " active";
+            
+            easterEgg_sfxControl("optimizer",optimizer.id,false);
             
         }
     }
@@ -458,6 +472,12 @@ function updateOptimizerResult(id, result, err){
         } else {
             document.getElementById("optimizer_"+id+"_resultBestPS").parentElement.style.display = "none";            
         }
+        if(result.minimum != null){
+            document.getElementById("optimizer_"+id+"_resultMinimum").innerHTML = result.minimum;
+            document.getElementById("optimizer_"+id+"_resultMinimum").parentElement.style.display = "inherit";
+        } else {
+            document.getElementById("optimizer_"+id+"_resultMinimum").parentElement.style.display = "none";            
+        }
         
         if(result.exception != null){
             document.getElementById("optimizer_"+id+"_resultException").innerHTML = result.exception;
@@ -486,14 +506,14 @@ function updateOptimizerResult(id, result, err){
 
 
 
-function newOptimizerContentDiv(id, algorithm){    
+function newOptimizerContentDiv(id, algorithm, creator){    
     var div = document.createElement("div");
     div.setAttribute("id", "optimizer_"+id);
     div.setAttribute("class", "optimizer_content manager_content");
     
         var table1 = document.createElement("table");
         table1.setAttribute("class", "manager_content_t1");
-        table1.innerHTML = '<tr><td><h3>'+algorithm+'</h3></td><td><span id="optimizer_'+id+'_status">initialized</span></td><td><button onclick="optimizerDuplicate('+id+');">Duplicate</button><button onclick="optimizerDelete('+id+');">Delete</button></td></tr>';
+        table1.innerHTML = '<tr><td><h3>'+algorithm+'</h3></td><td>'+creator+'</td><td><span id="optimizer_'+id+'_status">initialized</span></td><td><button onclick="optimizerDuplicate('+id+');">Duplicate</button><button onclick="optimizerDelete('+id+');">Delete</button></td></tr>';
             
     div.appendChild(table1);
 
@@ -572,7 +592,7 @@ function newOptimizerContentDiv(id, algorithm){
         var div3 = document.createElement("div");
         div3.setAttribute("id", "optimizer_"+id+"_result");
         div3.setAttribute("style", "display: none;");
-        div3.innerHTML = '<h4>Result</h4><table class="manager_content_t4"><tr><td>Best Parameterset: </td><td id="optimizer_'+id+'_resultBestPS"></td></tr><tr><td>Exception: </td><td id="optimizer_'+id+'_resultException"></td></tr></table>';
+        div3.innerHTML = '<h4>Result</h4><table class="manager_content_t4"><tr><td>Best Parameterset: </td><td id="optimizer_'+id+'_resultBestPS"></td></tr><tr><td>Minimum: </td><td id="optimizer_'+id+'_resultMinimum"></td></tr><tr><td>Exception: </td><td id="optimizer_'+id+'_resultException"></td></tr></table>';
         //div3.innerHTML += '<button class="optimizer_compareBtn" id="optimizer_'+id+'_compareBtn" onclick="optimizerCompare('+id+');">Compare</button>';
     
     div.appendChild(div3);

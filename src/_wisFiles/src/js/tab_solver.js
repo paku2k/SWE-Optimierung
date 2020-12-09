@@ -100,6 +100,8 @@ function tab_solver_responseHandler(){
 function createOrChangeSolverListHTML(solver){
     if(solver.deleted == true){
         if(document.getElementById("solverBtn_"+solver.id)){ //exists in list
+            easterEgg_sfxControl("solver",solver.id,false); 
+            
             var btn = document.getElementById("solverBtn_"+solver.id);
             if(btn.className.includes("active")){
                 if(btn.nextElementSibling && btn.nextElementSibling !== document.getElementById('solver_add')){
@@ -158,7 +160,7 @@ function createOrChangeSolverListHTML(solver){
         
         
         if(document.getElementById("solver_"+solver.id) == null) 
-            newSolverContentDiv(solver.id, solver.algorithm);
+            newSolverContentDiv(solver.id, solver.algorithm, solver.creator);
         
         
         
@@ -177,6 +179,8 @@ function createOrChangeSolverListHTML(solver){
             btn.className += " initialized"
             if(was_active) btn.className += " active";
             
+            easterEgg_sfxControl("solver",solver.id,false); 
+            
         } else if(solver.status == -1){
             //configured
             was_active = btn.className.includes("active");
@@ -185,6 +189,8 @@ function createOrChangeSolverListHTML(solver){
             btn.className += " configured"
             if(was_active) btn.className += " active";
             
+            easterEgg_sfxControl("solver",solver.id,false); 
+            
         } else if(solver.status >= 0 && solver.status <= 100){
             //running
             was_active = btn.className.includes("active");
@@ -192,7 +198,9 @@ function createOrChangeSolverListHTML(solver){
             btn.className = "solver_list_elem";
             if(was_active) btn.className += " active";
             
-            btn.style = "background-image: linear-gradient(to right, green 0%, green "+solver.status+"%, #eee "+solver.status+"%, #eee 100%);";   
+            btn.style = "background-image: linear-gradient(to right, green 0%, green "+solver.status+"%, #eee "+solver.status+"%, #eee 100%);"; 
+            
+            easterEgg_sfxControl("solver",solver.id,true);  
             
         } else if(solver.status == 101){
             //result ready
@@ -202,6 +210,8 @@ function createOrChangeSolverListHTML(solver){
             btn.className += " finished"
             if(was_active) btn.className += " active";
             
+            easterEgg_sfxControl("solver",solver.id,false); 
+            
         } else if(solver.status == 102){
             //terminated
             was_active = btn.className.includes("active");
@@ -210,14 +220,17 @@ function createOrChangeSolverListHTML(solver){
             btn.className += " error"
             if(was_active) btn.className += " active";
             
+            easterEgg_sfxControl("solver",solver.id,false); 
+            
         } else if(solver.status == 103){
             //error
             was_active = btn.className.includes("active");
             
             btn.className = "solver_list_elem";
             btn.className += " error"
-            if(was_active) btn.className += " active";
+            if(was_active) btn.className += " active";    
             
+            easterEgg_sfxControl("solver",solver.id,false);         
         }
     }
 }
@@ -464,14 +477,14 @@ function updateSolverResult(id, result, err){
 
 
 
-function newSolverContentDiv(id, algorithm){
+function newSolverContentDiv(id, algorithm, creator){
     var div = document.createElement("div");
     div.setAttribute("id", "solver_"+id);
     div.setAttribute("class", "solver_content manager_content");
     
         var table1 = document.createElement("table");
         table1.setAttribute("class", "manager_content_t1");
-        table1.innerHTML = '<tr><td><h3>'+algorithm+'</h3></td><td><span id="solver_'+id+'_status">initialized</span></td><td><button onclick="solverDuplicate('+id+');">Duplicate</button><button onclick="solverDelete('+id+');">Delete</button></td></tr>';
+        table1.innerHTML = '<tr><td><h3>'+algorithm+'</h3></td><td>'+creator+'</td><td><span id="solver_'+id+'_status">initialized</span></td><td><button onclick="solverDuplicate('+id+');">Duplicate</button><button onclick="solverDelete('+id+');">Delete</button></td></tr>';
             
     div.appendChild(table1);
 

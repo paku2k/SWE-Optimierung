@@ -555,6 +555,7 @@ public class OptimizerManager {
 			throw new Exception("Optimizer is running. Try terminating.");						
 		}
 		runningOptimizers.set(id, null);
+		System.gc();
 	}
 	
 	public static void deleteAll() {	

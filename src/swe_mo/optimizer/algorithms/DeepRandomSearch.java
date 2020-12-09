@@ -2,7 +2,7 @@ package swe_mo.optimizer.algorithms;
 
 import swe_mo.solver.SolverResult;
 import swe_mo.solver.de.CRN;
-import swe_mo.solver.pso.PSOgsc;
+
 import java.util.ArrayList;
 
 import swe_mo.Settings;
@@ -23,12 +23,13 @@ public class DeepRandomSearch extends BaseOptimizer{
 	double lowerBound;
 	double upperBound;
 	String solverType;
+	boolean printfile;
 
 	public static OptimizerConfig defaultConfig() throws Exception {
-		return new OptimizerConfig(1, 3, 50, (String)Settings.get("defaultAlgorithm"), 30, 10000, FitnessFunction.getBoundary("lower", 1), FitnessFunction.getBoundary("upper", 1));
+		return new OptimizerConfig(1, 3, 50, (String)Settings.get("defaultAlgorithm"), 30, 10000, FitnessFunction.getBoundary("lower", 1), FitnessFunction.getBoundary("upper", 1), false);
 	}
 	
-	public DeepRandomSearch(int ffID, String solverType, int numberIterations, double lowerBound, double upperBound, ArrayList<Double> parametersMin, ArrayList<Double> parametersMax, ArrayList<String> parametersName, int levels, int levelGuesses, int optimizerID) {
+	public DeepRandomSearch(int ffID, String solverType, int dimensions, int numberIterations, double lowerBound, double upperBound, ArrayList<Double> parametersMin, ArrayList<Double> parametersMax, ArrayList<String> parametersName, int levels, int levelGuesses, boolean printfile, int optimizerID) throws Exception {
 		
 		super(ffID, numberIterations);
 		this.parametersMin = parametersMin;
@@ -38,54 +39,100 @@ public class DeepRandomSearch extends BaseOptimizer{
 		this.levelGuesses = levelGuesses;
 		this.lowerBound = lowerBound;
 		this.upperBound = upperBound;
+		this.dimensions = dimensions;
 		this.solverType = solverType;
 		this.optimizerID = optimizerID;
+		this.printfile = printfile;
+		
+		if(parametersName.size()<1) {
+			throw new Exception("No solver hyperparameter given.");
+		}
 		
 	}
 	
 		public OptimizerResult optimize() throws Exception {
-			
-			FileGenerator file = new FileGenerator("Test_PSOgsc_DeepRandomSearch", "iteration; ffCalls; minimum; p1; p2; p3");
+			FileGenerator file = null;
+			if(printfile) {
+				String fileheader = "iteration; ffCalls; minimum";
+				for(int a = 0; a < parametersName.size(); a++) {
+					fileheader += "; "+parametersName.get(a);
+				}
+				file = new FileGenerator("Test_PSOgsc_DeepRandomSearch", fileheader);				
+			}
 			ArrayList<Double> tempParametersMin = new ArrayList<Double>(parametersMin);
 			ArrayList<Double> tempParametersMax = new ArrayList<Double>(parametersMax);
-			ArrayList<String> tempParametersName = new ArrayList<String>(parametersName);
-			double [] p = new double[tempParametersName.size()];
-			double [] bestSolution = new double[tempParametersName.size()+1];
+			double [] p = new double[parametersName.size()];
+			double [] bestSolution = new double[parametersName.size()+1];
+
+			int solverID = SolverManager.create("O-"+optimizerID, solverType);
+			SolverManager.configure(solverID, "ffid="+ffID+", N="+dimensions+" maxGenerations="+numberIterations+", lowerBound="+lowerBound+", upperBound="+upperBound+", convergence=0");
+
 			
 			for(int i = 0; i < levels; i++) {
 				for(int j = 0; j < levelGuesses && !OptimizerManager.checkTerminated(optimizerID); j++) {
-					
+					System.gc();
+
 					// define parameters for search
-					for(int k = 0; k < tempParametersName.size(); k++) {
+					for(int k = 0; k < parametersName.size(); k++) {	
+						if(tempParametersMax.get(k) == tempParametersMin.get(k)) {
+							p[k] = tempParametersMax.get(k);
+							continue;
+						}
 						p[k] = CRN.rn(tempParametersMax.get(k), tempParametersMin.get(k));
 					}
 					
-					// calculate solution for given parameters and write to file (in this hardcoded example the standard constructor of PSOgsc is used)
-					SolverResult sr = new PSOgsc(30, -5.12, 5.12, 20, p[0], p[1], p[2], 1, numberIterations, ffID, 0, 1).solve();
-					file.write(sr.iterations+";"+sr.ffCounter+";"+sr.value+";"+p[0]+";"+p[1]+";"+p[2]);
-					
-					// track best solution
-					if(j==0 && i==0) {
-						bestSolution[0] = sr.value; 
-						for(int l = 0; l < tempParametersName.size(); l++) {
-							bestSolution[l+1] = p[l];
-						}
+					//calculate solution
+					String s = "";
+					for(int a=0; a<parametersName.size(); a++) {						
+						s += parametersName.get(a)+"="+p[a]+" ";
 					}
-					else {
-						if(sr.value<bestSolution[0]) {
+					if(SolverManager.status(solverID) >= 0)
+						SolverManager.clear(solverID);	
+					SolverManager.configure(solverID, s);
+					SolverManager.start(solverID);
+
+					while(!OptimizerManager.checkTerminated(optimizerID)) {
+						double status = SolverManager.status(solverID);
+						s = ""+status;
+						if (status >= 100) {break;}
+					}
+
+					if(!OptimizerManager.checkTerminated(optimizerID)) {
+						SolverResult sr = SolverManager.result(solverID);
+						
+						
+						String filecontent = sr.iterations+"; "+sr.ffCounter+"; "+sr.value;
+						for(int a = 0; a < parametersName.size(); a++) {
+							filecontent += "; "+p[a];
+						}
+						if(printfile)
+							file.write(filecontent);
+						
+						// track best solution
+						if(j==0 && i==0) {
 							bestSolution[0] = sr.value; 
-							for(int m = 0; m < tempParametersName.size(); m++) {
-								bestSolution[m+1] = p[m];
+							for(int l = 0; l < parametersName.size(); l++) {
+								bestSolution[l+1] = p[l];
 							}
 						}
+						else {
+							if(sr.value<bestSolution[0]) {
+								bestSolution[0] = sr.value; 
+								for(int m = 0; m < parametersName.size(); m++) {
+									bestSolution[m+1] = p[m];
+								}
+							}
+						}
+						
+						OptimizerManager.updateStatus(optimizerID, (((double)i*levelGuesses+j)/((double)levels*levelGuesses)*100));
 					}
-					
-					OptimizerManager.updateStatus(optimizerID, (((double)i*levelGuesses+j)/((double)levels*levelGuesses)*100));
-					
 				}
 				
 				// update boundaries of search space
-				for(int n = 0; n < tempParametersName.size(); n++) {
+				for(int n = 0; n < parametersName.size(); n++) {
+					if(tempParametersMax.get(n) == tempParametersMin.get(n)) {
+						continue;
+					}
 					if(bestSolution[n+1]<((tempParametersMax.get(n)-tempParametersMin.get(n))/2)) {
 						tempParametersMax.set(n, ((tempParametersMax.get(n)-tempParametersMin.get(n))/2));
 					}
@@ -95,14 +142,19 @@ public class DeepRandomSearch extends BaseOptimizer{
 				}
 				
 			}
-			
-			file.close();
+
+			if(OptimizerManager.checkTerminated(optimizerID)) SolverManager.terminate(solverID);
+			SolverManager.delete(solverID);
+
+			if(printfile)
+				file.close();
 			String s = "";
-			for(int o = 0; o < bestSolution.length; o++) {
-				s += bestSolution[o]+" ";
+			for(int i = 0; i < parametersName.size(); i++) {
+				if(!s.equals("")) s+= ", ";
+				s += parametersName.get(i)+"="+bestSolution[i+1];
 			}
-			//System.out.println(s);
-			return new OptimizerResult(s);
+			System.gc();
+			return new OptimizerResult(s, bestSolution[0]);
 		}
 	
 	

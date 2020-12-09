@@ -599,10 +599,10 @@ public class UiBackend {
 				cmd_queue.remove();		
 				
 				if(!cmd_queue.isEmpty()) {					
-					return SolverManager.create(auth, cmd_queue.poll());					
+					return "Solver created ("+cmd_queue.peek()+") with ID "+SolverManager.create(auth, cmd_queue.poll());					
 				}
 				
-				return SolverManager.create(auth);
+				return "Solver created (default) with ID "+SolverManager.create(auth);
 				
 			} else if(cmd_queue.peek().equals("clone")) {
 				cmd_queue.remove();		

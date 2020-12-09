@@ -5,7 +5,8 @@ import org.json.simple.JSONObject;
 
 public class OptimizerResult {
 	public String bestParameterset;
-	//other messages (number of iterations until result, ...)	
+	public double minimum;
+
 	Exception e;
 	
 	
@@ -13,8 +14,9 @@ public class OptimizerResult {
 		
 	}
 	
-	public OptimizerResult(String bestParameterset) {
+	public OptimizerResult(String bestParameterset, double minimum) {
 		this.bestParameterset = bestParameterset;
+		this.minimum = minimum;
 		
 	}
 	
@@ -27,6 +29,7 @@ public class OptimizerResult {
 		
 		if(e == null) {
 			s += "Best Parameterset: "+bestParameterset+"\n";
+			s += "Minimum: "+minimum+"\n";
 		} else {
 			s += "Exception: "+e.getMessage();
 		}
@@ -40,6 +43,7 @@ public class OptimizerResult {
 		
 		if(e == null) {
 			json.put("bestPS", bestParameterset);
+			json.put("minimum", minimum);
 		} else {
 			json.put("exception", e.getMessage());
 		}
