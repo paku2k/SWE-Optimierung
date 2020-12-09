@@ -8,6 +8,7 @@ import org.json.simple.parser.JSONParser;
 
 import swe_mo.solver.FitnessFunction;
 import swe_mo.optimizer.algorithms.DeepRandomSearch;
+import swe_mo.optimizer.algorithms.RandomSearch;
 
 
 public class OptimizerConfig {
@@ -16,6 +17,7 @@ public class OptimizerConfig {
 
 	public int levels;
 	public int levelGuesses;
+	public int guesses;
 	
 	public String solvertype;
 	public int N;
@@ -62,7 +64,28 @@ public class OptimizerConfig {
 		usedpars.add("SHP"); //solver hyperparameters
 	}
 	
-	
+	//RandomSearch
+	public OptimizerConfig(int ffid, int guesses, String solvertype, int N, int maxGenerations, double lowerBound, double upperBound, boolean printfile) {
+		this.ffid = ffid;	
+		this.guesses = guesses;
+		this.solvertype = solvertype;	
+		this.N = N;
+		this.maxGenerations = maxGenerations;
+		this.lowerBound = lowerBound;		
+		this.upperBound = upperBound;		
+		
+		this.printfile = printfile;
+
+		usedpars.add("ffid");
+		usedpars.add("guesses");
+		usedpars.add("solvertype");
+		usedpars.add("N");
+		usedpars.add("maxGenerations");
+		usedpars.add("lowerBound");
+		usedpars.add("upperBound");
+		usedpars.add("printfile");
+		usedpars.add("SHP"); //solver hyperparameters
+	}
 	
 	public void set(String param, String value) throws Exception {		
 		switch(param) {
@@ -97,6 +120,9 @@ public class OptimizerConfig {
 				return;
 			case "printfile":
 				printfile = Boolean.parseBoolean(value);
+				return;
+			case "guesses":
+				guesses = (int)Double.parseDouble(value);
 				return;
 		}
 		throw new Exception("No such hyperparameter ("+param+").");
@@ -154,6 +180,8 @@ public class OptimizerConfig {
 				return upperBound;	
 			case "printfile": 
 				return printfile;	
+			case "guesses": 
+				return guesses;	
 		}
 		
 		if(SHP_name.contains(param)) {
@@ -254,6 +282,8 @@ public class OptimizerConfig {
 		switch(algorithm) {
 			case "DeepRand":
 				return DeepRandomSearch.defaultConfig();
+			case "Rand":
+				return RandomSearch.defaultConfig();
 				
 		}	
 		throw new Exception("Algorithm not specified.");
@@ -269,6 +299,8 @@ public class OptimizerConfig {
 				};
 				return new OptimizerResult("F=0.1212, CR=4.5");*/
 				return new DeepRandomSearch(config.ffid, config.solvertype, config.N, config.maxGenerations, config.lowerBound, config.upperBound, config.SHP_min, config.SHP_max, config.SHP_name, config.levels, config.levelGuesses, config.printfile, id).optimize();
+			case "Rand":
+				return new RandomSearch(config.ffid, config.solvertype, config.N, config.maxGenerations, config.lowerBound, config.upperBound, config.SHP_min, config.SHP_max, config.SHP_name, config.guesses, config.printfile, id).optimize();
 		}
 		throw new Exception("Algorithm not specified or no optimizer method.");
 	}
