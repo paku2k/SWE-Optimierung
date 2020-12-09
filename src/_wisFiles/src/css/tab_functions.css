@@ -1,0 +1,88 @@
+.math {
+    cursor: default;
+    pointer-events: none;
+}
+
+#tab_functions .MJXc-display {
+    margin: 0;
+    
+} 
+
+#tab_functions td:nth-of-type(2) .MJXc-display {
+    text-align: left !important;
+    padding-bottom: .5rem;
+    
+} 
+
+
+
+
+#tab_functions > div {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+#tab_functions table {
+    border-collapse: separate;
+    border-spacing: 0 0.1rem;
+    margin: 0 auto;
+}
+
+#tab_functions table tr:first-of-type th {
+    border-top: 1px solid #444;
+    border-bottom: 1px solid #444;
+}
+#tab_functions table tr:first-of-type th:first-of-type{
+    border-top-left-radius: 0.3rem;   
+    border-bottom-left-radius: 0.3rem; 
+    border-left: 1px solid #444;  
+}
+#tab_functions table tr:first-of-type th:nth-of-type(2) {
+    text-align: left;
+}
+#tab_functions table tr:first-of-type th:last-of-type{
+    border-top-right-radius: 0.3rem;   
+    border-bottom-right-radius: 0.3rem;   
+    border-right: 1px solid #444;
+}
+
+#tab_functions table tr:nth-of-type(2) td {
+    border-top: 1px solid #444;
+}
+#tab_functions table tr:nth-of-type(2) td:first-of-type{
+    border-top-left-radius: 0.3rem;   
+}
+#tab_functions table tr:nth-of-type(2) td:last-of-type{
+    border-top-right-radius: 0.3rem;   
+}
+
+
+#tab_functions table tr:last-of-type td{
+    border-bottom: 1px solid #444;    
+}
+#tab_functions table tr:last-of-type td:first-of-type{
+    border-bottom-left-radius: 0.3rem;   
+}
+#tab_functions table tr:last-of-type td:last-of-type{
+    border-bottom-right-radius: 0.3rem;   
+}
+
+#tab_functions table td, #tab_functions table th {
+    vertical-align: top;
+    border-top: 1px solid #bbb;
+    border-left: 1px solid #bbb;
+    padding: .5rem;
+}
+
+#tab_functions table td:first-of-type{
+    border-left: 1px solid #444;    
+    text-align: right;
+}
+#tab_functions table td:nth-of-type(2) {
+    padding-bottom: 0;
+}
+#tab_functions table td:last-of-type {
+    padding-bottom: 0;
+    vertical-align: middle;
+    border-right: 1px solid #444;
+}

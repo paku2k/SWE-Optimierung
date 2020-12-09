@@ -2,25 +2,28 @@ package swe_mo.solver.de;
 import swe_mo.solver.SolverManager;
 import swe_mo.solver.SolverResult;
 import swe_mo.solver.SolverConfig;
+import swe_mo.solver.Convergence;
+
+import java.io.IOException;
 
 
 import java.util.ArrayList;
 
 import swe_mo.solver.FitnessFunction;
 
-import swe_mo.solver.SolverConfig;
 
-
-import java.util.ArrayList;
-
-import swe_mo.solver.FitnessFunction;
 
 public class DErand1 {
 	
+	//FileGenerator g;
+	
+	
+	Convergence c;
 	int N;
 	int NP;
 	double F;
 	double CR;
+	
 	int maxGenerations;
 	private int generation;
 	double upperBound;
@@ -28,61 +31,118 @@ public class DErand1 {
 	int fitCount;
 	int solverID;
 	double best;
+	
+	
+	double sumOfDifferencesGlobal;
+
+	double convergenceCrit;
+	
+	String csv;
+
+
 	Particle_DE bestParticle;
 	int ffIndex;
 	ArrayList<Double> lastResult;
 	ArrayList<Particle_DE> xPop;
+	int numberOfCalls = 0;
 	
-	public DErand1(int N, int NP, double F, double CR, int maxGenerations, double upperBound, double lowerBound, int ffIndex, int solverID) {
+	public DErand1(int N, int NP, double F, double CR, int maxGenerations, double upperBound, double lowerBound, int ffIndex, int solverID, double convergence) throws IOException {
 		//With this constructor the population will be created with random set particles within the provided bounds. 
 		
-		this.solverID=solverID;
+		this(N, NP, F, CR, maxGenerations, ffIndex, solverID, convergence);
 		
-		this.fitCount=0;
-		this.bestParticle  = new Particle_DE(N);
-		this.best = Double.MAX_VALUE;
-		this.N=N;
-		this.NP=NP;
-		this.F=F;
-		this.CR=CR;
-		this.upperBound= upperBound;
+		this.upperBound=upperBound;
 		this.lowerBound=lowerBound;
-		this.maxGenerations=maxGenerations;
-		this.ffIndex=ffIndex;
+
+		xPop.clear();
 		
-		lastResult = new ArrayList<Double>();
-
-		this.xPop = new ArrayList<Particle_DE>();
-
-		this.generation=0;
-		
-
 		for(int i = 0; i<NP; i++) {
 			Particle_DE part = new Particle_DE(N, upperBound, lowerBound);
+
 	    	xPop.add(part);
 	    }
+		this.convergenceCrit=NP*N*(upperBound-lowerBound)*10E-5*convergence;
+		this.bestParticle  = new Particle_DE(N, upperBound,lowerBound);
 		
-		for(int i = 0; i<NP; i++) {
-	    	lastResult.add(-1.0);
-	    }
-	
 	}
 	
 	public static SolverConfig defaultConfig() {		
-		return new SolverConfig(1,5,50,0.7,0.3,1000,5.14,-5.14);
+		return new SolverConfig(1,5,50,0.3,0.3,1000,5.12,-5.12, 1.0);
 	}
 	
-	public DErand1(int N, int NP, double F, double CR, int maxGenerations, int ffIndex, int solverID) {
+	protected DErand1(int N, int NP, double F, double CR, int maxGenerations, int ffIndex, int solverID, double convergence, boolean generateFile) throws IOException {
+		this(N, NP, F, CR, maxGenerations, N, N, ffIndex, solverID, convergence);
+	}
+	
+	public DErand1(int N, int NP, double F, double CR, int maxGenerations, int ffIndex, int solverID, double convergence) throws IOException {
 		//If, for whatever reason, the population should be populated manually, this constructor can be used
 		// it will initialize all NP particles with all dimensions to be zero
 		
 		//Bounds are created to be max.
+
+		String s="";
+		if(N<1) {
+			s += "N";
+		}
+		if(NP<3) {
+			if(!s.equals("")) {
+				s+=", ";
+			}
+			s+="NP";
+		}
+		if(F<0) {
+			if(!s.equals("")) {
+				s+=", ";
+			}
+			s+="F";
+		}
+		if(CR<0) {
+			if(!s.equals("")) {
+				s+=", ";
+			}
+			s+="CR";
+		}
+		if(CR>1) {
+			if(!s.equals("")) {
+				s+=", ";
+			}
+			s+="CR";
+		}
+		if(convergence<0) {
+			if(!s.equals("")) {
+				s+=", ";
+			}
+			s+="convergence";
+		}
+		if(!s.equals("")) {
+			throw new IOException("Please check your input parameters ("+s+").");
+		}
+
+		c= new Convergence("DErand1");
+
+		
+		
+		/*
+		String header = "generation;";
+		for (int i=0; i<NP; i++) {
+			header=header+"P"+i+"solution;";
+			for (int j=0; j<N; j++) {
+				header=header+"P"+i+"axis"+j+";";
+			}
+		}
+		*/
+		
+		//g = new FileGenerator("DE_Positions_FFID"+ffIndex, header);
+		
+
 		
 		this.upperBound=Double.MAX_VALUE;
 		this.lowerBound=-Double.MAX_VALUE;
 		
 		this.fitCount=0;
 		this.solverID=solverID;
+		this.sumOfDifferencesGlobal=Double.MIN_VALUE;
+		this.convergenceCrit=NP*N*(upperBound-lowerBound)*10E-5*convergence;
 
 
 		this.bestParticle  = new Particle_DE(N);
@@ -109,43 +169,66 @@ public class DErand1 {
 	    }
 		
 		for(int i = 0; i<NP; i++) {
-	    	lastResult.add(-1.0);
+	    	lastResult.add(Double.MAX_VALUE);
 	    }
 	}
 	
-	public SolverResult solve() {
+	public SolverResult solve() throws Exception  {
 		
 		SolverManager.updateStatus(solverID, 0.0);
 		
 
 		// Solver
 		for(this.generation=0; generation<this.maxGenerations; generation++) {
+			
+			//csv = ""+generation+";";
+			
 			SolverManager.updateStatus(solverID, (100*((double)generation)/((double)this.maxGenerations)));
 			if(SolverManager.checkTerminated(solverID)) {
-				break;
+				return new SolverResult(best, bestParticle.position, fitCount);
+
 			}
-
-
+			this.sumOfDifferencesGlobal=0.0;
 			
+		
 			for(int i=0; i<NP; i++) {
 
 				xPop.set(i, compare(i, crossOver(xPop.get(i), calculateV(i))));
-
 				
 			}
-			//System.out.println("\n\n NEW GENERATION \n\n");
+			//g.write(csv);
+			boolean converged = c.update(sumOfDifferencesGlobal, best);
+			if (converged&&this.convergenceCrit!=0.0) {
+				c.file.close();
 
+				return new SolverResult(best, bestParticle.position, fitCount, generation);
+
+
+
+				
+
+			}
 		}
+			//System.out.println("\n\n NEW GENERATION \n\n");
+			//System.out.println("Convergence: "+Math.abs(((sumOfDifferencesGlobalLast-sumOfDifferencesGlobal)/sumOfDifferencesGlobalLast)));
+			//System.out.println("Sum of differences: "+sumOfDifferencesGlobal);
+			
 
-		return new SolverResult(best, bestParticle, fitCount);
+
+
+		c.file.close();
+			
+		return new SolverResult(best, bestParticle.position, fitCount, generation);
+
 	}
 	
 	public Particle_DE calculateV(int index) {
 		//calculates the Vector V for current generation
 		Particle_DE p=this.calculateRandomDifference(index);
+		
 		p.multiply(this.F);
+		
 		p.add(xPop.get(index));
-
 	
 		for (int i = 0; i < p.position.size(); i++) {
 			if(p.position.get(i)>this.upperBound) {
@@ -156,11 +239,7 @@ public class DErand1 {
 			}
 		}
 		
-		//System.out.println("v: "+p);
-		//System.out.println("x: "+xPop.get(index));
-
-
-		
+	
 		return p;
 	}
 	
@@ -191,44 +270,51 @@ public class DErand1 {
 			}
 			
 		}
-
-		//System.out.println("u: "+u)
-
-		
+	
 		return u;
 	}
 	
-	public Particle_DE compare(int xIndex, Particle_DE vectorU) {
-		
+	
+	public Particle_DE compare(int xIndex, Particle_DE vectorU) throws Exception {
 		//Compares vectorX and vectorU and returns the better one. If both give the same result, vectorU is returned
 		double xRes;
-		if(lastResult.get(xIndex)==-1.0) {
-			 xRes=FitnessFunction.solve(ffIndex, xPop.get(xIndex));
-			fitCount+=1;
 
+		if(generation == 0) {
+
+			 xRes=FitnessFunction.solve(ffIndex, xPop.get(xIndex));
+
+			fitCount+=1;
 		}
+		
+		
 		else {
 			xRes=lastResult.get(xIndex);
 		}
+		
+		Particle_DE x = xPop.get(xIndex);
+
+		/*
+		csv=csv+xRes+";";
+		for (int j=0; j<N; j++) {
+				csv=csv+x.position.get(j)+";";
+		}
+		*/
+		
+		
+		
+		
+		
+		
 		double uRes=FitnessFunction.solve(ffIndex, vectorU);
 		fitCount+=1;
-		//System.out.println("current best: "+best);
-		//System.out.println("xRes: "+xRes);
-		//System.out.println("uRes: "+uRes);
 
 		
 		if(xRes<uRes) {
 			if(xRes<this.best) {
 				this.best = xRes;
 				bestParticle = new Particle_DE(xPop.get(xIndex));
-				//System.out.println("Best Value:"+ best);
-				//System.out.println("In generation: "+ generation);
-
-
-				//System.out.println("BestX: "+bestParticle);
 
 			}
-			
 
 			return new Particle_DE(xPop.get(xIndex));
 		}
@@ -237,11 +323,7 @@ public class DErand1 {
 			if(uRes<this.best) {
 				this.best = uRes;
 				bestParticle = new Particle_DE(vectorU);
-				//System.out.println("Best Value:"+ best);
 				//System.out.println("In generation: "+ generation);
-
-				//System.out.println("BestU: "+vectorU);
-
 
 			}
 
@@ -257,7 +339,7 @@ public class DErand1 {
 		int index1;
 		int index2;
 		Particle_DE newP = new Particle_DE(this.N);
-		
+
 		do {
 			index1 = CRN.rInt(0, (int)NP-1);
 		}
@@ -269,14 +351,21 @@ public class DErand1 {
 		while (index2 == skip || index2 == index1);
 		
 		newP = new Particle_DE(xPop.get(index1));
-		//System.out.println("Test vor subtraktion: "+xPop.get(index1).toString());
 		newP.substract(xPop.get(index2));
-		//System.out.println("Test nach subtraktion: "+xPop.get(index1).toString());
 
+
+		double sumOfDifferences=0.0;
 		
-		
+		for (int i = 0; i < newP.position.size(); i++) {
+			sumOfDifferences+=Math.pow(Math.abs(newP.position.get(i)),2);
+
+		}
+
+		this.sumOfDifferencesGlobal+=Math.sqrt(sumOfDifferences);
+
 		return newP;
 	}
 	
+
 
 }

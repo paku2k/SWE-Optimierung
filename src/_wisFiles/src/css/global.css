@@ -1,0 +1,144 @@
+/* GLOBAL */
+
+body {
+    margin: 0;
+    
+    font-family: "Tw Cen MT", sans-serif;
+    
+    -moz-hyphens: auto;
+    -o-hyphens: auto;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto; 
+    
+    word-wrap: break-word;
+    
+    min-width: 950px;
+}
+
+h2 {
+    text-align: center;
+}
+
+.tbi {
+    color: red;
+    border: 1px solid red;
+}
+
+
+
+
+
+/* easter egg */
+
+#easteregg {
+    top: 0;
+    left: 0;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    
+    background-color: rgba(0,0,0,0.9);
+    color: white;
+    
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+
+    align-items: center;
+    
+    transition: 0.3s;
+    
+    animation: fadeeasteregg 0.8s;
+}
+@keyframes fadeeasteregg {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+#easteregg > div {
+    width: 80%;
+    min-width: 700px;
+    max-width: 1200px;
+    height: 80%;
+    min-height: 400px;
+    margin: auto;
+    background-color: white; 
+    color: black;
+    position: relative;
+    padding: 1rem 1.4rem;
+}
+
+#easteregg > div > a {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-right: .5rem;
+    margin-top: .2rem;
+    color: darkred;
+    cursor: pointer;
+}
+
+#easteregg > div > p:first-of-type {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 1.8rem;
+    animation: blinkingeggmsg 0.2s 5;
+}
+@keyframes blinkingeggmsg {
+    0%{   color: black;}
+    40%{  color: #ffa500;}
+    60%{  color: #ffa500;}
+    100%{ color: black;}
+}
+
+#easteregg > div > p:nth-of-type(2) {
+    text-align: center;
+    font-size: 1.2rem;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    margin-bottom: 1.8rem;
+    margin-top: 1.8rem;
+}
+
+#easteregg > div > div {
+    position: absolute;
+    top: 5.6rem;
+    left: 5%;
+    width: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+#easteregg > div > div > div {
+    display: none;
+    max-height: 100%;
+    width: 100%;    
+    text-align: center;
+    opacity: 0;
+}
+@keyframes eggimg_fadein {
+    0%{   opacity: 0;}
+    100%{ opacity: 1;}
+}
+@keyframes eggimg_fadeout {
+    0%{   opacity: 1;}
+    100%{ opacity: 0;}
+}
+
+#easteregg > div > div > div > img {
+    max-height: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+}

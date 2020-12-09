@@ -11,7 +11,7 @@
   <downloadUrl>http://java.com/download</downloadUrl>
   <supportUrl></supportUrl>
   <stayAlive>false</stayAlive>
-  <restartOnCrash>true</restartOnCrash>
+  <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
   <icon>D:\David\Akten\01_WICHTIG\W02_ARBEIT\02_Ausbildung_Studium\2018_HSH_BEng_Mechatronik\5_2020W\SWE\eclipse-git-workspace\SWE-Optimierung\src\_wisFiles\img\icon.ico</icon>
   <jre>
@@ -24,12 +24,12 @@
     <runtimeBits>64/32</runtimeBits>
   </jre>
   <versionInfo>
-    <fileVersion>0.0.1.2</fileVersion>
-    <txtFileVersion>0.0.1.2</txtFileVersion>
+    <fileVersion>0.0.3.0</fileVersion>
+    <txtFileVersion>0.0.3.0</txtFileVersion>
     <fileDescription>mOptimizer </fileDescription>
     <copyright>HSH SWE T3</copyright>
-    <productVersion>0.0.1.2</productVersion>
-    <txtProductVersion>0.0.1.2</txtProductVersion>
+    <productVersion>0.0.3.0</productVersion>
+    <txtProductVersion>0.0.3.0</txtProductVersion>
     <productName>mOptimizer</productName>
     <companyName></companyName>
     <internalName>moptimizer</internalName>

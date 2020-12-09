@@ -1,5 +1,8 @@
 package swe_mo.ui;
 
+import swe_mo.Settings;
+
+
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.util.ArrayList;
@@ -12,6 +15,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.wb.swt.SWTResourceManager;
+
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ShellEvent;
@@ -74,8 +78,10 @@ public class UiFrontend {
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
-		}	
-		display.dispose();
+		}
+
+		if(!shell.isDisposed()) display.dispose();	
+
 		shell = null;
 		clogger.info(AUTH, "run", "UiFrontend stopped");
 	}
@@ -129,11 +135,11 @@ public class UiFrontend {
 		btnStartWis.getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				if(state) {
-					btnStartWis.setText("Stop WebGUI");
+					btnStartWis.setText("Stop WIS");
 					lblWisStatusContent.setForeground(SWTResourceManager.getColor(0, 204, 0));
 					lblWisStatusContent.setText("Running at: localhost:"+port+"/");
 				} else {
-					btnStartWis.setText("Start WebGUI");		
+					btnStartWis.setText("Start WIS");		
 					lblWisStatusContent.setForeground(SWTResourceManager.getColor(255, 0, 0));			
 					lblWisStatusContent.setText("Not Started");
 				}
@@ -290,7 +296,7 @@ public class UiFrontend {
 	private static VerifyKeyListener verifykeyadapter_cmd = new VerifyKeyListener() {
 		public void verifyKey(VerifyEvent e) {
 			if(specialKeys(e, true)) return; //if pressed key is special key
-							
+			
 			if (e.keyCode==99) { //c
 				if(CTRL_pressed) return; //allow ctrl+c
 				if(ALT_pressed) return;	//allow alt+c for direct copy
@@ -303,6 +309,14 @@ public class UiFrontend {
 					stCmd.setSelection(cmd_last, stCmd.getText().length());
 				}
 			}
+
+			if (stCmd.getSelection().x < cmd_last) {
+				if(stCmd.getSelection().y < cmd_last)
+					stCmd.setSelection(cmd_last, cmd_last);	
+				else
+					stCmd.setSelection(cmd_last, stCmd.getSelection().y);	
+			}
+			
 			if (e.keyCode==118) { //v
 				e.doit = false;
 				if(stCmd.getCaretOffset() >= cmd_last) 
@@ -365,7 +379,10 @@ public class UiFrontend {
 			if(last_click + DOUBLECLICK_THRESHOLD > System.currentTimeMillis()) return;
 			
 			try {
-				UiBackend.cmd(AUTH, "wis open -m");
+				if((boolean) Settings.get("minUifOnWebguiOpen")) 
+					UiBackend.cmd(AUTH, "wis open -m");
+				else
+					UiBackend.cmd(AUTH, "wis open");
 			} catch(Exception ex) {
 				clogger.err(AUTH, "mouseadapter_btnOpenPage", ex);
 			}
@@ -379,7 +396,6 @@ public class UiFrontend {
 
 		@Override
 		public void shellClosed(ShellEvent e) {
-			// TODO Auto-generated method stub
 	        MessageBox messageBox = new MessageBox(shell, SWT.APPLICATION_MODAL | SWT.YES | SWT.NO);
 	        messageBox.setText("Warning");
 	        messageBox.setMessage("You are about to stop and close the application. Continue?");
@@ -605,7 +621,7 @@ public class UiFrontend {
 		btnStartWis.setForeground(SWTResourceManager.getColor(34, 139, 34));
 		btnStartWis.setBounds(448, 21, 110, 23);
 		btnStartWis.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
-		btnStartWis.setText("Start WebGUI");
+		btnStartWis.setText("Start WIS");
 		btnStartWis.addKeyListener(keyadapter_fnkeys);
 		btnStartWis.addMouseListener(mouseadapter_btnStartWis);		
 		
@@ -657,6 +673,9 @@ public class UiFrontend {
 		stCmd.addVerifyKeyListener(verifykeyadapter_cmd);
 		stCmd.addKeyListener(keyadapter_fnkeys);
 		stCmd.addKeyListener(keyadapter_cmd);
+		
+		stCmd.forceFocus();
+		setCaretPosEnd("stCmd");
 		
 		cmd_last = stCmd.getText().length();
 		

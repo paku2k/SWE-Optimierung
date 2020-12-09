@@ -1,0 +1,129 @@
+
+
+
+
+/* solver compare */
+
+#tab_solver #solver_compare{
+    width: 100%;
+    padding-bottom: 3rem;
+}
+
+#tab_solver #solver_compare > table {
+    table-layout: fixed;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#tab_solver #solver_compare > table tr{    
+    display: flex;
+    align-items: stretch;
+}
+
+#tab_solver #solver_compare > table td, #tab_solver #solver_compare > table th {
+    display: inline-block;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box; 
+    vertical-align: center;
+    text-align: left;
+}
+
+#tab_solver #solver_compare > table th { 
+    padding: .4rem 1rem; 
+    text-align: right;
+    border-left: 1px solid #444;
+    border-right: 1px solid #444;
+    border-top: 1px solid #bbb;
+    min-width: 8rem;
+    margin-right: .1rem;
+}
+
+#tab_solver #solver_compare > table tr:first-of-type > th:first-of-type { 
+    border: 1px solid #444;
+    border-radius: .3rem;
+    margin-bottom: .1rem;
+}
+
+#tab_solver #solver_compare > table tr:nth-of-type(2) > th:first-of-type { 
+    border-top: 1px solid #444;
+    border-top-left-radius: .3rem;
+    border-top-right-radius: .3rem;
+}
+
+#tab_solver #solver_compare > table tr:last-of-type > th:first-of-type { 
+    border-bottom: 1px solid #444;
+    border-bottom-left-radius: .3rem;
+    border-bottom-right-radius: .3rem;
+}
+
+
+#tab_solver #solver_compare > table td {
+    border-top: 1px solid #bbb;
+    border-left: 1px solid #bbb;
+    width: 100%;
+    padding: .4rem 1rem; 
+}
+
+#tab_solver #solver_compare > table tr:first-of-type td {
+    font-weight: bold;
+}
+
+#tab_solver #solver_compare > table tr:first-of-type td span {
+    cursor: pointer;
+    color: darkred;
+}
+
+#tab_solver #solver_compare > table tr:first-of-type > td:first-of-type { 
+    border-top-left-radius: .3rem;
+    border-bottom-left-radius: .3rem;
+}
+
+#tab_solver #solver_compare > table tr:first-of-type > td:last-of-type { 
+    border-top-right-radius: .3rem;
+    border-bottom-right-radius: .3rem;
+}
+
+#tab_solver #solver_compare > table tr > td:last-of-type { 
+    border-right: 1px solid #444;
+}
+
+#tab_solver #solver_compare > table tr > td:first-of-type { 
+    border-left: 1px solid #444;
+}
+
+#tab_solver #solver_compare > table tr:last-of-type > td{ 
+    border-bottom: 1px solid #444;
+}
+
+#tab_solver #solver_compare > table tr:last-of-type > td:first-of-type{ 
+    border-bottom-left-radius: 0.3rem;
+}
+
+#tab_solver #solver_compare > table tr:last-of-type > td:last-of-type{ 
+    border-bottom-right-radius: 0.3rem;
+}
+
+#tab_solver #solver_compare > table tr:first-of-type > td{ 
+    border-top: 1px solid #444;
+    border-bottom: 1px solid #444;
+    margin-bottom: .1rem;
+}
+
+#tab_solver #solver_compare > table tr:nth-of-type(2) > td{ 
+    border-top: 1px solid #444;
+}
+
+#tab_solver #solver_compare > table tr:nth-of-type(2) > td:first-of-type{ 
+    border-top-left-radius: .3rem;
+}
+
+#tab_solver #solver_compare > table tr:nth-of-type(2) > td:last-of-type{ 
+    border-top-right-radius: .3rem;
+}
+
+
+
+
+
+

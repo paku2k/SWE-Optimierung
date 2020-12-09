@@ -3,13 +3,20 @@ package swe_mo.ui;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.json.simple.JSONObject;
+
+import swe_mo.Main;
+import swe_mo.Settings;
+import swe_mo.optimizer.OptimizerConfig;
+import swe_mo.optimizer.OptimizerManager;
+import swe_mo.solver.FitnessFunction;
+import swe_mo.solver.SolverConfig;
 import swe_mo.solver.SolverManager;
 
 
 
 public class UiBackend {	
 	private final static String AUTH = "UiB";
-	private final static String _AUTH = AUTH;
 	
 	private static boolean running = false;
 	private static boolean exit = false;
@@ -35,6 +42,7 @@ public class UiBackend {
 	 * start UiBackend
 	 * run it
 	 * stop it
+	 * @throws Exception 
 	 */
 	public static void start() {
 		if(exit) return;
@@ -43,10 +51,32 @@ public class UiBackend {
 		try {
 			UiBackend.cmd(AUTH, "uif start");			
 		} catch(Exception e) {
-			clogger.err(_AUTH, "start", e);
+			clogger.err(AUTH, "start", e);
 		}
+		
+		try {
+			if((boolean) Settings.get("openWebguiOnStartup")) {
+				UiBackend.cmd(AUTH, "wis start");
+			}
+		} catch (Exception e) {}		
 
+		boolean webguiopenedonstartup = false;
 		while(running) {
+			try {
+				if(!webguiopenedonstartup && wis.status()) {
+					if((boolean) Settings.get("openWebguiOnStartup")) {
+						if((boolean) Settings.get("minUifOnWebguiOpen")) 
+							UiBackend.cmd(AUTH, "wis open -m");
+						else
+							UiBackend.cmd(AUTH, "wis open");
+						webguiopenedonstartup = true;
+					} else {
+						webguiopenedonstartup = true;
+					}
+				}
+			} catch (Exception e) {}
+			
+			
 			while_run();
 
 			try {
@@ -54,7 +84,7 @@ public class UiBackend {
 			} catch (Exception e) {
 				clogger.err(AUTH, "run", e);	
 			}
-		}		
+		}
 		
 		//stopping
 				
@@ -71,6 +101,9 @@ public class UiBackend {
 		
 		SolverManager.terminateAll();
 		SolverManager.joinAllThreads();
+		
+		OptimizerManager.terminateAll();
+		OptimizerManager.joinAllThreads();
 		
 		clogger.info(AUTH, "run", "UiBackend stopped");
 	}
@@ -119,7 +152,7 @@ public class UiBackend {
 				}
 			}
 		} catch (Exception e) {
-			clogger.err(_AUTH, "while_run", e);
+			clogger.err(AUTH, "while_run", e);
 		}
 				
 	}
@@ -152,43 +185,42 @@ public class UiBackend {
 	 * function to be called by every function for commandline interpreter access
 	 * logs cmd request and answer, calls cmd_interprete 
 	 * 
-	 * @param AUTH 	authenticator for submitting class
+	 * @param auth 	authenticator for submitting class
 	 * @param cmd	command as String
 	 * 
 	 * @return returns Object with answer
 	 * 
 	 * @throws Exception
 	 */
-	public static Object cmd(String AUTH, String cmd) throws Exception {
+	public static Object cmd(String auth, String cmd) throws Exception {
 		int token = cmd_cnt++;
 		Object status;
-		clogger.cmd(_AUTH, "cmd", "$("+AUTH+"-"+token+") "+cmd);
+		clogger.cmd(AUTH, "cmd", "$("+auth+"-"+token+") "+cmd);
 		try {
-			status = cmd_interprete(AUTH, cmd); 
+			status = cmd_interprete(auth, cmd); 
 		} catch(Exception e){
-			clogger.cmd(_AUTH, "cmd", "$("+AUTH+"-"+token+") --> ERR: "+e.getMessage());
+			clogger.cmd(AUTH, "cmd", "$("+auth+"-"+token+") --> ERR: "+e.getMessage());
 			throw e;
 		}
-		clogger.cmd(_AUTH, "cmd", "$("+AUTH+"-"+token+") --> "+status);
+		clogger.cmd(AUTH, "cmd", "$("+auth+"-"+token+") --> "+status);
 		return status;
 	}
-	
 
 	
 	/**
 	 * interprete cmd line command
 	 * 
-	 * @param AUTH 	authenticator for submitting class
+	 * @param auth 	authenticator for submitting class
 	 * @param cmd	command as String
 	 * 
 	 * @return returns Object with answer
 	 * 
 	 * @throws Exception
 	 */	
-	private static Object cmd_interprete(String AUTH, String cmd) throws Exception {
+	private static Object cmd_interprete(String auth, String cmd) throws Exception {
 		//cut the command string
 		Queue<String> cmd_queue = new LinkedList<String>();
-		String[] cmd_split = cmd.replace("    "," ").replace("   "," ").replace("  "," ").split(" ");
+		String[] cmd_split = cmd.replace("\t"," ").replace("    "," ").replace("   "," ").replace("  "," ").split(" ");
 		for(String s : cmd_split) {
 			if(s != "" && s != null)
 				cmd_queue.offer(s);
@@ -206,14 +238,14 @@ public class UiBackend {
 			
 			if(cmd_queue.isEmpty()) {
 				return     "List of modules\r"
-						 + "\t" + "app \t\tApplication Control\r"
-						 + "\t" + "cfg \t\tApplication Configuration\r"
+						 + "\t" + "app \t\tApplication control\r"
+						 + "\t" + "cfg \t\tApplication configuration\r"
 						 + "\t" + "uif \t\tUiFrontend\r"
 						 + "\t" + "wis \t\tWebInterfaceServer\r"
 						 + "\t" + "sm  \t\tSolverManager\r"
 						 + "\t" + "om  \t\tOptimizer";
 			} else {
-				return cmd(AUTH, cmd_queue.poll()+" help");
+				return cmd(auth, cmd_queue.poll()+" help");
 			}
 			
 			
@@ -224,15 +256,34 @@ public class UiBackend {
 			
 			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
 				return     "app - List of commands\r"
-						 + "\t" + "exit \t\tStop and exit Application";		
+						 + "\t" + "exit \t\tStop and exit application\r"
+						 + "\t" + "info \t\tApplication version information";		
 				
 			} else if(cmd_queue.peek().equals("exit")) {
 				cmd_queue.remove();
 				
+				UiFrontend.setMinimized(false);
 				if(wis.status()) wis.stop(true);
 				UiFrontend.stop(true);
 				UiBackend.stop(true);
-				return "Exiting application.";
+				return "Exiting application.";	
+				
+			} else if(cmd_queue.peek().equals("info")) {
+				cmd_queue.remove();
+
+				if(!cmd_queue.isEmpty() && cmd_queue.poll().equals("-json")) {
+					JSONObject jsonobj = new JSONObject();
+					jsonobj.put("version", Main.APPVERSION);
+					jsonobj.put("date", Main.DATE);
+					jsonobj.put("developers", Main.DEVELOPERS);
+					return jsonobj.toJSONString();
+					
+				} else {
+					return 	  "METAHEURISTIC OPTIMIZATION"+"\n\n"
+						 	+ "VERSION: "+Main.APPVERSION+"\n"
+						 	+ "DATE: "+Main.DATE+"\n"
+						 	+ "DEVELOPERS:\n"+Main.DEVELOPERS+"\n";					
+				}
 			}
 			
 			
@@ -243,11 +294,38 @@ public class UiBackend {
 
 			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
 				return     "cfg - List of commands\r"
-						 + "Not implemented yet.";
+						 + "\t" + "<key>       \tGet value of setting <key>\r"
+						 + "\t" + "<key> <val> \tSet setting <key> to value <v>\r"
+						 + "\t" + "-save       \tSave settings\r"
+						 + "\t" + "-reset      \tReset all settings to default\r"
+						 + "\t" + "-list       \tList all settings\r";
 				
-			}	
-			return "Not implemented yet.";
-			
+			} else if(cmd_queue.peek().equals("-save")) {
+				Settings.save();
+				return "Settings saved.";
+				
+			} else if(cmd_queue.peek().equals("-reset")) {
+				Settings.factorySettings();
+				return "Settings set to default.";
+				
+			} else if(cmd_queue.peek().equals("-list")) {
+				cmd_queue.remove();
+				
+				if(!cmd_queue.isEmpty() && cmd_queue.poll().equals("-json")) {
+					return Settings.listAll(true);
+				} else {
+					return Settings.listAll(false);
+				}
+				
+			} else if(!cmd_queue.isEmpty()) {
+				String key = cmd_queue.poll();
+				if(!cmd_queue.isEmpty()) {
+					Settings.set(key, cmd_queue.poll());
+					return "New value set.";
+				} else {
+					return Settings.get(key).toString();
+				}
+			}
 			
 
 		// uif	
@@ -257,9 +335,9 @@ public class UiBackend {
 			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
 				return     "uif - List of commands\r"
 						 + "\t" + "start \t\tStart UiFrontend\r"
-						 + "\t" + "min   \t\tMinimize Window\r"
-						 + "\t" + "show  \t\tShow Window\r"
-						 + "\t" + "status\t\tGet Status of UiFrontend";	
+						 + "\t" + "min   \t\tMinimize window\r"
+						 + "\t" + "show  \t\tShow window\r"
+						 + "\t" + "status\t\tGet status of UiFrontend";	
 				
 			} else if(cmd_queue.peek().equals("start")) {
 				cmd_queue.remove();				
@@ -322,7 +400,7 @@ public class UiBackend {
 						 + "\t" + "start \t\tStart WebInterfaceServer\r"
 						 + "\t" + "stop  \t\tStop WebInterfaceServer\r"
 						 + "\t" + "open  \t\tOpen WebGUI in Browser\r"
-						 + "\t" + "status\t\tGet Status of WebInterfaceServer";
+						 + "\t" + "status\t\tGet status of WebInterfaceServer";
 				
 			} else if(cmd_queue.peek().equals("start")) {
 				cmd_queue.remove();		
@@ -330,7 +408,7 @@ public class UiBackend {
 				if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-n")) {
 					cmd_queue.remove();
 
-					if(wis.status()) UiBackend.cmd(_AUTH, "wis stop");
+					if(wis.status()) UiBackend.cmd(AUTH, "wis stop");
 					
 					if(cmd_queue.isEmpty()) {
 						wis = new WebInterfaceServer();
@@ -344,11 +422,11 @@ public class UiBackend {
 						}
 					}					
 					
-					return UiBackend.cmd(_AUTH, "wis start");
+					return UiBackend.cmd(AUTH, "wis start");
 					
 				} else if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-r")) {
-					if(wis.status()) UiBackend.cmd(_AUTH, "wis stop");
-					return UiBackend.cmd(_AUTH, "wis start");					
+					if(wis.status()) UiBackend.cmd(AUTH, "wis stop");
+					return UiBackend.cmd(AUTH, "wis start");					
 				}
 				
 				if(cmd_queue.isEmpty()) {
@@ -408,14 +486,18 @@ public class UiBackend {
 
 			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
 				return     "sm - List of commands\r"
-						 + "\t" + "list \t\tList all Solvers\r"
-						 + "\t" + "create \t\tCreate new Solver-Instance\r"
-						 + "\t" + "config \t\tConfigure Solver\r"
-						 + "\t" + "solve \t\tStart Solving\r"
-						 + "\t" + "term \t\tTerminate Solver\r"
-						 + "\t" + "status \t\tGet Status of Solver(-Manager)\r"
-						 + "\t" + "result \t\tGet Result\r"
-						 + "\t" + "delete \t\tDelete Solver-Instance\r";
+						 + "\t" + "list   \tList all solvers\r"
+						 + "\t" + "create \tCreate new solver-instance\r"
+						 + "\t" + "clone  \tCreate new solver-instance with cloned properties\r"
+						 + "\t" + "config \tConfigure solver\r"
+						 + "\t" + "solve  \tStart solving\r"
+						 + "\t" + "term   \tTerminate solver\r"
+						 + "\t" + "status \tGet status of solver\r"
+						 + "\t" + "result \tGet result\r"
+						 + "\t" + "clear  \tClear solver-instance\r"
+						 + "\t" + "delete \tDelete solver-instance\r"
+				 		 + "\t" + "lsalgo \tList of implemented algorithms\r"
+				 		 + "\t" + "lspars \tList of parameters for algorithm\r";
 								
 			} else if(cmd_queue.peek().equals("list") || cmd_queue.peek().equals("lsit")) {
 				cmd_queue.remove();		
@@ -425,37 +507,42 @@ public class UiBackend {
 					boolean show_notrunning = true;
 					boolean json = false;
 					String type = "";
+					String creator = "";
 					double status = -5;
 					double status_max = 105;
 					int id = 0;
 					int id_max = Integer.MAX_VALUE;
 					
-					int i = 5;
+					int i = 6;
 					while(cmd_queue.size()>0 && i>=0) {
-						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-r")) {
+						if(cmd_queue.peek().equals("-r")) {
 							cmd_queue.remove();		
 							show_running = true;
 							show_notrunning = false;
-						}
-						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-nr")) {
+						} else if(cmd_queue.peek().equals("-nr")) {
 							cmd_queue.remove();		
 							show_running = false;
 							show_notrunning = true;
-						}
-						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {
+						} else if(cmd_queue.peek().equals("-json")) {
 							cmd_queue.remove();		
 							json = true;
-						}
-						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-t")) {
+						} else if(cmd_queue.peek().equals("-t")) {
 							cmd_queue.remove();		
 							
 							if(!cmd_queue.isEmpty()) {
 								type = cmd_queue.poll();					
 							} else {
-								throw new Exception("Specify Solver type.");
+								throw new Exception("Specify solver type.");
 							}	
-						}
-						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-s")) {
+						} else if(cmd_queue.peek().equals("-c")) {
+							cmd_queue.remove();		
+							
+							if(!cmd_queue.isEmpty()) {
+								creator = cmd_queue.poll();					
+							} else {
+								throw new Exception("Specify solver creator.");
+							}	
+						} else if(cmd_queue.peek().equals("-s")) {
 							cmd_queue.remove();		
 							
 							if(!cmd_queue.isEmpty()) {
@@ -476,8 +563,7 @@ public class UiBackend {
 									}
 								} catch(Exception e) {}
 							}						
-						}
-						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-id")) {
+						} else if(cmd_queue.peek().equals("-id")) {
 							cmd_queue.remove();		
 							
 							if(!cmd_queue.isEmpty()) {
@@ -498,10 +584,12 @@ public class UiBackend {
 									}
 								} catch(Exception e) {}
 							}						
+						} else {
+							throw new Exception("No such parameter: "+cmd_queue.poll());
 						}
 						i--;
 					}					
-					return SolverManager.list(show_running, show_notrunning, type, status, status_max, id, id_max, json);
+					return SolverManager.list(show_running, show_notrunning, type, creator, status, status_max, id, id_max, json);
 					
 				} else {
 					return SolverManager.list();
@@ -511,10 +599,29 @@ public class UiBackend {
 				cmd_queue.remove();		
 				
 				if(!cmd_queue.isEmpty()) {					
-					return SolverManager.create(cmd_queue.poll());					
+					return "Solver created ("+cmd_queue.peek()+") with ID "+SolverManager.create(auth, cmd_queue.poll());					
 				}
 				
-				return SolverManager.create();
+				return "Solver created (default) with ID "+SolverManager.create(auth);
+				
+			} else if(cmd_queue.peek().equals("clone")) {
+				cmd_queue.remove();		
+				
+				int id = -1;
+				
+				if(!cmd_queue.isEmpty()) {	
+					try {
+						id = Integer.parseInt(cmd_queue.poll());		
+					} catch(Exception e) {						
+						throw new Exception("No valid clone id given.");
+					}
+				}
+				
+				if(id > -1) {
+					return SolverManager.cloneSolver(auth, id);
+				} else {
+					return SolverManager.cloneSolver(auth);
+				}
 				
 			} else if(cmd_queue.peek().equals("config")) {
 				cmd_queue.remove();		
@@ -582,7 +689,7 @@ public class UiBackend {
 							} catch(Exception e) {}
 						}
 						
-						throw new Exception("No valied clone id given.");
+						throw new Exception("No valid clone id given.");
 					}
 					
 					
@@ -627,7 +734,7 @@ public class UiBackend {
 					throw e;
 				}
 				
-			} else if(cmd_queue.peek().equals("term")) {
+			} else if(cmd_queue.peek().equals("term") || cmd_queue.peek().equals("terminate")) {
 				cmd_queue.remove();		
 				
 				try {
@@ -680,11 +787,39 @@ public class UiBackend {
 						return SolverManager.result().toJSON();
 				} else {
 					if(id>-1)
-						return "Result: "+SolverManager.result(id);
+						return SolverManager.result(id).toString();
 					else
-						return "Result: "+SolverManager.result();
-				}
+						return SolverManager.result().toString();
+				}	
 				
+				
+			} else if(cmd_queue.peek().equals("clear")) {
+				cmd_queue.remove();		
+				
+				try {
+					if(!cmd_queue.isEmpty()) {	
+						if(cmd_queue.peek().contains("-")) {
+							if(cmd_queue.poll().equals("-all")) {
+								SolverManager.clearAll();
+								return "All Solvers cleared (if possible).";
+							}
+						} else {	
+							int id = Integer.parseInt(cmd_queue.poll());								
+							if(!cmd_queue.isEmpty()) {	
+								SolverManager.clear(id, Integer.parseInt(cmd_queue.poll()));					
+								return "Solvers cleared.";								
+							} else {
+								SolverManager.clear(id);					
+								return "Solver cleared.";					
+							}
+						}
+					} else {					
+						SolverManager.clear();						
+						return "Solver cleared.";
+					}
+				} catch(Exception e) {
+					throw e;
+				}
 				
 			} else if(cmd_queue.peek().equals("delete")) {
 				cmd_queue.remove();		
@@ -712,7 +847,34 @@ public class UiBackend {
 					}
 				} catch(Exception e) {
 					throw e;
-				}						
+				}
+				
+			} else if(cmd_queue.peek().equals("lsalgo")) {
+				cmd_queue.remove();	
+						
+				if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {	
+					return SolverConfig.getAlgorithmList(true, false, "");
+				} else {
+					return SolverConfig.getAlgorithmList(false, false, "");
+				}		
+				
+			} else if(cmd_queue.peek().equals("lspars")) {
+				cmd_queue.remove();	
+				
+				if(!cmd_queue.isEmpty() && !cmd_queue.peek().equals("-json")) {
+					String algo = cmd_queue.poll();
+					
+					if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {	
+						return SolverConfig.getAlgorithmList(true, true, algo);
+					} else {
+						return SolverConfig.getAlgorithmList(false, true, algo);
+					}					
+				} else {
+					throw new Exception("Specify algorithm.");
+				}
+				
+			} else if(cmd_queue.peek().equals("lsffbd")) {
+				return FitnessFunction.ffBoundariesJSON();
 			}
 			
 			
@@ -723,13 +885,435 @@ public class UiBackend {
 
 			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
 				return     "om - List of commands\r"
-						 + "Not implemented yet.";
+						 + "\t" + "list   \tList all optimizers\r"
+						 + "\t" + "create \tCreate new optimizer-instance\r"
+						 + "\t" + "clone  \tCreate new optimizer-instance with cloned properties\r"
+						 + "\t" + "config \tConfigure optimizer\r"
+						 + "\t" + "start  \tStart optimizing\r"
+						 + "\t" + "term   \tTerminate optimizer\r"
+						 + "\t" + "status \tGet status of optimizer\r"
+						 + "\t" + "result \tGet result\r"
+						 + "\t" + "clear  \tClear optimizer-instance\r"
+						 + "\t" + "delete \tDelete optimizer-instance\r"
+				 		 + "\t" + "lsalgo \tList of implemented algorithms\r"
+				 		 + "\t" + "lspars \tList of parameters for algorithm\r";
+								
+			} else if(cmd_queue.peek().equals("list") || cmd_queue.peek().equals("lsit")) {
+				cmd_queue.remove();		
 				
-			}	
-			return "Not implemented yet.";
-			
-			
+				if(!cmd_queue.isEmpty()) {
+					boolean show_running = true;
+					boolean show_notrunning = true;
+					boolean json = false;
+					String type = "";
+					String creator = "";
+					double status = -5;
+					double status_max = 105;
+					int id = 0;
+					int id_max = Integer.MAX_VALUE;
+					
+					int i = 6;
+					while(cmd_queue.size()>0 && i>=0) {
+						if(cmd_queue.peek().equals("-r")) {
+							cmd_queue.remove();		
+							show_running = true;
+							show_notrunning = false;
+						} else if(cmd_queue.peek().equals("-nr")) {
+							cmd_queue.remove();		
+							show_running = false;
+							show_notrunning = true;
+						} else if(cmd_queue.peek().equals("-json")) {
+							cmd_queue.remove();		
+							json = true;
+						} else if(cmd_queue.peek().equals("-t")) {
+							cmd_queue.remove();		
+							
+							if(!cmd_queue.isEmpty()) {
+								type = cmd_queue.poll();					
+							} else {
+								throw new Exception("Specify optimizer type.");
+							}	
+						} else if(cmd_queue.peek().equals("-c")) {
+							cmd_queue.remove();		
+							
+							if(!cmd_queue.isEmpty()) {
+								creator = cmd_queue.poll();					
+							} else {
+								throw new Exception("Specify optimizer creator.");
+							}	
+						} else if(cmd_queue.peek().equals("-s")) {
+							cmd_queue.remove();		
+							
+							if(!cmd_queue.isEmpty()) {
+								try {
+									status = Double.parseDouble(cmd_queue.peek());
+									status_max = status;
+									cmd_queue.remove();
+									if(!cmd_queue.isEmpty()) {
+										try {
+											status_max = Double.parseDouble(cmd_queue.peek());
+											cmd_queue.remove();
+										} catch(Exception e) {}
+									}
+									if(status_max < status) {
+										double m = status;
+										status = status_max;
+										status_max = m;
+									}
+								} catch(Exception e) {}
+							}						
+						} else if(cmd_queue.peek().equals("-id")) {
+							cmd_queue.remove();		
+							
+							if(!cmd_queue.isEmpty()) {
+								try {
+									id = Integer.parseInt(cmd_queue.peek());
+									id_max = id;
+									cmd_queue.remove();
+									if(!cmd_queue.isEmpty()) {
+										try {
+											id_max = Integer.parseInt(cmd_queue.peek());
+											cmd_queue.remove();
+										} catch(Exception e) {}
+									}
+									if(id_max < id) {
+										int m = id;
+										id = id_max;
+										id_max = m;
+									}
+								} catch(Exception e) {}
+							}						
+						} else {
+							throw new Exception("No such parameter: "+cmd_queue.poll());
+						}
+						i--;
+					}					
+					return OptimizerManager.list(show_running, show_notrunning, type, creator, status, status_max, id, id_max, json);
+					
+				} else {
+					return OptimizerManager.list();
+				}
+				
+			} else if(cmd_queue.peek().equals("create")) {
+				cmd_queue.remove();		
+				
+				if(!cmd_queue.isEmpty()) {					
+					return OptimizerManager.create(auth, cmd_queue.poll());					
+				}
+				
+				return OptimizerManager.create(auth);
+				
+			} else if(cmd_queue.peek().equals("clone")) {
+				cmd_queue.remove();		
+				
+				int id = -1;
+				
+				if(!cmd_queue.isEmpty()) {	
+					try {
+						id = Integer.parseInt(cmd_queue.poll());		
+					} catch(Exception e) {						
+						throw new Exception("No valid clone id given.");
+					}
+				}
+				
+				if(id > -1) {
+					return OptimizerManager.cloneOptimizer(auth, id);
+				} else {
+					return OptimizerManager.cloneOptimizer(auth);
+				}
+				
+			} else if(cmd_queue.peek().equals("config")) {
+				cmd_queue.remove();		
 
+				try {
+
+					int id = -1;	
+					int id_max = -1;					
+					try {
+						id = Integer.parseInt(cmd_queue.peek());
+						cmd_queue.poll();						
+						try {
+							id_max = Integer.parseInt(cmd_queue.peek());
+							cmd_queue.poll();
+						} catch(Exception e) {}
+					} catch(Exception e) {}
+
+					if(cmd_queue.isEmpty()) throw new Exception("Not enough parameters. You need at least one.");
+
+							
+					if(cmd_queue.peek().equals("-get")) {
+						cmd_queue.poll();
+						if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {	
+							if(id>-1)
+								return OptimizerManager.getConfig(id, true);
+							else
+								return OptimizerManager.getConfig(true);
+						} else {	
+							if(id>-1)
+								return OptimizerManager.getConfig(id, false);
+							else
+								return OptimizerManager.getConfig(false);						
+						}
+						
+					} else if(cmd_queue.peek().equals("-reset")) {
+						if(id>-1) {
+							if(id_max>-1) {
+								OptimizerManager.resetConfig(id, id_max);		
+								return "Optimizers reset.";
+							} else {
+								OptimizerManager.resetConfig(id);
+							}
+						} else {
+							OptimizerManager.resetConfig();		
+						}
+						return "Optimizer reset.";
+						
+					} else if(cmd_queue.peek().equals("-clone")) {	
+						cmd_queue.poll();
+						
+						if(!cmd_queue.isEmpty()) {	
+							int cloneId = -1;
+							
+							try {
+								cloneId = Integer.parseInt(cmd_queue.poll());
+								
+								if(id>-1) {
+									if(id_max>-1) {
+										OptimizerManager.cloneConfig(id, id_max, cloneId);	
+									} else {
+										OptimizerManager.cloneConfig(id, cloneId);
+									}
+								} else {
+									OptimizerManager.cloneConfig(cloneId);		
+								}	
+								return "Configuration cloned from "+cloneId+".";
+							} catch(Exception e) {}
+						}
+						
+						throw new Exception("No valid clone id given.");
+						
+					} else if(cmd_queue.peek().equals("-addSHP") || cmd_queue.peek().equals("-addshp")) {	
+						cmd_queue.poll();
+						
+						String s = "";	
+						while(!cmd_queue.isEmpty()) {	
+							s += cmd_queue.poll()+" ";
+						}
+
+						if(id>-1) {
+							if(id_max>-1) {
+								OptimizerManager.configAddSHP(id, id_max, s);	
+								return "SHP added to optimizers.";
+							} else {
+								OptimizerManager.configAddSHP(id, s);
+							}
+						} else {
+							OptimizerManager.configAddSHP(s);		
+						}
+						return "SHP added to optimizer.";
+						
+					} else if(cmd_queue.peek().equals("-rmvSHP") || cmd_queue.peek().equals("-rmvshp")) {	
+						cmd_queue.poll();
+						
+						String s = "";	
+						while(!cmd_queue.isEmpty()) {	
+							s += cmd_queue.poll()+" ";
+						}
+
+						if(id>-1) {
+							if(id_max>-1) {
+								OptimizerManager.configRemoveSHP(id, id_max, s);	
+								return "SHP removed from optimizers.";
+							} else {
+								OptimizerManager.configRemoveSHP(id, s);
+							}
+						} else {
+							OptimizerManager.configRemoveSHP(s);		
+						}
+						return "SHP remove from optimizer.";
+					}
+					
+					
+					
+					String config = "";
+					while(!cmd_queue.isEmpty()) {	
+						config += cmd_queue.poll()+" ";
+					}
+					if(id > -1) {
+						if(id_max > -1) {
+							OptimizerManager.configure(id, id_max, config);
+							return "Optimizers configured.";
+						} else {
+							OptimizerManager.configure(id, config);
+						}
+					} else {
+						OptimizerManager.configure(config);
+					}
+					return "Optimizer configured.";
+				} catch(Exception e) {
+					throw e;
+				}
+								
+			} else if(cmd_queue.peek().equals("start") || cmd_queue.peek().equals("optimize")) {
+				cmd_queue.remove();		
+				
+				try {
+					if(!cmd_queue.isEmpty()) {							
+						int id = Integer.parseInt(cmd_queue.poll());								
+						if(!cmd_queue.isEmpty()) {								
+							OptimizerManager.start(id, Integer.parseInt(cmd_queue.poll()));	
+							return "Optimizers started.";								
+						} else {
+							OptimizerManager.start(id);		
+							return "Optimizer started.";					
+						}
+					} else {					
+						OptimizerManager.start();
+						return "Optimizer started.";
+					}
+				} catch(Exception e) {
+					throw e;
+				}
+				
+			} else if(cmd_queue.peek().equals("term") || cmd_queue.peek().equals("terminate")) {
+				cmd_queue.remove();		
+				
+				try {
+					if(!cmd_queue.isEmpty()) {	
+						if(cmd_queue.peek().contains("-")) {
+							if(cmd_queue.poll().equals("-all")) {
+								OptimizerManager.terminateAll();
+								return "All Optimizers terminated.";
+							}
+						} else {			
+							int id = Integer.parseInt(cmd_queue.poll());								
+							if(!cmd_queue.isEmpty()) {								
+								OptimizerManager.terminate(id, Integer.parseInt(cmd_queue.poll()));	
+								return "Optimizers terminated.";								
+							} else {
+								OptimizerManager.terminate(id);		
+								return "Optimizer terminated.";					
+							}
+						}
+					} else {					
+						OptimizerManager.terminate();						
+						return "Optimizer terminated.";
+					}
+				} catch(Exception e) {
+					throw e;
+				}
+				
+			} else if(cmd_queue.peek().equals("status")) {
+				cmd_queue.remove();					
+				
+				if(!cmd_queue.isEmpty()) {		
+					return "Status: "+SolverManager.round(OptimizerManager.status(Integer.parseInt(cmd_queue.poll())),3);	
+				} else {	
+					return "Status: "+SolverManager.round(OptimizerManager.status(),3);	
+				}	
+				
+			} else if(cmd_queue.peek().equals("result")) {
+				cmd_queue.remove();	
+
+				int id = -1;					
+				try {
+					id = Integer.parseInt(cmd_queue.peek());
+					cmd_queue.poll();
+				} catch(Exception e) {}
+						
+				if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {	
+					if(id>-1)
+						return OptimizerManager.result(id).toJSON();
+					else
+						return OptimizerManager.result().toJSON();
+				} else {
+					if(id>-1)
+						return OptimizerManager.result(id).toString();
+					else
+						return OptimizerManager.result().toString();
+				}	
+				
+				
+			} else if(cmd_queue.peek().equals("clear")) {
+				cmd_queue.remove();		
+				
+				try {
+					if(!cmd_queue.isEmpty()) {	
+						if(cmd_queue.peek().contains("-")) {
+							if(cmd_queue.poll().equals("-all")) {
+								OptimizerManager.clearAll();
+								return "All Optimizers cleared (if possible).";
+							}
+						} else {	
+							int id = Integer.parseInt(cmd_queue.poll());								
+							if(!cmd_queue.isEmpty()) {	
+								OptimizerManager.clear(id, Integer.parseInt(cmd_queue.poll()));					
+								return "Optimizers cleared.";								
+							} else {
+								OptimizerManager.clear(id);					
+								return "Optimizer cleared.";					
+							}
+						}
+					} else {					
+						OptimizerManager.clear();						
+						return "Optimizer cleared.";
+					}
+				} catch(Exception e) {
+					throw e;
+				}
+				
+			} else if(cmd_queue.peek().equals("delete")) {
+				cmd_queue.remove();		
+				
+				try {
+					if(!cmd_queue.isEmpty()) {	
+						if(cmd_queue.peek().contains("-")) {
+							if(cmd_queue.poll().equals("-all")) {
+								OptimizerManager.deleteAll();
+								return "All Optimizers deleted.";
+							}
+						} else {	
+							int id = Integer.parseInt(cmd_queue.poll());								
+							if(!cmd_queue.isEmpty()) {	
+								OptimizerManager.delete(id, Integer.parseInt(cmd_queue.poll()));					
+								return "Optimizers deleted.";								
+							} else {
+								OptimizerManager.delete(id);					
+								return "Optimizer deleted.";					
+							}
+						}
+					} else {					
+						OptimizerManager.delete();						
+						return "Optimizer deleted.";
+					}
+				} catch(Exception e) {
+					throw e;
+				}
+				
+			} else if(cmd_queue.peek().equals("lsalgo")) {
+				cmd_queue.remove();	
+						
+				if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {	
+					return OptimizerConfig.getAlgorithmList(true, false, "");
+				} else {
+					return OptimizerConfig.getAlgorithmList(false, false, "");
+				}		
+				
+			} else if(cmd_queue.peek().equals("lspars")) {
+				cmd_queue.remove();	
+				
+				if(!cmd_queue.isEmpty() && !cmd_queue.peek().equals("-json")) {
+					String algo = cmd_queue.poll();
+					
+					if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {	
+						return OptimizerConfig.getAlgorithmList(true, true, algo);
+					} else {
+						return OptimizerConfig.getAlgorithmList(false, true, algo);
+					}					
+				} else {
+					throw new Exception("Specify algorithm.");
+				}
+			}
 		}
 
 		throw new Exception("Command unknown ("+cmd+"). Try help for list of commands.");		

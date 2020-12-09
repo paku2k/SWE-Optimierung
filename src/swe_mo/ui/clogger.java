@@ -102,7 +102,13 @@ public class clogger {
 		excecuteLog(ERROR, AUTH, sourceMethod, msg);
 	}
 	public static void err(String AUTH, String sourceMethod, Exception e) {
-		excecuteLog(ERROR, AUTH, sourceMethod, e.getClass().getCanonicalName()+": "+e.getMessage());
+		String msg = "";
+		if(e.getClass().getCanonicalName() != "java.lang.Exception")
+			msg += e.getClass().getCanonicalName();
+		else
+			msg += "MOException";
+		msg +=  ": "+e.getMessage();
+		excecuteLog(ERROR, AUTH, sourceMethod, msg);
 	}
 	public static void ftl(String AUTH, String sourceMethod, String msg) {
 		excecuteLog(FATAL, AUTH, sourceMethod, msg);

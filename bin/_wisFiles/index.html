@@ -3,10 +3,18 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        
-        
+            
         <title>MO WebGUI</title>
-        <link rel="stylesheet" href="src/style.css">
+        <link rel="stylesheet" href="src/css/global.css">
+        <link rel="stylesheet" href="src/css/header.css">
+        <link rel="stylesheet" href="src/css/infobanner.css">
+        <link rel="stylesheet" href="src/css/tab.css">
+        <link rel="stylesheet" href="src/css/tab_manager.css">
+        <link rel="stylesheet" href="src/css/tab_solver.css">
+        <link rel="stylesheet" href="src/css/tab_optimizer.css">
+        <link rel="stylesheet" href="src/css/tab_functions.css">
+        <link rel="stylesheet" href="src/css/tab_cmd.css">
+        <link rel="stylesheet" href="src/css/tab_settings.css">
         
         <link rel="icon" type="image/png" href="img/icon.png">        
         <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
@@ -19,19 +27,399 @@
         <meta name="msapplication-config" content="img/browserconfig.xml">
         <meta name="theme-color" content="#ffffff">
         
-        <script language="javascript" type="text/javascript" src="src/script.js"></script>
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML"></script>
+        <script language="javascript" type="text/javascript" src="src/js/helperfn.js"></script>
+        <script language="javascript" type="text/javascript" src="src/js/loadAsync.js"></script>
+        <script language="javascript" type="text/javascript" src="src/js/infobanner.js"></script>
+        <script language="javascript" type="text/javascript" src="src/js/filesaver.js"></script>
+        <script language="javascript" type="text/javascript" src="src/js/tab_cmd.js"></script>
+        <script language="javascript" type="text/javascript" src="src/js/tab_solver.js"></script>
+        <script language="javascript" type="text/javascript" src="src/js/tab_optimizer.js"></script>
+        <script language="javascript" type="text/javascript" src="src/js/tab_functions.js"></script>
+        <script language="javascript" type="text/javascript" src="src/js/tab_settings.js"></script>
+        <script language="javascript" type="text/javascript" src="src/js/tab.js"></script>
+        <script language="javascript" type="text/javascript" src="src/js/global.js"></script>
     </header>
     <body onload="onload();">
         
+        <div id="info" style="display: none;">
+            <div><p id="info_close_x" onclick="closeInfo();">&#x2715;</p></div>
+            <p id="info_text"></p>
+        </div>
 	    
-	    <div>
-	        <img id="img_logo" src="img/icon.png">
+	    <div id="header">
+            <img id="img_logo" src="img/icon.png">
             <h1>Metaheuristic Optimization</h1>
 	    </div>
-	    	    
-	    <textarea id="cmd_input"></textarea><br>
-	    <button id="cmd_send" onclick="cmdInputExecute();">Execute</button>
-	    <button id="cmd_save" onclick="saveAsMoclFile();" disabled>Save</button>
-	    <input type="file" id="file_input" />
+            
+            
+        <div id="tab">
+            <button class="tablinks" onclick="tab(event, 'tab_solver')" id="tab_defaultOpen">Solver</button>
+            <button class="tablinks" onclick="tab(event, 'tab_optimizer')">Optimizer</button>  
+            <button class="tablinks" onclick="tab(event, 'tab_functions')">Functions</button>
+            <button class="tablinks" onclick="tab(event, 'tab_cmd')">CMD Editor</button>
+            <button class="tablinks" onclick="tab(event, 'tab_settings')">Settings</button>            
+        </div>
+        
+        
+        <div id="tab_solver" class="tabcontent tab_manager">
+            <h2>Solver Manager</h2>
+            <div>
+                <table>
+                    <tr>
+                        <td id="solver_list" class="manager_list">                            
+                            <label id="solver_add" class="add_manager" onclick="switch_solver(event, 'add_solver')">add solver</label>                                 
+                        </td>
+                        <td id="solver_contents">      
+                            <div id="add_solver" class="solver_content manager_content">
+                                <h3>Add Solver</h3><br>  
+                                <label for="solvalgorithm">Algorithm:</label>
+                                <select id="solvalgorithm">
+                                    <option value="default">default</option>
+                                </select>
+                                <button class="solver_content_btn" onclick="createSolver();">Create</button>         
+                                                          
+                            </div>                       
+                        </td>
+                    </tr>
+                </table>
+                <div id="solver_compare">
+                    <h3>Compare</h3>
+                    <table>
+                        <tr id="solver_compare_trsolver">
+                            <th>Solver</th>
+                        </tr>
+                        <tr id="solver_compare_trminimum">
+                            <th>Minimum</th>
+                        </tr>
+                        <tr id="solver_compare_triter">
+                            <th>Iterations</th>
+                        </tr>
+                        <tr id="solver_compare_trfc">
+                            <th>Function Calls</th>
+                        </tr>
+                    </table>                    
+                </div>
+            </div>            
+            
+        </div>
+        
+        
+        <div id="tab_optimizer" class="tabcontent tab_manager">
+            <h2>Optimizer Manager</h2>
+            <div>
+                <table>
+                    <tr>
+                        <td id="optimizer_list" class="manager_list">                            
+                            <label id="optimizer_add" class="add_manager" onclick="switch_optimizer(event, 'add_optimizer')">add optimizer</label>                                 
+                        </td>
+                        <td id="optimizer_contents">      
+                            <div id="add_optimizer" class="optimizer_content manager_content">
+                                <h3>Add Optimizer</h3><br>  
+                                <label for="optialgorithm">Algorithm:</label>
+                                <select id="optialgorithm">
+                                    <option value="default">default</option>
+                                </select>
+                                <button class="optimizer_content_btn" onclick="createOptimizer();">Create</button>          
+                                                          
+                            </div>                    
+                       
+                        </td>
+                    </tr>
+                </table>
+                <!--
+                <div id="optimizer_compare">
+                    <h3>Compare</h3>
+                    <table>
+                        <tr id="optimizer_compare_trsolver">
+                            <th>Optimizer</th>
+                        </tr>
+                    </table>                    
+                </div>
+                -->
+            </div>            
+            
+        </div>   
+        
+        
+        <div id="tab_functions" class="tabcontent">
+            <h2>Fitness Functions</h2>
+            <div>
+                <table>
+                    <tr>
+                        <th>ffid</th>
+                        <th>Function</th>
+                        <th>Boundaries</th>
+                    </tr>
+                    <tr>
+                        <td>0</td>
+                        <td class="math"><!-- f0 Rastrigin -->
+                            \begin{equation}
+                                f_{rastrigin} = An + \sum_{i=1}^{n} \left[ x_i^2 - A\cos(2\pi x_i) \right]
+                            \end{equation}
+                        </td>
+                        <td class="math" id="ff_0_boundaries"></td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td class="math"><!-- f1 -->
+                            \begin{equation}
+                                f_1 = \sum_{i=0}^{n-1} x_i^2
+                            \end{equation}
+                        </td>
+                        <td class="math" id="ff_1_boundaries"></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td class="math"><!-- f2 -->
+                            \begin{equation}
+                                f_2 = \sum_{i=0}^{n-1} |x_i| + \prod_{i=0}^{n-1} |x_i|
+                            \end{equation}
+                        </td>
+                        <td class="math" id="ff_2_boundaries"></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td class="math"><!-- f3 -->
+                            \begin{equation}
+                                f_3 = \sum_{i=0}^{n-1} \left(\sum_{j=1}^{i} x_j \right)^2
+                            \end{equation}
+                        </td>
+                        <td class="math" id="ff_3_boundaries"></td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td class="math"><!-- f4 -->
+                            \begin{equation}
+                                f_4 = max~|x_i|,~0=i &lt; n
+                            \end{equation}
+                        </td>
+                        <td class="math" id="ff_4_boundaries"></td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td class="math"><!-- f5 -->
+                            \begin{equation}
+                                f_5 = \sum_{i=0}^{n-2} \left( 100 \left(x_{i+1}-x_i^2 \right)^2 + (x_i - 1)^2 \right)
+                            \end{equation}
+                        </td>
+                        <td class="math" id="ff_5_boundaries"></td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td class="math"><!-- f6 -->
+                            \begin{equation}
+                                f_6 = \sum_{i=0}^{n-1} \left( \left\lfloor x_i + \frac{1}{2} \right\rfloor \right)^2
+                            \end{equation}
+                        </td>
+                        <td class="math" id="ff_6_boundaries"></td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td class="math"><!-- f7 -->
+                            \begin{equation}
+                                f_7 = \sum_{i=0}^{n-1} \left( i+1\right)x_i^4 + rand(0,1)
+                            \end{equation}
+                        </td>
+                        <td class="math" id="ff_7_boundaries"></td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td class="math"><!-- f8 -->
+                            \begin{equation}
+                                f_8 = \sum_{i=0}^{n-1} -x_i \sin(\sqrt{|x_i|})
+                            \end{equation}
+                        </td>
+                        <td class="math" id="ff_8_boundaries"></td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td class="math"><!-- f9 -->
+                            \begin{equation}
+                                f_9 = \sum_{i=0}^{n-1} \left( x_i^2 - 10 \cos(2\pi x_i) + 10 \right)
+                            \end{equation}
+                        </td>
+                        <td class="math" id="ff_9_boundaries"></td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td class="math"><!-- f10 -->
+                            \begin{equation}
+                                f_{10} = -20 e^{-0.2 \sqrt{\frac{1}{n} \sum_{i=0}^{n-1} x_i^2}} -  e^{\frac{1}{n} \sum_{i=0}^{n-1} \cos(2 \pi x_i)} + 20 + e
+                            \end{equation}
+                        </td>
+                        <td class="math" id="ff_10_boundaries"></td>
+                    </tr>
+                    <tr>
+                        <td>11</td>
+                        <td class="math"><!-- f11 -->
+                            \begin{equation}
+                                f_{11} = \frac{1}{4000} \left( \sum_{i=0}^{n-1} x_i^2 \right) - \prod_{i=0}^{n-1} \cos \left( \frac{x_i}{\sqrt{i+1}} \right) + 1
+                            \end{equation}
+                        </td>
+                        <td class="math" id="ff_11_boundaries"></td>
+                    </tr>
+                    <tr>
+                        <td>12</td>
+                        <td class="math"><!-- f12 -->
+                            \begin{equation}
+                                f_{12} = \frac{\pi}{n} \left[   10 (\sin^2(\pi x_1))   +   \sum_{i=0}^{n-2} (x_i-1)^2(1+ 10\sin^2(\pi x_{i+1}))  +  (x_n-1)^2     \right] + \sum_{i=0}^{n-1} u(x_i,10,100,4)
+                            \end{equation}
+                        </td>
+                        <td class="math" id="ff_12_boundaries"></td>
+                    </tr>
+                    <tr>
+                        <td>13</td>
+                        <td class="math"><!-- f13 -->
+                            \begin{equation}
+                                f_{13} = \frac{1}{10} \left[   10 (\sin^2(3\pi x_1))   +   \sum_{i=0}^{n-2} (x_i-1)^2(1+ \sin^2(3\pi x_{i+1}))  +  (x_n-1)(1+ \sin^2(2\pi x_n)    \right] + \sum_{i=0}^{n-1} u(x_i,10,100,4)
+                            \end{equation}
+                            <!-- u -->
+                            \begin{equation}
+                                u(x, a, k, m) = 
+                                \begin{cases}
+                                    k(x_i-a)^m,    & \text{if}~ x_i &gt; a \\
+                                    0,             & \text{if}~ \text{-}a \leq x_i \leq a \\
+                                    k(-x_i-a)^m,    & \text{if}~ x_i &lt; \text{-}a
+                                \end{cases}
+                            \end{equation}
+                        </td>
+                        <td class="math" id="ff_13_boundaries"></td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td class="math"><!-- f14 -->
+                            \begin{equation}
+                                f_{14} = \left( \frac{1}{500} + \sum_{j=0}^{24}\left( j + 1 + \sum_{i=0}^{1}(x_i-a_{ij})^6   \right)^{-1} ~\right)^{-1}
+                            \end{equation}
+                            <!-- a -->
+                            \begin{equation}
+                               a = 
+                                \begin{bmatrix}
+                                    -32 & -16 & 0 & 16 & 32 & -32 & -16 & 0 & 16 & 32 & -32 & -16 & 0 & 16 & 32 & -32 & -16 & 0 & 16 & 32 & -32 & -16 & 0 & 16 & 32 \\
+                                    -32 & -32 & -32 & -32 & -32 & -16 & -16 & -16 & -16 & -16 & 0 & 0 & 0 & 0 & 0 & 16 & 16 & 16 & 16 & 16 & 32 & 32 & 32 & 32 & 32 
+                                \end{bmatrix}
+                            \end{equation}
+                        </td>
+                        <td class="math" id="ff_14_boundaries"></td>
+                    </tr>
+                    <tr>
+                        <td>15</td>
+                        <td class="math"><!-- f15 -->
+                            \begin{equation}
+                                f_{15} = \sum_{i=0}^{10} \left( b_i - \frac{x_0 \left( c_i^2 + c_ix_1\right)}{c_i^2 + c_ix_2 + x_3} \right)^2
+                            \end{equation}
+                            <!-- b -->
+                            \begin{equation}
+                               b = 
+                                \begin{bmatrix}
+                                    0.1957& 0.1947& 0.1735& 0.1600& 0.0844& 0.0627& 0.0456& 0.0342& 0.0323& 0.0235& 0.0246 
+                                \end{bmatrix}
+                            \end{equation}
+                            <!-- c -->
+                            \begin{equation}
+                               c = 
+                                \begin{bmatrix}
+                                    4 & 2 & 1 & \frac{1}{2} & \frac{1}{4} &   \frac{1}{6} & \frac{1}{8} & \frac{1}{10} & \frac{1}{12} & \frac{1}{14} & \frac{1}{16}
+                                \end{bmatrix}
+                            \end{equation}                        
+                        </td>
+                        <td class="math" id="ff_15_boundaries"></td>
+                    </tr>
+                    <tr>
+                        <td>16</td>
+                        <td class="math"><!-- f16 -->
+                            \begin{equation}
+                                f_{16} = 4x_0^2 - 2.1x_0^4 + \frac{1}{3}x_0^6 + x_0x_1 -4x_1^2 + 4x_1^4
+                            \end{equation}
+                        </td>
+                        <td class="math" id="ff_16_boundaries"></td>
+                    </tr>
+                    <tr>
+                        <td>17</td>
+                        <td class="math"><!-- f17 -->
+                            \begin{equation}
+                                f_{17} = \left(x_1 - \frac{5.1}{4\pi^2} x_0^2 + \frac{5}{\pi}x_0 - 6 \right)^2 + 10 \left(1-\frac{1}{8\pi} \right) \cos x_0 + 10
+                            \end{equation}
+                        </td>
+                        <td class="math" id="ff_17_boundaries"></td>
+                    </tr>
+                    <tr>
+                        <td>18</td>
+                        <td class="math"><!-- f18 -->
+                            \begin{equation}
+                                f_{18} = \left[  1 + (x_0+x_1+1)^2(19-14x_0+3x_0^2 -14x_1 + 6x_0x_1 + 3x_1^2)    \right] \left[  30 + (2x_0 - 3x_1)^2 (18-32x_0+12x_0^2 + 48x_1 - 36x_0x_1 + 27x_1^2)   \right]
+                            \end{equation}
+                        </td>
+                        <td class="math" id="ff_18_boundaries"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>        
+        
+        
+        <div id="tab_cmd" class="tabcontent">	
+            <h2>CMD Editor</h2>   
+            <div>         
+                <label class="cmd_editor_buttons" id="cmd_save_as" onclick="saveAsWithFilename();">&#x1f5ab; ...</label>
+                <label class="cmd_editor_buttons" id="cmd_save" onclick="saveAsMoclFile('');">&#x1f5ab;</label>
+                <label class="cmd_editor_buttons"><input type="file" id="cmd_file"/>&#x1f5c0;</label>   
+                <label class="cmd_editor_buttons" id="cmd_clr" onclick="clr_cmd_input();">&#x2612;</label>
+            </div>
+            <textarea id="cmd_input" ondrop="cmdInputDrop(event);" ondragover="cmdInputDragOver(event);" ondragleave="cmdInputDragLeave(event);" oninput="cmd_input_changed(event);"></textarea><br>
+            <label id="cmd_send" onclick="cmdInputExecute();" class="cmd_editor_buttons">Execute</label>
+            
+            <div>       
+                <h3 id="historyH3">Command History</h3>
+                <label class="clearhistory" onclick="clearCmdHistory();">Clear</label>
+                <table id="tab_cmd_history_table">
+                    <tr id="tab_cmd_history_tableheader">
+                        <th>ID</th>
+                        <th>Command</th>
+                        <th>Response</th>
+                    </tr>
+                </table>                
+            </div>     
+                                                                              
+        </div>
+        
+        
+        <div id="tab_settings" class="tabcontent">
+            <h2>Application Settings</h2>
+            
+            <div id="settings_list">
+                <table id="tab_settings_table">
+                    <tr id="tab_settings_tableheader">
+                        <th>Setting</th>
+                        <th>Value</th>
+                    </tr>
+                </table> 
+                <label onclick="settingsReset();">Reset All</label>
+            </div>               
+                
+            <div id="settings_credentials">
+                <h3>App Info</h3>
+                <table>
+                    <tr>
+                        <td>App Version</td>
+                        <td id="appinfo_version"></td>
+                    </tr>
+                    <tr>
+                        <td>WebGUI Version</td>
+                        <td id="appinfo_wguiversion">0.2.0.0</td>
+                    </tr>
+                    <tr>
+                        <td>Release Date</td>
+                        <td id="appinfo_date"></td>
+                    </tr>
+                    <tr>
+                        <td>Developers</td>
+                        <td id="appinfo_developers"></td>
+                    </tr>
+                </table>    
+                <p>&copy; 2020</p>                
+            </div>
+        </div>   
+        
 	</body>
 </html>
