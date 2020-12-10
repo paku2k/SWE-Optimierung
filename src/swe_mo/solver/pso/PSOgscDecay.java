@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import swe_mo.solver.Convergence;
+import swe_mo.solver.FileGenerator;
 import swe_mo.solver.SolverConfig;
 import swe_mo.solver.SolverManager;
 import swe_mo.solver.SolverResult;
@@ -14,11 +15,25 @@ public class PSOgscDecay extends PSOgsc{
 	double decayEnd;
 	
 
-	public PSOgscDecay(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, int solverID, double decayStart, double decayEnd, double convergence) throws Exception {
+	public PSOgscDecay(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, int solverID, double decayStart, double decayEnd, double convergence, boolean printConvergenceFile, boolean printPositionFile) throws Exception {
 
 		
-		super(dimension, min, max, particleCount, w, cc, cs, dt, numIter,  ffID, convergence, solverID);
-		c = new Convergence("PSOgnscD");
+		super(dimension, min, max, particleCount, w, cc, cs, dt, numIter,  ffID, convergence, solverID, false, false);
+		this.printPositionFile=printPositionFile;
+
+		c = new Convergence("PSOgnscDConvergence", printConvergenceFile, convergence);
+		if(printPositionFile) {
+			String header = "generation;";
+			for (int i=0; i<particleCount; i++) {
+				header=header+"P"+i+"solution;";
+				for (int j=0; j<dimension; j++) {
+					header=header+"P"+i+"axis"+j+";";
+				}
+			}
+			
+			
+			g = new FileGenerator("PSOgscDecay_Positions_FFID"+ffID, header);
+		}
 
 		if(decayStart > decayEnd) {
 			this.decayStart = decayStart;
@@ -31,7 +46,7 @@ public class PSOgscDecay extends PSOgsc{
 
 	public static SolverConfig defaultConfig() {
 		//int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, double decayStart, double decayEnd, convergence
-		return new SolverConfig(1, 30, 100, 5000, 5.12, -5.12, 0.9, 0.5, 0.9, 1, 0.9, 0.4, 1.0);
+		return new SolverConfig(1, 30, 100, 5000, 5.12, -5.12, 0.9, 0.5, 0.9, 1, 0.9, 0.4, 1.0, false, false);
 	}
 	
 	
@@ -48,6 +63,12 @@ public class PSOgscDecay extends PSOgsc{
 			
 			
 			for(int i=0; i<numIter && !SolverManager.checkTerminated(solverID); i++) {
+				if(printPositionFile) {
+					csv = ""+i+";";
+				}
+				
+				sumOfDifferencesGlobal=0.0;
+				
 				for(int j=0; j<particleCount; j++) {
 					updateGlobalBestPosition(swarm.get(j));
 					swarm.get(j).updateVelocityDecay(globalBestPosition, numIter, i, decayStart, decayEnd);
@@ -58,14 +79,28 @@ public class PSOgscDecay extends PSOgsc{
 					calculateRandomDifference(j);						
 					//end convergence related
 					
+					if(printPositionFile) {
+						csv=csv+swarm.get(j).currentMinimum+";";
+							for (int p=0; p<dimension; p++) {
+								csv=csv+swarm.get(j).position.get(p)+";";
+							}
+						}
+					
 					counter++;
+				}
+				
+				if(printPositionFile) {
+					g.write(csv);
 				}
 				SolverManager.updateStatus(solverID, (100*((double)i)/((double)numIter)));
 				
 				boolean converged = c.update(sumOfDifferencesGlobal, globalMinimum);	
 				
-				if(converged&&convergence!=0.0) {
-					c.file.close();
+				if(converged) {
+					c.closeFile();
+					if(printPositionFile) {
+						g.close();
+					}
 					return new SolverResult(globalMinimum, globalBestPosition, counter, i);
 				}
 			}
@@ -73,7 +108,10 @@ public class PSOgscDecay extends PSOgsc{
 			double val = (globalMinimum);
 			ret.addAll(globalBestPosition);
 			
-			c.file.close();
+			c.closeFile();
+			if(printPositionFile) {
+				g.close();
+			}
 			return new SolverResult(val, ret, counter, numIter);
 		}
 }

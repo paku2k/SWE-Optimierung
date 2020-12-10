@@ -3,6 +3,7 @@ import swe_mo.solver.SolverManager;
 import swe_mo.solver.SolverResult;
 import swe_mo.solver.SolverConfig;
 import swe_mo.solver.Convergence;
+import swe_mo.solver.FileGenerator;
 
 import java.io.IOException;
 
@@ -15,7 +16,7 @@ import swe_mo.solver.FitnessFunction;
 
 public class DErand1 {
 	
-	//FileGenerator g;
+	FileGenerator g;
 	
 	
 	Convergence c;
@@ -34,6 +35,8 @@ public class DErand1 {
 	
 	
 	double sumOfDifferencesGlobal;
+	boolean printConvergenceFile;
+	boolean printPositionFile;
 
 	double convergenceCrit;
 	
@@ -46,10 +49,10 @@ public class DErand1 {
 	ArrayList<Particle_DE> xPop;
 	int numberOfCalls = 0;
 	
-	public DErand1(int N, int NP, double F, double CR, int maxGenerations, double upperBound, double lowerBound, int ffIndex, int solverID, double convergence) throws IOException {
+	public DErand1(int N, int NP, double F, double CR, int maxGenerations, double upperBound, double lowerBound, int ffIndex, int solverID, double convergence, boolean printConvergenceFile, boolean printPositionFile) throws IOException {
 		//With this constructor the population will be created with random set particles within the provided bounds. 
 		
-		this(N, NP, F, CR, maxGenerations, ffIndex, solverID, convergence);
+		this(N, NP, F, CR, maxGenerations, ffIndex, solverID, convergence, printConvergenceFile, printPositionFile);
 		
 		this.upperBound=upperBound;
 		this.lowerBound=lowerBound;
@@ -67,14 +70,11 @@ public class DErand1 {
 	}
 	
 	public static SolverConfig defaultConfig() {		
-		return new SolverConfig(1,5,50,0.3,0.3,1000,5.12,-5.12, 1.0);
+		return new SolverConfig(1,5,50,0.3,0.3,1000,5.12,-5.12, 1.0, false, false);
 	}
+
 	
-	protected DErand1(int N, int NP, double F, double CR, int maxGenerations, int ffIndex, int solverID, double convergence, boolean generateFile) throws IOException {
-		this(N, NP, F, CR, maxGenerations, N, N, ffIndex, solverID, convergence);
-	}
-	
-	public DErand1(int N, int NP, double F, double CR, int maxGenerations, int ffIndex, int solverID, double convergence) throws IOException {
+	public DErand1(int N, int NP, double F, double CR, int maxGenerations, int ffIndex, int solverID, double convergence, boolean printConvergenceFile, boolean printPositionFile) throws IOException {
 		//If, for whatever reason, the population should be populated manually, this constructor can be used
 		// it will initialize all NP particles with all dimensions to be zero
 		
@@ -118,22 +118,24 @@ public class DErand1 {
 			throw new IOException("Please check your input parameters ("+s+").");
 		}
 
-		c= new Convergence("DErand1");
-
 		
+		this.printConvergenceFile=printConvergenceFile;
+		this.printPositionFile=printPositionFile;
 		
-		/*
-		String header = "generation;";
-		for (int i=0; i<NP; i++) {
-			header=header+"P"+i+"solution;";
-			for (int j=0; j<N; j++) {
-				header=header+"P"+i+"axis"+j+";";
+		if(printPositionFile) {
+			String header = "generation;";
+			for (int i=0; i<NP; i++) {
+				header=header+"P"+i+"solution;";
+				for (int j=0; j<N; j++) {
+					header=header+"P"+i+"axis"+j+";";
+				}
 			}
-		}
-		*/
-		
-		//g = new FileGenerator("DE_Positions_FFID"+ffIndex, header);
-		
+			
+			
+			g = new FileGenerator("DErand1_Positions_FFID"+ffIndex, header);
+		}		
+		c = new Convergence("DErand1Convergence", printConvergenceFile, convergence);
+
 
 		
 		this.upperBound=Double.MAX_VALUE;
@@ -181,8 +183,9 @@ public class DErand1 {
 		// Solver
 		for(this.generation=0; generation<this.maxGenerations; generation++) {
 			
-			//csv = ""+generation+";";
-			
+			if(g!=null) {
+				csv = ""+generation+";";
+			}
 			SolverManager.updateStatus(solverID, (100*((double)generation)/((double)this.maxGenerations)));
 			if(SolverManager.checkTerminated(solverID)) {
 				return new SolverResult(best, bestParticle.position, fitCount);
@@ -196,10 +199,22 @@ public class DErand1 {
 				xPop.set(i, compare(i, crossOver(xPop.get(i), calculateV(i))));
 				
 			}
-			//g.write(csv);
+			
+			if(g!=null) {
+				g.write(csv);
+			}
+			
 			boolean converged = c.update(sumOfDifferencesGlobal, best);
-			if (converged&&this.convergenceCrit!=0.0) {
-				c.file.close();
+			if (converged) {
+		
+				c.closeFile();
+				try {
+					g.close();
+				}
+				catch (Exception e) {
+					
+				}
+			
 
 				return new SolverResult(best, bestParticle.position, fitCount, generation);
 
@@ -215,8 +230,15 @@ public class DErand1 {
 			
 
 
-
-		c.file.close();
+		
+		
+		c.closeFile();
+		try {
+			g.close();
+		}
+		catch (Exception e) {
+			
+		}
 			
 		return new SolverResult(best, bestParticle.position, fitCount, generation);
 
@@ -293,12 +315,12 @@ public class DErand1 {
 		
 		Particle_DE x = xPop.get(xIndex);
 
-		/*
+		if(g!=null) {
 		csv=csv+xRes+";";
-		for (int j=0; j<N; j++) {
+			for (int j=0; j<N; j++) {
 				csv=csv+x.position.get(j)+";";
+			}
 		}
-		*/
 		
 		
 		

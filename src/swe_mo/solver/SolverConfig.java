@@ -32,7 +32,6 @@ public class SolverConfig {
 	public double CR;
 	//DErtb1 attributes
 	public double lambda;
-	public double convergence;
 	//PSOgsc attributes
 	public double w;
 	public double cc;
@@ -42,6 +41,11 @@ public class SolverConfig {
 	public double decayStart;
 	public double decayEnd;
 	public int neighbors;
+	
+	public double convergence;
+	public boolean printConvergenceFile;
+	public boolean printPositionFile;
+
 	
 	
 	//list of used parameters
@@ -65,6 +69,17 @@ public class SolverConfig {
 		usedpars.add("maxGenerations");
 		usedpars.add("lowerBound");		
 		usedpars.add("upperBound");
+	}
+	
+	public SolverConfig(int ffid, int n, int nP, double f, double cR, int maxGenerations, double upperBound, double lowerBound, double convergence, boolean printConvergenceFile, boolean printPositionFile ) {
+		this(ffid, n, nP,f, cR, maxGenerations, upperBound, lowerBound, convergence);
+		
+		this.printConvergenceFile = printConvergenceFile;
+		this.printPositionFile = printPositionFile;
+		
+		usedpars.add("printConvergenceFile");
+		usedpars.add("printPositionFile");
+
 	}
 	
 	//with convergence
@@ -96,24 +111,41 @@ public class SolverConfig {
 		usedpars.add("lambda");
 	}
 	
+	public SolverConfig(int ffid, int n, int nP, double f, double cR, double lambda, int maxGenerations, double upperBound, double lowerBound, double convergence, boolean printConvergenceFile, boolean printPositionFile) {
+		this(ffid, n, nP, f, cR, lambda, maxGenerations, upperBound, lowerBound, convergence);
+		
+		this.printConvergenceFile = printConvergenceFile;
+		this.printPositionFile = printPositionFile;
+		
+		usedpars.add("printConvergenceFile");
+		usedpars.add("printPositionFile");
+	}
+	
+	
 	//PSOgsc
-	public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, double convergence) {
+	public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, double convergence, boolean printConvergenceFile, boolean printPositionFile) {
 		this(ffid, n, nP, maxGenerations, upperBound, lowerBound, convergence);		
 
 		this.w = w;
 		this.cc = cc;
 		this.cs = cs;
 		this.dt = dt;
-
+		this.printConvergenceFile = printConvergenceFile;
+		this.printPositionFile = printPositionFile;
+		
+		usedpars.add("printConvergenceFile");
+		usedpars.add("printPositionFile");
 		usedpars.add("w");
 		usedpars.add("cc");
 		usedpars.add("cs");
 		usedpars.add("dt");
 	}
 	
+	
+	
 	//PSOnsc / PSOgnsc
-		public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, int neighbors, double convergence) {
-			this(ffid, n, nP, maxGenerations, upperBound, lowerBound, w, cc, cs, dt, convergence);		
+		public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, int neighbors, double convergence, boolean printConvergenceFile, boolean printPositionFile) {
+			this(ffid, n, nP, maxGenerations, upperBound, lowerBound, w, cc, cs, dt, convergence, printConvergenceFile, printPositionFile);		
 		
 			this.neighbors = neighbors;
 			usedpars.add("neighbors");
@@ -122,8 +154,8 @@ public class SolverConfig {
 		}
 	
 	//PSOgscDecay
-	public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, double decayStart, double decayEnd, double convergence) {
-		this(ffid, n, nP, maxGenerations, upperBound, lowerBound, w, cc, cs, dt, convergence);		
+	public SolverConfig(int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, double decayStart, double decayEnd, double convergence, boolean printConvergenceFile, boolean printPositionFile) {
+		this(ffid, n, nP, maxGenerations, upperBound, lowerBound, w, cc, cs, dt, convergence, printConvergenceFile, printPositionFile);		
 
 		this.decayStart = decayStart;
 		this.decayEnd = decayEnd;
@@ -192,6 +224,12 @@ public class SolverConfig {
 			case "neighbors":
 				neighbors = (int)Double.parseDouble(value);
 				return;
+			case "printPositionFile":
+				printPositionFile = Boolean.parseBoolean(value);
+				return;
+			case "printConvergenceFile":
+				printConvergenceFile = Boolean.parseBoolean(value);
+				return;
 		}
 		throw new Exception("No such hyperparameter ("+param+").");
 	}
@@ -233,6 +271,10 @@ public class SolverConfig {
 				return convergence;
 			case "neighbors": 
 				return neighbors;
+			case "printPositionFile": 
+				return printPositionFile;
+			case "printConvergenceFile": 
+				return printConvergenceFile;
 				
 		}
 		return "(not defined)";
@@ -309,7 +351,11 @@ public class SolverConfig {
 										 config.maxGenerations,
 										 config.upperBound,
 										 config.lowerBound,
-										 config.ffid, id, config.convergence).solve();	
+										 config.ffid,
+										 id,
+										 config.convergence,
+										 config.printConvergenceFile,
+										 config.printPositionFile).solve();	
 				
 			case "DEbest1":
 				return new DEbest1(config.N,
@@ -319,7 +365,11 @@ public class SolverConfig {
 										 config.maxGenerations,
 										 config.upperBound,
 										 config.lowerBound,
-										 config.ffid, id,config.convergence).solve();	
+										 config.ffid,
+										 id,
+										 config.convergence,
+										 config.printConvergenceFile,
+										 config.printPositionFile).solve();	
 			case "DEbest2":
 				return new DEbest2(config.N,
 										 config.NP,
@@ -328,7 +378,11 @@ public class SolverConfig {
 										 config.maxGenerations,
 										 config.upperBound,
 										 config.lowerBound,
-										 config.ffid, id,config.convergence).solve();
+										 config.ffid,
+										 id,
+										 config.convergence,
+										 config.printConvergenceFile,
+										 config.printPositionFile).solve();
 			case "DErtb1":
 				return new DErandToBest1(config.N,
 										 config.NP,
@@ -338,7 +392,11 @@ public class SolverConfig {
 										 config.maxGenerations,
 										 config.upperBound,
 										 config.lowerBound,
-										 config.ffid, id,config.convergence).solve();
+										 config.ffid,
+										 id,
+										 config.convergence,
+										 config.printConvergenceFile,
+										 config.printPositionFile).solve();
 					
 			case "PSOgsc":
 				return new PSOgsc(config.N,
@@ -351,7 +409,10 @@ public class SolverConfig {
 								 config.dt,
 								 config.maxGenerations,
 								 config.ffid,
-								 config.convergence, id).solve();	
+								 config.convergence, 
+								 id,
+								 config.printConvergenceFile,
+								 config.printPositionFile).solve();	
 				
 			case "PSOnsc":
 				return new PSOnsc(config.N,
@@ -365,7 +426,9 @@ public class SolverConfig {
 										 config.maxGenerations,
 										 config.ffid, id,
 										 config.neighbors,
-										 config.convergence).solve();
+										 config.convergence,
+										 config.printConvergenceFile,
+										 config.printPositionFile).solve();
 				
 			case "PSOgnsc":
 				return new PSOgnsc(config.N,
@@ -379,7 +442,9 @@ public class SolverConfig {
 										 config.maxGenerations,
 										 config.ffid, id,
 										 config.neighbors,
-										 config.convergence).solve();	
+										 config.convergence,
+										 config.printConvergenceFile,
+										 config.printPositionFile).solve();	
 				
 			case "PSOgscD":
 				return new PSOgscDecay(config.N,
@@ -395,7 +460,9 @@ public class SolverConfig {
 										 id,
 										 config.decayStart,
 										 config.decayEnd,
-										 config.convergence).solve();	
+										 config.convergence,
+										 config.printConvergenceFile,
+										 config.printPositionFile).solve();	
 
 		}
 		throw new Exception("Algorithm not specified or no solver method.");

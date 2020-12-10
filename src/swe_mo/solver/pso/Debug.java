@@ -30,7 +30,7 @@ public class Debug {
 
 		int neighbors = 50;
 		//PSOgscDecay psoGlobalSolver = new PSOgscDecay(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID, decayStart, decayEnd);
-		SolverResult sr = new PSOnsc(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID, neighbors, convergence).solve();
+		SolverResult sr = new PSOnsc(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID, neighbors, convergence, false, false).solve();
 		//SolverResult sr = new PSOgsc(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID).solve();
 		//SolverResult sr = new PSOgnsc(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID, neighbors, convergence).solve();
 		

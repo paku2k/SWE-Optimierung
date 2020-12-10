@@ -3,25 +3,49 @@ package swe_mo.solver.de;
 import java.io.IOException;
 
 import swe_mo.solver.Convergence;
+import swe_mo.solver.FileGenerator;
 
 public class DEbest2 extends DEbest1{
 
 	
 	public DEbest2(int N, int NP, double F, double CR, int maxGenerations, double upperBound, double lowerBound,
-			int ffIndex, int solverID, double convergence) throws IOException {
-		super(N, NP, F, CR, maxGenerations, upperBound, lowerBound, ffIndex, solverID, convergence);
-		c= new Convergence("DEbest2");
+			int ffIndex, int solverID, double convergence, boolean printConvergenceFile, boolean printPositionFile) throws IOException {
+		super(N, NP, F, CR, maxGenerations, upperBound, lowerBound, ffIndex, solverID, convergence, false, false);
+		c= new Convergence("DEbest2Convergence", printConvergenceFile, convergence);
+		
+		if(printPositionFile) {
+			String header = "generation;";
+			for (int i=0; i<NP; i++) {
+				header=header+"P"+i+"solution;";
+				for (int j=0; j<N; j++) {
+					header=header+"P"+i+"axis"+j+";";
+				}
+			}
+			
+			
+			g = new FileGenerator("DEbest2_Positions_FFID"+ffIndex, header);
+		}
 
-		// TODO Auto-generated constructor stub
 	}
 	
 	
 	public DEbest2(int N, int NP, double F, double CR, int maxGenerations, 
-			int ffIndex, int solverID, double convergence) throws IOException {
-		super(N, NP, F, CR, maxGenerations,  ffIndex, solverID, convergence);
-		c= new Convergence("DEbest2");
+			int ffIndex, int solverID, double convergence, boolean printConvergenceFile, boolean printPositionFile) throws IOException {
+		super(N, NP, F, CR, maxGenerations,  ffIndex, solverID, convergence, false, false);
+		c= new Convergence("DEbest2Convergence", printConvergenceFile, convergence);
 
-		// TODO Auto-generated constructor stub
+		if(printPositionFile) {
+			String header = "generation;";
+			for (int i=0; i<NP; i++) {
+				header=header+"P"+i+"solution;";
+				for (int j=0; j<N; j++) {
+					header=header+"P"+i+"axis"+j+";";
+				}
+			}
+			
+			
+			g = new FileGenerator("DEbest2_Positions_FFID"+ffIndex, header);
+		}
 	}
 			
 		

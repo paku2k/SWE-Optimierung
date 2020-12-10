@@ -14,6 +14,10 @@ public class PSOgsc {
 	double sumOfDifferencesGlobal;
 	Convergence c;
 	double convergence;
+	boolean printPositionFile;
+	FileGenerator g;
+	String csv;
+
 	//end convergence related
 	
 	
@@ -36,12 +40,28 @@ public class PSOgsc {
 
 	
 
-		public PSOgsc(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, double convergence, int solverID) throws Exception {
+		public PSOgsc(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, double convergence, int solverID, boolean printConvergenceFile, boolean printPositionFile) throws Exception {
 		// This constructor creates and  initializes a psoGlobal-Solver for classical Particle Swarm Optimization.
 			swarm = new ArrayList<PSOparticle>();
 
 
-			c = new Convergence("PSOgsc");
+			c = new Convergence("PSOgscConvergence", printConvergenceFile, convergence);
+			
+			if(printPositionFile) {
+				String header = "generation;";
+				for (int i=0; i<particleCount; i++) {
+					header=header+"P"+i+"solution;";
+					for (int j=0; j<dimension; j++) {
+						header=header+"P"+i+"axis"+j+";";
+					}
+				}
+				
+				
+				g = new FileGenerator("PSOgsc_Positions_FFID"+ffID, header);
+			}
+			
+			this.printPositionFile=printPositionFile;
+			
 			this.convergence = convergence;
 
 			this.solverID = solverID;
@@ -91,7 +111,7 @@ public class PSOgsc {
 
 			public static SolverConfig defaultConfig() {
 				//int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, 
-				return new SolverConfig(1, 30, 100, 5000, 5.12, -5.12, 0.9, 0.5, 0.9, 1, 1.0);
+				return new SolverConfig(1, 30, 100, 5000, 5.12, -5.12, 0.9, 0.5, 0.9, 1, 1.0, false, false);
 			}
 			
 	
@@ -109,6 +129,10 @@ public class PSOgsc {
 				
 				for(int i=0; i<numIter && !SolverManager.checkTerminated(solverID); i++) {
 				//for(int i=0; i<numIter; i++) {
+					if(printPositionFile) {
+						csv = ""+i+";";
+					}
+					
 					sumOfDifferencesGlobal=0.0;
 					
 					for(int j=0; j<particleCount; j++) {
@@ -122,15 +146,29 @@ public class PSOgsc {
 						//convergence related
 						calculateRandomDifference(j);						
 						//end convergence related
+					
+						if(printPositionFile) {
+							csv=csv+swarm.get(j).currentMinimum+";";
+								for (int p=0; p<dimension; p++) {
+									csv=csv+swarm.get(j).position.get(p)+";";
+								}
+							}
 						
 						
 						counter++;
 					}
+					if(printPositionFile) {
+						g.write(csv);
+					}
+					
 					SolverManager.updateStatus(solverID, (100*((double)i)/((double)numIter)));
 					boolean converged = c.update(sumOfDifferencesGlobal, globalMinimum);	
 					
-					if(converged&&convergence!=0.0) {
-						c.file.close();
+					if(converged) {
+						c.closeFile();
+						if(printPositionFile) {
+							g.close();
+						}
 						return new SolverResult(globalMinimum, globalBestPosition, counter, i);
 					}
 
@@ -140,7 +178,10 @@ public class PSOgsc {
 				double val = (globalMinimum);
 				ret.addAll(globalBestPosition);
 				
-				c.file.close();
+				c.closeFile();
+				if(printPositionFile) {
+					g.close();
+				}
 				return new SolverResult(val, ret, counter, numIter);
 			}
 			
