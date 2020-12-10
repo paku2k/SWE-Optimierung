@@ -32,5 +32,6 @@
 	<classpathentry kind="lib" path="libraries/org.json/json-20200518.jar"/>
 	<classpathentry kind="lib" path="libraries/org.jfree/jfreechart.jar"/>
 	<classpathentry kind="lib" path="libraries/org.json/json-simple-1.1.jar"/>
+	<classpathentry kind="lib" path="libraries/com.mathworks/engine.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
