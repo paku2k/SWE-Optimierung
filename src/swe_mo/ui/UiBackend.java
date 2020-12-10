@@ -13,8 +13,6 @@ import swe_mo.solver.FitnessFunction;
 import swe_mo.solver.SolverConfig;
 import swe_mo.solver.SolverManager;
 
-
-
 public class UiBackend {	
 	private final static String AUTH = "UiB";
 	
@@ -26,7 +24,6 @@ public class UiBackend {
 	private static Thread Thread_WebInterfaceServer;	
 	
  	
-	
 	
 	
 	
@@ -217,6 +214,7 @@ public class UiBackend {
 	 * 
 	 * @throws Exception
 	 */	
+	@SuppressWarnings("unchecked")
 	private static Object cmd_interprete(String auth, String cmd) throws Exception {
 		//cut the command string
 		Queue<String> cmd_queue = new LinkedList<String>();
@@ -242,6 +240,7 @@ public class UiBackend {
 						 + "\t" + "cfg \t\tApplication configuration\r"
 						 + "\t" + "uif \t\tUiFrontend\r"
 						 + "\t" + "wis \t\tWebInterfaceServer\r"
+				 		 + "\t" + "mv  \t\tMO Visualizer\r"
 						 + "\t" + "sm  \t\tSolverManager\r"
 						 + "\t" + "om  \t\tOptimizer";
 			} else {
@@ -476,6 +475,25 @@ public class UiBackend {
 				}
 
 				return (wis.status()?"running":"not running")+". Configured port: "+wis.getPort();	
+			}
+			
+			
+		// mv	
+		} else if(cmd_queue.peek().equals("mv")) {
+			cmd_queue.remove();
+
+			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
+				return     "mv - List of commands\r"
+						 + "\t" + "start \t\tstart the MO Visualizer\r";	
+				
+			} else if(cmd_queue.peek().equals("start")) {
+				cmd_queue.remove();				
+				try {
+					throw new Exception("MatLab engine yet to be correctly implemented.");
+					//return "Starting MO Visualizer.";
+				} catch(Exception e) {
+					throw new Exception("Could not start MO Visualizer. ("+e.getMessage()+")");
+				}
 			}
 			
 			
