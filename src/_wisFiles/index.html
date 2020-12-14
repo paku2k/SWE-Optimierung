@@ -145,6 +145,22 @@
         <div id="tab_functions" class="tabcontent">
             <h2>Fitness Functions</h2>
             <div>
+            <div>
+                <h3>Custom Functions</h3>
+                <table id="ffEditor">
+                    <tr id="ffEditor_fields">
+                        <th colspan="3">
+                            <input id="ff_editor_in" oninput="ffEditor_oninput();" type="text" placeholder="LaTex equation f(x,n)=" autocomplete="off">
+                            <div class="ff_editor_out" id="ff_editor_out1" class="math"></div>
+                            <div class="ff_editor_out" id="ff_editor_out2" class="math"></div>
+                            <button onclick="cff_create()">Create Fitness Function</button>
+                        </th>
+                    </tr>
+                </table>
+                
+                <br>
+                
+                <h3>Implemented Functions (hard coded)</h3>
                 <table>
                     <tr>
                         <th>ffid</th>
@@ -272,7 +288,7 @@
                         <td>13</td>
                         <td class="math"><!-- f13 -->
                             \begin{equation}
-                                f_{13} = \frac{1}{10} \left[   10 (\sin^2(3\pi x_1))   +   \sum_{i=0}^{n-2} (x_i-1)^2(1+ \sin^2(3\pi x_{i+1}))  +  (x_n-1)(1+ \sin^2(2\pi x_n)    \right] + \sum_{i=0}^{n-1} u(x_i,10,100,4)
+                                f_{13} = \frac{1}{10} \left[   10 (\sin^2(3\pi x_1))   +   \sum_{i=0}^{n-2} (x_i-1)^2(1+ \sin^2(3\pi x_{i+1}))  +  (x_n-1)(1+ \sin^2(2\pi x_n))    \right] + \sum_{i=0}^{n-1} u(x_i,10,100,4)
                             \end{equation}
                             <!-- u -->
                             \begin{equation}
@@ -354,6 +370,7 @@
                         <td class="math" id="ff_18_boundaries"></td>
                     </tr>
                 </table>
+            </div>
             </div>
         </div>        
         

@@ -35,7 +35,6 @@ function sendCmds(dataarray, timeout, callback) {
             if(dataarray[i] == "show me memes" && easterEggUnlock(3)){
             } else if(dataarray[i] == "memes" && easterEggUnlock(2)){
             } else if(dataarray[i] == "easteregg" && easterEggUnlock(1)){
-            } else if(dataarray[i] == "easteregg" && easterEggUnlock(1)){
             } else if(dataarray[i] == "sfx on"){ easterEgg_sfxEnable();
             } else if(dataarray[i] == "sfx v+"){ easterEgg_sfxVolume(true);
             } else if(dataarray[i] == "sfx v-"){ easterEgg_sfxVolume(false);
@@ -47,6 +46,7 @@ function sendCmds(dataarray, timeout, callback) {
             }
         }
     }
+    data = data.replaceAll("+",">>>plus<<<");
     
     if(datacnt > 0){    
         loadAsync("xhr", data, timeout, callback);

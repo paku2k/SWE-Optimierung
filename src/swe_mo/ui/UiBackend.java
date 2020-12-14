@@ -7,13 +7,12 @@ import org.json.simple.JSONObject;
 
 import swe_mo.Main;
 import swe_mo.Settings;
+import swe_mo.fitnessfunction.FitnessFunctionManager;
 import swe_mo.optimizer.OptimizerConfig;
 import swe_mo.optimizer.OptimizerManager;
 import swe_mo.solver.FitnessFunction;
 import swe_mo.solver.SolverConfig;
 import swe_mo.solver.SolverManager;
-
-
 
 public class UiBackend {	
 	private final static String AUTH = "UiB";
@@ -26,7 +25,6 @@ public class UiBackend {
 	private static Thread Thread_WebInterfaceServer;	
 	
  	
-	
 	
 	
 	
@@ -217,6 +215,7 @@ public class UiBackend {
 	 * 
 	 * @throws Exception
 	 */	
+	@SuppressWarnings("unchecked")
 	private static Object cmd_interprete(String auth, String cmd) throws Exception {
 		//cut the command string
 		Queue<String> cmd_queue = new LinkedList<String>();
@@ -242,8 +241,10 @@ public class UiBackend {
 						 + "\t" + "cfg \t\tApplication configuration\r"
 						 + "\t" + "uif \t\tUiFrontend\r"
 						 + "\t" + "wis \t\tWebInterfaceServer\r"
+				 		 + "\t" + "mv  \t\tMO Visualizer\r"
+				 		 + "\t" + "ffm \t\tFitnessFunctionManager\r"
 						 + "\t" + "sm  \t\tSolverManager\r"
-						 + "\t" + "om  \t\tOptimizer";
+						 + "\t" + "om  \t\tOptimizer\r";
 			} else {
 				return cmd(auth, cmd_queue.poll()+" help");
 			}
@@ -257,7 +258,7 @@ public class UiBackend {
 			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
 				return     "app - List of commands\r"
 						 + "\t" + "exit \t\tStop and exit application\r"
-						 + "\t" + "info \t\tApplication version information";		
+						 + "\t" + "info \t\tApplication version information\r";		
 				
 			} else if(cmd_queue.peek().equals("exit")) {
 				cmd_queue.remove();
@@ -337,7 +338,7 @@ public class UiBackend {
 						 + "\t" + "start \t\tStart UiFrontend\r"
 						 + "\t" + "min   \t\tMinimize window\r"
 						 + "\t" + "show  \t\tShow window\r"
-						 + "\t" + "status\t\tGet status of UiFrontend";	
+						 + "\t" + "status\t\tGet status of UiFrontend\r";	
 				
 			} else if(cmd_queue.peek().equals("start")) {
 				cmd_queue.remove();				
@@ -400,7 +401,7 @@ public class UiBackend {
 						 + "\t" + "start \t\tStart WebInterfaceServer\r"
 						 + "\t" + "stop  \t\tStop WebInterfaceServer\r"
 						 + "\t" + "open  \t\tOpen WebGUI in Browser\r"
-						 + "\t" + "status\t\tGet status of WebInterfaceServer";
+						 + "\t" + "status\t\tGet status of WebInterfaceServer\r";
 				
 			} else if(cmd_queue.peek().equals("start")) {
 				cmd_queue.remove();		
@@ -478,6 +479,131 @@ public class UiBackend {
 				return (wis.status()?"running":"not running")+". Configured port: "+wis.getPort();	
 			}
 			
+			
+		// mv	
+		} else if(cmd_queue.peek().equals("mv")) {
+			cmd_queue.remove();
+
+			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
+				return     "mv - List of commands\r"
+						 + "\t" + "start \t\tstart the MO Visualizer\r";	
+				
+			} else if(cmd_queue.peek().equals("start")) {
+				cmd_queue.remove();				
+				try {
+					throw new Exception("MatLab engine yet to be correctly implemented.");
+					//return "Starting MO Visualizer.";
+				} catch(Exception e) {
+					throw new Exception("Could not start MO Visualizer. ("+e.getMessage()+")");
+				}
+			}
+
+			
+			
+		//ffm
+		} else if(cmd_queue.peek().equals("ffm")) {
+			cmd_queue.remove();
+
+			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
+				return     "ffm - List of commands\r"
+						 + "\t" + "list   \tList all custom fitness functions\r"
+						 + "\t" + "create \tCreate new fitness function\r"
+						 + "\t" + "modify \tModify fitness function\r"
+						 + "\t" + "delete \tDelete fitness function\r"
+				 		 + "\t" + "get    \tGet fitness function string\r";	
+				
+			} else if(cmd_queue.peek().equals("list") || cmd_queue.peek().equals("lsit")) {
+				cmd_queue.remove();	
+						
+				if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-json")) {	
+					return FitnessFunctionManager.list(true);
+				} else {
+					return FitnessFunctionManager.list(false);
+				}		
+				
+				
+			} else if(cmd_queue.peek().equals("create")) {
+				cmd_queue.remove();	
+						
+				if(!cmd_queue.isEmpty()) {
+					String s = "";
+					while(!cmd_queue.isEmpty()) {	
+						s += cmd_queue.poll()+" ";
+					}					
+					return "Added fitness function with ID "+FitnessFunctionManager.add(s)+".";
+				}
+				throw new Exception("Missing fitness function string");
+				
+				
+			} else if(cmd_queue.peek().equals("modify")) {
+				cmd_queue.remove();	
+						
+				if(!cmd_queue.isEmpty()) {
+					int id = -1;
+					try {
+						id = Integer.parseInt(cmd_queue.peek());
+					} catch(Exception e) {
+						throw new Exception("Fitness function id format not correct.");
+					}
+					cmd_queue.poll();
+					
+					if(!cmd_queue.isEmpty()) {
+						String s = "";
+						while(!cmd_queue.isEmpty()) {	
+							s += cmd_queue.poll()+" ";
+						}
+						FitnessFunctionManager.change(id, s);
+						return "Changed fitness function ID "+id+".";
+					}
+					throw new Exception("Missing fitness function string");
+				}
+				throw new Exception("Missing fitness function id");
+				
+				
+			} else if(cmd_queue.peek().equals("delete")) {
+				cmd_queue.remove();		
+				
+				if(!cmd_queue.isEmpty()) {	
+					if(cmd_queue.peek().contains("-")) {
+						if(cmd_queue.poll().equals("-all")) {
+							FitnessFunctionManager.deleteAll();
+							return "All custom fitness functions deleted.";
+						}
+					} else {	
+						int id = Integer.parseInt(cmd_queue.poll());								
+						if(!cmd_queue.isEmpty()) {	
+							FitnessFunctionManager.delete(id, Integer.parseInt(cmd_queue.poll()));					
+							return "Custom fitness functions deleted.";								
+						} else {
+							FitnessFunctionManager.delete(id);					
+							return "Custom fitness function deleted.";					
+						}
+					}
+				} 
+				throw new Exception("Missing fitness function id");
+					
+				
+			} else if(cmd_queue.peek().equals("get")) {
+				cmd_queue.remove();	
+						
+				if(!cmd_queue.isEmpty()) {
+					int id = -1;
+					try {
+						id = Integer.parseInt(cmd_queue.peek());
+					} catch(Exception e) {
+						throw new Exception("Fitness function id format not correct.");
+					}
+					cmd_queue.poll();
+					
+					if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-tree")) {
+						return FitnessFunctionManager.print(id);
+					} else {
+						return FitnessFunctionManager.printTex(id);						
+					}
+				}
+				throw new Exception("Missing fitness function id");
+				
+			}
 			
 
 		//sm

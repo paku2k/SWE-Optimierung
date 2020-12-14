@@ -1,4 +1,4 @@
-var REFRESH_RATE_OPTIMIZER = 1000;
+var REFRESH_RATE_OPTIMIZER = 2000;
 
 
 /* TAB_OPTIMIZER switching tabs */

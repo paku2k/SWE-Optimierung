@@ -505,23 +505,26 @@ function newSolverContentDiv(id, algorithm, creator){
                 tr31.innerHTML = '<th>Hyperparameter</th><th>Value</th><th onclick="solverCfgResetAll('+id+')">Reset All</th></tr>';
 
             table3.appendChild(tr31);
-                var pars;
+            
+                if(Algorithms_JSON){
+                    var pars;
 
-                for(var i=0; i < Algorithms_JSON.length; i++){
-                    if(Algorithms_JSON[i].algorithm == algorithm){
-                        pars = Algorithms_JSON[i].parameters;
+                    for(var i=0; i < Algorithms_JSON.length; i++){
+                        if(Algorithms_JSON[i].algorithm == algorithm){
+                            pars = Algorithms_JSON[i].parameters;
+                        }
                     }
-                }
 
-                for(var i=0; i < pars.length; i++){
-                    var par = pars[i].name;
-                    var value = pars[i].default;
+                    for(var i=0; i < pars.length; i++){
+                        var par = pars[i].name;
+                        var value = pars[i].default;
 
-                    var tr3x = document.createElement("tr");
-                    tr3x.innerHTML = '<td>'+par+'</td><td><input type="text" value="'+value+'" id="solver_'+id+'_cfg_'+par+'" autocomplete="off" onchange="solverCfgChange('+id+',\''+par+'\',this.value)"></td><td onclick="solverCfgReset('+id+',\''+par+'\')">reset</td>';
+                        var tr3x = document.createElement("tr");
+                        tr3x.innerHTML = '<td>'+par+'</td><td><input type="text" value="'+value+'" id="solver_'+id+'_cfg_'+par+'" autocomplete="off" onchange="solverCfgChange('+id+',\''+par+'\',this.value)"></td><td onclick="solverCfgReset('+id+',\''+par+'\')">reset</td>';
 
 
-                    table3.appendChild(tr3x);
+                        table3.appendChild(tr3x);
+                    }                    
                 }
     
         div1.appendChild(table3);
@@ -592,21 +595,23 @@ function solverCfgReset(id, name){
         }
     }
     
-    var pars;
-    
-    for(var i=0; i < Algorithms_JSON.length; i++){
-        if(Algorithms_JSON[i].algorithm == solver.algorithm){
-            pars = Algorithms_JSON[i].parameters;
-        }
-    }
-    
-    for(var i=0; i < pars.length; i++){
-        if(pars[i].name == name){
-            if(document.getElementById("solver_"+id+"_cfg_"+pars[i].name).value != pars[i].default){
-                solverCfgChange(id, pars[i].name, ""+pars[i].default);
+    if(Algorithms_JSON){
+        var pars;
+
+        for(var i=0; i < Algorithms_JSON.length; i++){
+            if(Algorithms_JSON[i].algorithm == solver.algorithm){
+                pars = Algorithms_JSON[i].parameters;
             }
-                
-            break;
+        }
+
+        for(var i=0; i < pars.length; i++){
+            if(pars[i].name == name){
+                if(document.getElementById("solver_"+id+"_cfg_"+pars[i].name).value != pars[i].default){
+                    solverCfgChange(id, pars[i].name, ""+pars[i].default);
+                }
+
+                break;
+            }
         }
     }
 }
