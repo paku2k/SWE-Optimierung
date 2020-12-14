@@ -12,7 +12,7 @@ public class Test_Solver_DE {
 	
 	public static void main(String[] args) throws IOException {
 		
-		Convergence c = new Convergence("null");
+		Convergence c = new Convergence("null", false, 1.0);
 		for(int i=0; i<400; i++) {
 			System.out.println(c.update(CRN.rn((400-i)/(Math.pow(2.0, (i/30.0))),0), 0.0));
 			

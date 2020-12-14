@@ -15,6 +15,7 @@ public class PSOparticle extends Particle_DE {
 	ArrayList<Double> personalBestPosition = new ArrayList<Double>();
 	ArrayList<Double> nc = new ArrayList<Double>();
 	ArrayList<Integer> neighborhood = new ArrayList<Integer>();
+	public double currentMinimum;
 	double personalMinimum= Double.MAX_VALUE /10;
 	double w, cc, cs, dt,  min, max;
 	double ncMinimum = Double.MAX_VALUE;
@@ -120,6 +121,7 @@ public class PSOparticle extends Particle_DE {
 	
 	public void updatePersonalBestPosition(int ffID) throws Exception {
 		double minimum = FitnessFunction.solve(ffID, this);
+		this.currentMinimum=minimum;
 		if(minimum < personalMinimum) {
 			personalMinimum = minimum;
 			personalBestPosition = new ArrayList<Double>(position);
