@@ -20,8 +20,8 @@ function onload(){
     loadSolverInitial();  
     
     ffLoadBoundaries();
-    easterEggInitTs();   
-    
+    checkCffList();
+    easterEggInitTs();       
 }
 
 
@@ -89,7 +89,9 @@ function easterEggInit(lvl){
         document.getElementById("img_logo").style.cursor = "pointer";        
     }
     if(lvl < 1){
-        setTimeout(function(){createAlgorithmSelectHTML("PSOeeg");},1000);
+        setTimeout(function(){
+            createSolvAlgorithmSelectHTML("PSOeeg");
+        },1000);
     }
 }
 

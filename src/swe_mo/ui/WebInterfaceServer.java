@@ -596,7 +596,7 @@ public class WebInterfaceServer{
                 while ((i = ios.read()) != -1) {
                     sb.append((char) i);
                 }
-    			
+
     		    path = uri.toString();
                 parstring = sb.toString();
     		    
@@ -604,12 +604,12 @@ public class WebInterfaceServer{
     			throw new Exception("HTTP request method not supported or unknown ("+method+")");
     			//HEAD, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH not supported
     		}    		
-    		parstring = URLDecoder.decode(parstring, StandardCharsets.UTF_8.name());    		
+    		parstring = URLDecoder.decode(parstring, StandardCharsets.UTF_8.name()).replaceAll(">>>plus<<<", "+");    		
     		this.parstring = parstring;
     		
     		
     		//get seperated path
-    		path = URLDecoder.decode(path, StandardCharsets.UTF_8.name());  
+    		path = URLDecoder.decode(path, StandardCharsets.UTF_8.name()).replaceAll(">>>plus<<<", "+");  
     		
     		pathsep = new LinkedList<String>(Arrays.asList(path.split("/")));
     		if(!pathsep.isEmpty()) pathsep.remove(); //first element is empty (the first char in path is /)

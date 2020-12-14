@@ -1,15 +1,16 @@
 package swe_mo.solver;
 
-
-import java.util.Random;
 import java.util.Collections;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import swe_mo.fitnessfunction.FitnessFunctionManager;
 import swe_mo.solver.de.Particle_DE;
 
 public class FitnessFunction {
+	
+	public static int numberOfHardCoded = 19;
 	
 	public static double solve(int index, Particle_DE vector) throws Exception {
 	//the index refers to Cakar's list of functions	
@@ -53,7 +54,11 @@ public class FitnessFunction {
 			case 18:
 				return calculatef18(vector);
 			default:
-				throw new Exception("Cannot find fitnessfunction "+index);
+				if(FitnessFunctionManager.exists(index)) {
+					return FitnessFunctionManager.calculate(index, vector);
+				} else {
+					throw new Exception("Cannot find fitnessfunction "+index);					
+				}
 		}
 		
 	}
@@ -380,7 +385,7 @@ public class FitnessFunction {
 	public static String ffBoundariesJSON() throws Exception {
 			JSONArray jarr = new JSONArray();
 			
-			for(int i = 0; i <= 18; i++) {
+			for(int i = 0; i < numberOfHardCoded; i++) {
 				JSONObject j = new JSONObject();		
 				
 				j.put("ffid", i);

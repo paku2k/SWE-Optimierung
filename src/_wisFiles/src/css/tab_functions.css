@@ -3,9 +3,13 @@
     pointer-events: none;
 }
 
+#MathJax_Message {
+    display: none;
+    visibility: hidden;
+}
+
 #tab_functions .MJXc-display {
-    margin: 0;
-    
+    margin: 0;  
 } 
 
 #tab_functions td:nth-of-type(2) .MJXc-display {
@@ -16,16 +20,20 @@
 
 
 
-
 #tab_functions > div {
-    max-width: 100%;
+    display: flex;
+}
+
+#tab_functions > div > div {
+    max-width: 1300px;
     overflow-x: auto;
+    margin: 0 auto;
+    
 }
 
 #tab_functions table {
     border-collapse: separate;
     border-spacing: 0 0.1rem;
-    margin: 0 auto;
 }
 
 #tab_functions table tr:first-of-type th {
@@ -85,4 +93,56 @@
     padding-bottom: 0;
     vertical-align: middle;
     border-right: 1px solid #444;
+}
+
+
+
+#ffEditor {
+    width: 100%;
+}
+
+#ffEditor button {
+    float: right;
+}
+
+#ffEditor td:first-of-type {
+    width: 2rem;
+}
+
+#ffEditor td:last-of-type {    
+    width: 10%;
+    min-width: 6rem;
+    max-width: 10rem;
+    text-align: center;
+    padding: .2rem 1rem;
+    color: darkred;
+    cursor: pointer;
+} 
+
+#ff_editor_in {
+    width: 100%;
+    border: 1px solid grey;
+    min-height: 2rem;
+    text-align: center;
+    margin-bottom: .5rem;
+}
+
+.ff_editor_out {
+    box-sizing: border-box;
+    width: 100%;
+    border: 1px solid grey;
+    min-height: 4rem;
+    display: table;
+    padding: 0.5rem;
+    margin-bottom: .5rem;
+    background-color: #ddd;
+}
+
+.ff_editor_out > span {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#ff_editor_out2 {
+    display: none;
 }
