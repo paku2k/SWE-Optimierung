@@ -1,5 +1,7 @@
 package swe_mo.ui;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -486,13 +488,23 @@ public class UiBackend {
 
 			if(cmd_queue.isEmpty() || cmd_queue.peek().equals("help")) {
 				return     "mv - List of commands\r"
-						 + "\t" + "start \t\tstart the MO Visualizer\r";	
+						 + "\t" + "install \t\tstart the MO Visualizer Installer\r"	
+				 		 + "\t" + "start \t\tstart the MO Visualizer\r";	
+				
+			} else if(cmd_queue.peek().equals("install")) {
+				cmd_queue.remove();				
+				try {
+					MoVisualizerHandler.install();
+					return "Starting MO Visualizer Installer.";			
+				} catch(Exception e) {
+					throw new Exception("Could not start MO Visualizer. ("+e.getMessage()+")");
+				}
 				
 			} else if(cmd_queue.peek().equals("start")) {
 				cmd_queue.remove();				
-				try {
-					throw new Exception("MatLab engine yet to be correctly implemented.");
-					//return "Starting MO Visualizer.";
+				try {			
+					MoVisualizerHandler.start();
+					return "Starting MO Visualizer. This might take a while...";
 				} catch(Exception e) {
 					throw new Exception("Could not start MO Visualizer. ("+e.getMessage()+")");
 				}
