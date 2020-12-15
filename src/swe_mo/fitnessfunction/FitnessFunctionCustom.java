@@ -100,19 +100,6 @@ public class FitnessFunctionCustom {
 			
 			this.functionString = s;	
 			this.functionStringStyled = styled;
-
-			
-for(String u : detectedVars) {
-	System.out.println(u);
-}
-System.out.println("-----");
-
-System.out.println(fm);
-System.out.println("Root: "+fm.rootkey);
-System.out.println("-----");
-			
-System.out.println(functionTree.toString());
-//throw new Exception("Parser to be implemented.");
 		} catch(Exception e) {
 			throw new Exception("Error while parsing function string. ("+e.getMessage()+")");
 		}
@@ -125,110 +112,296 @@ System.out.println(functionTree.toString());
 		//L	
 			if(checkForPattern(s, "\\sum_[~]^[~][~][~]")) {
 				//L with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 1");
+				throw new Exception("implicit multiplication used, not implemented. (id=1)");
 				
 			} else if(checkForPattern(s, "\\sum_[~]^[~][~]~")) {
 				//L with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 2");
+				throw new Exception("implicit multiplication used, not implemented. (id=2)");
 				
 			} else if(checkForPattern(s, "\\sum_[~]^[~][~]")) {
 				//L
-throw new Exception("\\sum_[~]^[~][~] not implemented yet.");	
+				ArrayList<String> contents = getPatternContents(s, "\\sum_[~]^[~][~]");					
+				String countername = "";
+				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+
+				MathfunctionTree mft_lb = new MathfunctionTree(new STC("F",""));
+				String[] lb = fm.get("["+contents.get(0)+"]").split("=");
+				if(lb.length != 2) throw new Exception("error lower boundary in product");
+				countername = lb[0];
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,lb[1],b);
+				mft_lb.getRoot().addR(b);
+				
+				MathfunctionTree mft_ub = new MathfunctionTree(new STC("F",""));
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(1)+"]"),b);
+				mft_ub.getRoot().addR(b);
+				
+				detectedVars.add(countername);			
+				MathfunctionTree mft = new MathfunctionTree(new STC("F",""));	
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(2)+"]"),b);
+				mft.getRoot().addR(b);
+				
+				btn.setData(new STC("L","sum",countername,mft_lb,mft_ub,mft));
+				
 				
 			} else if(checkForPattern(s, "\\sum_[~]^~[~][~]")) {
 				//L with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 3");
+				throw new Exception("implicit multiplication used, not implemented. (id=3)");
 				
 			} else if(checkForPattern(s, "\\sum_[~]^~[~]~")) {
 				//L with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 4");
+				throw new Exception("implicit multiplication used, not implemented. (id=4)");
 				
 			} else if(checkForPattern(s, "\\sum_[~]^~[~]")) {
 				//L
-throw new Exception("\\sum_[~]^~[~] not implemented yet.");	
+				ArrayList<String> contents = getPatternContents(s, "\\sum_[~]^~[~]");					
+				String countername = "";
+				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+
+				MathfunctionTree mft_lb = new MathfunctionTree(new STC("F",""));
+				String[] lb = fm.get("["+contents.get(0)+"]").split("=");
+				if(lb.length != 2) throw new Exception("error lower boundary in product");
+				countername = lb[0];
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,lb[1],b);
+				mft_lb.getRoot().addR(b);
+				
+				MathfunctionTree mft_ub = new MathfunctionTree(new STC("F",""));
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(1),b);
+				mft_ub.getRoot().addR(b);
+				
+				detectedVars.add(countername);			
+				MathfunctionTree mft = new MathfunctionTree(new STC("F",""));	
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(2)+"]"),b);
+				mft.getRoot().addR(b);
+				
+				btn.setData(new STC("L","sum",countername,mft_lb,mft_ub,mft));
 		
 			} else if(checkForPattern(s, "\\sum_[~]^[~]~[~]")) {
 				//L with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 5");
+				throw new Exception("implicit multiplication used, not implemented. (id=5)");
 				
 			} else if(checkForPattern(s, "\\sum_[~]^[~]~ ~")) {
 				//L with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 6");
+				throw new Exception("implicit multiplication used, not implemented. (id=6)");
 				
 			} else if(checkForPattern(s, "\\sum_[~]^[~]~")) {
 				//L
-throw new Exception("\\sum_[~]^[~] ~ not implemented yet.");	
+				ArrayList<String> contents = getPatternContents(s, "\\sum_[~]^[~]~");					
+				String countername = "";
+				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+
+				MathfunctionTree mft_lb = new MathfunctionTree(new STC("F",""));
+				String[] lb = fm.get("["+contents.get(0)+"]").split("=");
+				if(lb.length != 2) throw new Exception("error lower boundary in product");
+				countername = lb[0];
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,lb[1],b);
+				mft_lb.getRoot().addR(b);
+				
+				MathfunctionTree mft_ub = new MathfunctionTree(new STC("F",""));
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(1)+"]"),b);
+				mft_ub.getRoot().addR(b);
+				
+				detectedVars.add(countername);			
+				MathfunctionTree mft = new MathfunctionTree(new STC("F",""));	
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(2),b);
+				mft.getRoot().addR(b);
+				
+				btn.setData(new STC("L","sum",countername,mft_lb,mft_ub,mft));
 		
 			} else if(checkForPattern(s, "\\sum_[~]^~ ~[~]")) {
 				//L with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 7");
+				throw new Exception("implicit multiplication used, not implemented. (id=7)");
 				
 			} else if(checkForPattern(s, "\\sum_[~]^~ ~ ~")) {
 				//L with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 8");
+				throw new Exception("implicit multiplication used, not implemented. (id=8)");
 				
 			} else if(checkForPattern(s, "\\sum_[~]^~ ~")) {
 				//L
-throw new Exception("\\sum_[~]^~ ~ not implemented yet.");	
+				ArrayList<String> contents = getPatternContents(s, "\\sum_[~]^~ ~");					
+				String countername = "";
+				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+
+				MathfunctionTree mft_lb = new MathfunctionTree(new STC("F",""));
+				String[] lb = fm.get("["+contents.get(0)+"]").split("=");
+				if(lb.length != 2) throw new Exception("error lower boundary in product");
+				countername = lb[0];
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,lb[1],b);
+				mft_lb.getRoot().addR(b);
+				
+				MathfunctionTree mft_ub = new MathfunctionTree(new STC("F",""));
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(1),b);
+				mft_ub.getRoot().addR(b);
+				
+				detectedVars.add(countername);			
+				MathfunctionTree mft = new MathfunctionTree(new STC("F",""));	
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(2),b);
+				mft.getRoot().addR(b);
+				
+				btn.setData(new STC("L","sum",countername,mft_lb,mft_ub,mft));
 				
 		
 			} else if(checkForPattern(s, "\\prod_[~]^[~][~][~]")) {
 				//L with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 9");
+				throw new Exception("implicit multiplication used, not implemented. (id=9)");
 				
 			} else if(checkForPattern(s, "\\prod_[~]^[~][~]~")) {
 				//L with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 10");
+				throw new Exception("implicit multiplication used, not implemented. (id=10)");
 				
 			} else if(checkForPattern(s, "\\prod_[~]^[~][~]")) {
 				//L
-throw new Exception("\\prod_[~]^[~][~] not implemented yet.");	
+				ArrayList<String> contents = getPatternContents(s, "\\prod_[~]^[~][~]");					
+				String countername = "";
+				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+
+				MathfunctionTree mft_lb = new MathfunctionTree(new STC("F",""));
+				String[] lb = fm.get("["+contents.get(0)+"]").split("=");
+				if(lb.length != 2) throw new Exception("error lower boundary in product");
+				countername = lb[0];
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,lb[1],b);
+				mft_lb.getRoot().addR(b);
+				
+				MathfunctionTree mft_ub = new MathfunctionTree(new STC("F",""));
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(1)+"]"),b);
+				mft_ub.getRoot().addR(b);
+				
+				detectedVars.add(countername);			
+				MathfunctionTree mft = new MathfunctionTree(new STC("F",""));	
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(2)+"]"),b);
+				mft.getRoot().addR(b);
+				
+				btn.setData(new STC("L","prod",countername,mft_lb,mft_ub,mft));
+
 				
 			} else if(checkForPattern(s, "\\prod_[~]^~[~][~]")) {
 				//L with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 11");
+				throw new Exception("implicit multiplication used, not implemented. (id=11)");
 				
 			} else if(checkForPattern(s, "\\prod_[~]^~[~]~")) {
 				//L with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 12");
+				throw new Exception("implicit multiplication used, not implemented. (id=12)");
 				
 			} else if(checkForPattern(s, "\\prod_[~]^~[~]")) {
 				//L
-throw new Exception("\\prod_[~]^~[~] not implemented yet.");	
+				ArrayList<String> contents = getPatternContents(s, "\\prod_[~]^~[~]");					
+				String countername = "";
+				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+
+				MathfunctionTree mft_lb = new MathfunctionTree(new STC("F",""));
+				String[] lb = fm.get("["+contents.get(0)+"]").split("=");
+				if(lb.length != 2) throw new Exception("error lower boundary in product");
+				countername = lb[0];
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,lb[1],b);
+				mft_lb.getRoot().addR(b);
+				
+				MathfunctionTree mft_ub = new MathfunctionTree(new STC("F",""));
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(1),b);
+				mft_ub.getRoot().addR(b);
+				
+				detectedVars.add(countername);			
+				MathfunctionTree mft = new MathfunctionTree(new STC("F",""));	
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(2)+"]"),b);
+				mft.getRoot().addR(b);
+				
+				btn.setData(new STC("L","prod",countername,mft_lb,mft_ub,mft));
 		
 			} else if(checkForPattern(s, "\\prod_[~]^[~]~[~]")) {
 				//L with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 13");
+				throw new Exception("implicit multiplication used, not implemented. (id=13)");
 				
 			} else if(checkForPattern(s, "\\prod_[~]^[~]~ ~")) {
 				//L with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 14");
+				throw new Exception("implicit multiplication used, not implemented. (id=14)");
 				
 			} else if(checkForPattern(s, "\\prod_[~]^[~]~")) {
 				//L
-throw new Exception("\\prod_[~]^[~]~ not implemented yet.");	
+				ArrayList<String> contents = getPatternContents(s, "\\prod_[~]^[~]~");					
+				String countername = "";
+				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+
+				MathfunctionTree mft_lb = new MathfunctionTree(new STC("F",""));
+				String[] lb = fm.get("["+contents.get(0)+"]").split("=");
+				if(lb.length != 2) throw new Exception("error lower boundary in product");
+				countername = lb[0];
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,lb[1],b);
+				mft_lb.getRoot().addR(b);
+				
+				MathfunctionTree mft_ub = new MathfunctionTree(new STC("F",""));
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(1)+"]"),b);
+				mft_ub.getRoot().addR(b);
+				
+				detectedVars.add(countername);			
+				MathfunctionTree mft = new MathfunctionTree(new STC("F",""));	
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(2),b);
+				mft.getRoot().addR(b);
+				
+				btn.setData(new STC("L","prod",countername,mft_lb,mft_ub,mft));
 		
 			} else if(checkForPattern(s, "\\prod_[~]^~ ~[~]")) {
 				//L with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 14");
+				throw new Exception("implicit multiplication used, not implemented. (id=14)");
 				
 			} else if(checkForPattern(s, "\\prod_[~]^~ ~ ~")) {
 				//L with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 15");
+				throw new Exception("implicit multiplication used, not implemented. (id=15)");
 				
 			} else if(checkForPattern(s, "\\prod_[~]^~ ~")) {
 				//L
-throw new Exception("\\prod_[~]^~ ~ not implemented yet.");	
+				ArrayList<String> contents = getPatternContents(s, "\\prod_[~]^~ ~");					
+				String countername = "";
+				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+
+				MathfunctionTree mft_lb = new MathfunctionTree(new STC("F",""));
+				String[] lb = fm.get("["+contents.get(0)+"]").split("=");
+				if(lb.length != 2) throw new Exception("error lower boundary in product");
+				countername = lb[0];
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,lb[1],b);
+				mft_lb.getRoot().addR(b);
+				
+				MathfunctionTree mft_ub = new MathfunctionTree(new STC("F",""));
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(1),b);
+				mft_ub.getRoot().addR(b);
+				
+				detectedVars.add(countername);			
+				MathfunctionTree mft = new MathfunctionTree(new STC("F",""));	
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(2),b);
+				mft.getRoot().addR(b);
+				
+				btn.setData(new STC("L","prod",countername,mft_lb,mft_ub,mft));
 		
 		
 		//S	
 			} else if(checkForPattern(s, "\\sqrt[~][~]")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 16");
+				throw new Exception("implicit multiplication used, not implemented. (id=16)");
 				
 			} else if(checkForPattern(s, "\\sqrt[~]~")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 17");
+				throw new Exception("implicit multiplication used, not implemented. (id=17)");
 				
 			} else if(checkForPattern(s, "\\sqrt[~]")) {
 				//S			
@@ -243,11 +416,11 @@ throw new Exception("\\prod_[~]^~ ~ not implemented yet.");
 				
 			} else if(checkForPattern(s, "\\sqrt ~[~]")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 18");
+				throw new Exception("implicit multiplication used, not implemented. (id=18)");
 				
 			} else if(checkForPattern(s, "\\sqrt ~ ~")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 19");
+				throw new Exception("implicit multiplication used, not implemented. (id=19)");
 				
 			} else if(checkForPattern(s, "\\sqrt ~")) {
 				//S
@@ -263,11 +436,11 @@ throw new Exception("\\prod_[~]^~ ~ not implemented yet.");
 		
 			} else if(checkForPattern(s, "\\ln[~][~]")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 20");
+				throw new Exception("implicit multiplication used, not implemented. (id=20)");
 				
 			} else if(checkForPattern(s, "\\ln[~]~")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 21");
+				throw new Exception("implicit multiplication used, not implemented. (id=21)");
 				
 			} else if(checkForPattern(s, "\\ln[~]")) {
 				//S			
@@ -282,11 +455,11 @@ throw new Exception("\\prod_[~]^~ ~ not implemented yet.");
 				
 			} else if(checkForPattern(s, "\\ln ~[~]")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 22");
+				throw new Exception("implicit multiplication used, not implemented. (id=22)");
 				
 			} else if(checkForPattern(s, "\\ln ~ ~")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 23");
+				throw new Exception("implicit multiplication used, not implemented. (id=23)");
 				
 			} else if(checkForPattern(s, "\\ln ~")) {
 				//S
@@ -302,63 +475,123 @@ throw new Exception("\\prod_[~]^~ ~ not implemented yet.");
 
 			} else if(checkForPattern(s, "\\sin^[~][~][~]")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 24");
+				throw new Exception("implicit multiplication used, not implemented. (id=24)");
 	
 			} else if(checkForPattern(s, "\\sin^[~][~]~")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 25");
+				throw new Exception("implicit multiplication used, not implemented. (id=25)");
 	
 			} else if(checkForPattern(s, "\\sin^[~][~]")) {
-				//S with implicit multiplication
-throw new Exception("\\sin^[~][~] not implemented yet.");	
+				//S 
+				ArrayList<String> contents = getPatternContents(s, "\\sin^[~][~]");					
+
+				btn.setData(new STC("O","^"));	
+				
+				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(1)+"]"),b);
+				MathfunctionTree mft = new MathfunctionTree(new STC("F",""));
+				mft.getRoot().addR(b);
+
+				b = new BinaryTreeNode<STC>(new STC("S","sin",mft));
+								
+				btn.addL(b);
+				
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(0)+"]"),b);
+				btn.addR(b);			
 				
 	
 			} else if(checkForPattern(s, "\\sin^~[~][~]")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 26");
+				throw new Exception("implicit multiplication used, not implemented. (id=26)");
 	
 			} else if(checkForPattern(s, "\\sin^~[~]~")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 27");
+				throw new Exception("implicit multiplication used, not implemented. (id=27)");
 	
 			} else if(checkForPattern(s, "\\sin^~[~]")) {
-				//S with implicit multiplication
-throw new Exception("\\sin^~[~] not implemented yet.");	
+				//S 
+				ArrayList<String> contents = getPatternContents(s, "\\sin^~[~]");					
+
+				btn.setData(new STC("O","^"));	
+				
+				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(1)+"]"),b);
+				MathfunctionTree mft = new MathfunctionTree(new STC("F",""));
+				mft.getRoot().addR(b);
+
+				b = new BinaryTreeNode<STC>(new STC("S","sin",mft));
+								
+				btn.addL(b);
+				
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(0),b);
+				btn.addR(b);			
 				
 	
 			} else if(checkForPattern(s, "\\sin^[~]~[~]")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 28");
+				throw new Exception("implicit multiplication used, not implemented. (id=28)");
 	
 			} else if(checkForPattern(s, "\\sin^[~]~ ~")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 29");
+				throw new Exception("implicit multiplication used, not implemented. (id=29)");
 	
 			} else if(checkForPattern(s, "\\sin^[~]~")) {
-				//S with implicit multiplication
-throw new Exception("\\sin^[~] ~ not implemented yet.");	
+				//S 
+				ArrayList<String> contents = getPatternContents(s, "\\sin^[~]~");					
+
+				btn.setData(new STC("O","^"));	
+				
+				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(1),b);
+				MathfunctionTree mft = new MathfunctionTree(new STC("F",""));
+				mft.getRoot().addR(b);
+
+				b = new BinaryTreeNode<STC>(new STC("S","sin",mft));
+								
+				btn.addL(b);
+				
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(0)+"]"),b);
+				btn.addR(b);			
 				
 	
 			} else if(checkForPattern(s, "\\sin^~ ~[~]")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 30");
+				throw new Exception("implicit multiplication used, not implemented. (id=30)");
 	
 			} else if(checkForPattern(s, "\\sin^~ ~ ~")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 31");
+				throw new Exception("implicit multiplication used, not implemented. (id=31)");
 	
 			} else if(checkForPattern(s, "\\sin^~ ~")) {
-				//S with implicit multiplication	
-throw new Exception("\\sin^~ ~ not implemented yet.");	
+				//S 
+				ArrayList<String> contents = getPatternContents(s, "\\sin^~ ~");					
+
+				btn.setData(new STC("O","^"));	
+				
+				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(1),b);
+				MathfunctionTree mft = new MathfunctionTree(new STC("F",""));
+				mft.getRoot().addR(b);
+
+				b = new BinaryTreeNode<STC>(new STC("S","sin",mft));
+								
+				btn.addL(b);
+				
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(0),b);
+				btn.addR(b);			
 				
 		
 			} else if(checkForPattern(s, "\\sin[~][~]")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 32");
+				throw new Exception("implicit multiplication used, not implemented. (id=32)");
 				
 			} else if(checkForPattern(s, "\\sin[~]~")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 33");
+				throw new Exception("implicit multiplication used, not implemented. (id=33)");
 				
 			} else if(checkForPattern(s, "\\sin[~]")) {
 				//S			
@@ -373,11 +606,11 @@ throw new Exception("\\sin^~ ~ not implemented yet.");
 				
 			} else if(checkForPattern(s, "\\sin ~[~]")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 34");
+				throw new Exception("implicit multiplication used, not implemented. (id=34)");
 				
 			} else if(checkForPattern(s, "\\sin ~ ~")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 35");
+				throw new Exception("implicit multiplication used, not implemented. (id=35)");
 				
 			} else if(checkForPattern(s, "\\sin ~")) {
 				//S
@@ -393,63 +626,123 @@ throw new Exception("\\sin^~ ~ not implemented yet.");
 
 			} else if(checkForPattern(s, "\\cos^[~][~][~]")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 36");
+				throw new Exception("implicit multiplication used, not implemented. (id=36)");
 		
 			} else if(checkForPattern(s, "\\cos^[~][~]~")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 37");
+				throw new Exception("implicit multiplication used, not implemented. (id=37)");
 		
 			} else if(checkForPattern(s, "\\cos^[~][~]")) {
-				//S with implicit multiplication
-throw new Exception("\\cos^[~][~] not implemented yet.");
+				//S 
+				ArrayList<String> contents = getPatternContents(s, "\\cos^[~][~]");					
+
+				btn.setData(new STC("O","^"));	
+				
+				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(1)+"]"),b);
+				MathfunctionTree mft = new MathfunctionTree(new STC("F",""));
+				mft.getRoot().addR(b);
+
+				b = new BinaryTreeNode<STC>(new STC("S","cos",mft));
+								
+				btn.addL(b);
+				
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(0)+"]"),b);
+				btn.addR(b);			
 				
 		
 			} else if(checkForPattern(s, "\\cos^~[~][~]")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 38");
+				throw new Exception("implicit multiplication used, not implemented. (id=38)");
 		
 			} else if(checkForPattern(s, "\\cos^~[~]~")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 39");
+				throw new Exception("implicit multiplication used, not implemented. (id=39)");
 		
 			} else if(checkForPattern(s, "\\cos^~[~]")) {
-				//S with implicit multiplication
-throw new Exception("\\cos^~[~] not implemented yet.");
+				//S 
+				ArrayList<String> contents = getPatternContents(s, "\\cos^~[~]");					
+
+				btn.setData(new STC("O","^"));	
+				
+				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(1)+"]"),b);
+				MathfunctionTree mft = new MathfunctionTree(new STC("F",""));
+				mft.getRoot().addR(b);
+
+				b = new BinaryTreeNode<STC>(new STC("S","cos",mft));
+								
+				btn.addL(b);
+				
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(0),b);
+				btn.addR(b);			
 				
 		
 			} else if(checkForPattern(s, "\\cos^[~]~[~]")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 40");
+				throw new Exception("implicit multiplication used, not implemented. (id=40)");
 		
 			} else if(checkForPattern(s, "\\cos^[~]~ ~")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 41");
+				throw new Exception("implicit multiplication used, not implemented. (id=41)");
 		
 			} else if(checkForPattern(s, "\\cos^[~]~")) {
-				//S with implicit multiplication
-throw new Exception("\\cos^[~]~ not implemented yet.");
+				//S 
+				ArrayList<String> contents = getPatternContents(s, "\\cos^[~]~");					
+
+				btn.setData(new STC("O","^"));	
+				
+				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(1),b);
+				MathfunctionTree mft = new MathfunctionTree(new STC("F",""));
+				mft.getRoot().addR(b);
+
+				b = new BinaryTreeNode<STC>(new STC("S","cos",mft));
+								
+				btn.addL(b);
+				
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(0)+"]"),b);
+				btn.addR(b);			
 				
 		
 			} else if(checkForPattern(s, "\\cos^~ ~[~]")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 42");
+				throw new Exception("implicit multiplication used, not implemented. (id=42)");
 		
 			} else if(checkForPattern(s, "\\cos^~ ~ ~")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 43");
+				throw new Exception("implicit multiplication used, not implemented. (id=43)");
 		
 			} else if(checkForPattern(s, "\\cos^~ ~")) {
-				//S with implicit multiplication
-throw new Exception("\\cos^~ ~ not implemented yet.");
+				//S 
+				ArrayList<String> contents = getPatternContents(s, "\\cos^~ ~");					
+
+				btn.setData(new STC("O","^"));	
+				
+				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(1),b);
+				MathfunctionTree mft = new MathfunctionTree(new STC("F",""));
+				mft.getRoot().addR(b);
+
+				b = new BinaryTreeNode<STC>(new STC("S","cos",mft));
+								
+				btn.addL(b);
+				
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(0),b);
+				btn.addR(b);			
 					
 		
 			} else if(checkForPattern(s, "\\cos[~][~]")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 44");
+				throw new Exception("implicit multiplication used, not implemented. (id=44)");
 				
 			} else if(checkForPattern(s, "\\cos[~]~")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 45");
+				throw new Exception("implicit multiplication used, not implemented. (id=45)");
 				
 			} else if(checkForPattern(s, "\\cos[~]")) {
 				//S		
@@ -464,11 +757,11 @@ throw new Exception("\\cos^~ ~ not implemented yet.");
 				
 			} else if(checkForPattern(s, "\\cos ~[~]")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 46");
+				throw new Exception("implicit multiplication used, not implemented. (id=46)");
 				
 			} else if(checkForPattern(s, "\\cos ~ ~")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 47");
+				throw new Exception("implicit multiplication used, not implemented. (id=47)");
 				
 			} else if(checkForPattern(s, "\\cos ~")) {
 				//S
@@ -484,11 +777,11 @@ throw new Exception("\\cos^~ ~ not implemented yet.");
 		
 			} else if(checkForPattern(s, "\\abs[~][~]")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 48");
+				throw new Exception("implicit multiplication used, not implemented. (id=48)");
 				
 			} else if(checkForPattern(s, "\\abs[~]~")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 49");
+				throw new Exception("implicit multiplication used, not implemented. (id=49)");
 				
 			} else if(checkForPattern(s, "\\abs[~]")) {
 				//S		
@@ -504,11 +797,11 @@ throw new Exception("\\cos^~ ~ not implemented yet.");
 		
 			} else if(checkForPattern(s, "\\floor[~][~]")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 50");
+				throw new Exception("implicit multiplication used, not implemented. (id=50)");
 				
 			} else if(checkForPattern(s, "\\floor[~]~")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 51");
+				throw new Exception("implicit multiplication used, not implemented. (id=51)");
 				
 			} else if(checkForPattern(s, "\\floor[~]")) {
 				//S		
@@ -524,11 +817,11 @@ throw new Exception("\\cos^~ ~ not implemented yet.");
 		
 			} else if(checkForPattern(s, "\\ceil[~][~]")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 52");
+				throw new Exception("implicit multiplication used, not implemented. (id=52)");
 				
 			} else if(checkForPattern(s, "\\ceil[~]~")) {
 				//S with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 53");
+				throw new Exception("implicit multiplication used, not implemented. (id=53)");
 				
 			} else if(checkForPattern(s, "\\ceil[~]")) {
 				//S	
@@ -545,11 +838,11 @@ throw new Exception("\\cos^~ ~ not implemented yet.");
 		//P	
 			} else if(checkForPattern(s, "\\log_[~][~][~]")) {
 				//P with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 54");
+				throw new Exception("implicit multiplication used, not implemented. (id=54)");
 				
 			} else if(checkForPattern(s, "\\log_[~][~]~")) {
 				//P with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 55");
+				throw new Exception("implicit multiplication used, not implemented. (id=55)");
 				
 			} else if(checkForPattern(s, "\\log_[~][~]")) {
 				//P				
@@ -569,11 +862,11 @@ throw new Exception("\\cos^~ ~ not implemented yet.");
 		
 			} else if(checkForPattern(s, "\\log_[~]~[~]")) {
 				//P with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 56");
+				throw new Exception("implicit multiplication used, not implemented. (id=56)");
 				
 			} else if(checkForPattern(s, "\\log_[~]~ ~")) {
 				//P with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 57");
+				throw new Exception("implicit multiplication used, not implemented. (id=57)");
 				
 			} else if(checkForPattern(s, "\\log_[~]~")) {
 				//P				
@@ -590,14 +883,65 @@ throw new Exception("\\cos^~ ~ not implemented yet.");
 				mft.getRoot().addR(b);
 								
 				btn.setData(new STC("P","log",mft_p,mft));
+				
+		
+			} else if(checkForPattern(s, "\\log_~[~][~]")) {
+				//P with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented. (id=56)");
+				
+			} else if(checkForPattern(s, "\\log_~[~]~")) {
+				//P with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented. (id=57)");
+				
+			} else if(checkForPattern(s, "\\log_~[~]")) {
+				//P				
+				ArrayList<String> contents = getPatternContents(s, "\\log_~[~]");					
+
+				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(0),b);
+				MathfunctionTree mft_p = new MathfunctionTree(new STC("F",""));
+				mft_p.getRoot().addR(b);
+				
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(1)+"]"),b);
+				MathfunctionTree mft = new MathfunctionTree(new STC("F",""));
+				mft.getRoot().addR(b);
+								
+				btn.setData(new STC("P","log",mft_p,mft));
+				
+		
+			} else if(checkForPattern(s, "\\log_~ ~[~]")) {
+				//P with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented. (id=56)");
+				
+			} else if(checkForPattern(s, "\\log_~ ~ ~")) {
+				//P with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented. (id=57)");
+				
+			} else if(checkForPattern(s, "\\log_~ ~")) {
+				//P				
+				ArrayList<String> contents = getPatternContents(s, "\\log_~ ~");					
+
+				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(0),b);
+				MathfunctionTree mft_p = new MathfunctionTree(new STC("F",""));
+				mft_p.getRoot().addR(b);
+				
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(1),b);
+				MathfunctionTree mft = new MathfunctionTree(new STC("F",""));
+				mft.getRoot().addR(b);
+								
+				btn.setData(new STC("P","log",mft_p,mft));
+				
 		
 			} else if(checkForPattern(s, "\\log[~][~]")) {
 				//P with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 58");
+				throw new Exception("implicit multiplication used, not implemented. (id=58)");
 				
 			} else if(checkForPattern(s, "\\log[~]~")) {
 				//P with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 59");
+				throw new Exception("implicit multiplication used, not implemented. (id=59)");
 				
 			} else if(checkForPattern(s, "\\log[~]")) {
 				//P				
@@ -614,11 +958,11 @@ throw new Exception("\\cos^~ ~ not implemented yet.");
 		
 			} else if(checkForPattern(s, "\\log ~[~]")) {
 				//P with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 60");
+				throw new Exception("implicit multiplication used, not implemented. (id=60)");
 				
 			} else if(checkForPattern(s, "\\log ~ ~")) {
 				//P with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 61");
+				throw new Exception("implicit multiplication used, not implemented. (id=61)");
 				
 			} else if(checkForPattern(s, "\\log ~")) {
 				//P		
@@ -636,11 +980,11 @@ throw new Exception("\\cos^~ ~ not implemented yet.");
 		
 			} else if(checkForPattern(s, "\\sqrt_[~][~][~]")) {
 				//P with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 62");
+				throw new Exception("implicit multiplication used, not implemented. (id=62)");
 				
 			} else if(checkForPattern(s, "\\sqrt_[~][~]~")) {
 				//P with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 63");
+				throw new Exception("implicit multiplication used, not implemented. (id=63)");
 				
 			} else if(checkForPattern(s, "\\sqrt_[~][~]")) {
 				//P				
@@ -660,11 +1004,11 @@ throw new Exception("\\cos^~ ~ not implemented yet.");
 		
 			} else if(checkForPattern(s, "\\sqrt_[~]~[~]")) {
 				//P with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 64");
+				throw new Exception("implicit multiplication used, not implemented. (id=64)");
 				
 			} else if(checkForPattern(s, "\\sqrt_[~]~ ~")) {
 				//P with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 65");
+				throw new Exception("implicit multiplication used, not implemented. (id=65)");
 				
 			} else if(checkForPattern(s, "\\sqrt_[~]~")) {
 				//P	
@@ -686,11 +1030,11 @@ throw new Exception("\\cos^~ ~ not implemented yet.");
 		//C				
 			} else if(checkForPattern(s, "\\pi[~]")) {
 				//C with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 66");
+				throw new Exception("implicit multiplication used, not implemented. (id=66)");
 				
 			} else if(checkForPattern(s, "\\pi ~")) {
 				//C with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 67");
+				throw new Exception("implicit multiplication used, not implemented. (id=67)");
 				
 			} else if(checkForPattern(s, "\\pi")) {
 				//C
@@ -700,11 +1044,11 @@ throw new Exception("\\cos^~ ~ not implemented yet.");
 
 			} else if(checkForPattern(s, "e[~]")) {
 				//C with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 68");
+				throw new Exception("implicit multiplication used, not implemented. (id=68)");
 				
 			} else if(checkForPattern(s, "e ~")) {
 				//C with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 69");
+				throw new Exception("implicit multiplication used, not implemented. (id=69)");
 				
 			} else if(checkForPattern(s, "e")) {
 				//C
@@ -715,11 +1059,11 @@ throw new Exception("\\cos^~ ~ not implemented yet.");
 		//O
 			} else if(checkForPattern(s, "[~]+[~][~]")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 70");
+				throw new Exception("implicit multiplication used, not implemented. (id=70)");
 
 			} else if(checkForPattern(s, "[~]+[~]~")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 71");
+				throw new Exception("implicit multiplication used, not implemented. (id=71)");
 				
 			} else if(checkForPattern(s, "[~]+[~]")) {
 				//O
@@ -735,11 +1079,11 @@ throw new Exception("\\cos^~ ~ not implemented yet.");
 				
 			} else if(checkForPattern(s, "[~]-[~][~]")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 72");
+				throw new Exception("implicit multiplication used, not implemented. (id=72)");
 				
 			} else if(checkForPattern(s, "[~]-[~]~")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 73");
+				throw new Exception("implicit multiplication used, not implemented. (id=73)");
 				
 			} else if(checkForPattern(s, "[~]-[~]")) {
 				//O
@@ -755,11 +1099,11 @@ throw new Exception("\\cos^~ ~ not implemented yet.");
 				
 			} else if(checkForPattern(s, "[~]*[~][~]")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 74");
+				throw new Exception("implicit multiplication used, not implemented. (id=74)");
 				
 			} else if(checkForPattern(s, "[~]*[~]~")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 75");
+				throw new Exception("implicit multiplication used, not implemented. (id=75)");
 				
 			} else if(checkForPattern(s, "[~]*[~]")) {
 				//O
@@ -775,11 +1119,11 @@ throw new Exception("\\cos^~ ~ not implemented yet.");
 				
 			} else if(checkForPattern(s, "[~]/[~][~]")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 81");
+				throw new Exception("implicit multiplication used, not implemented. (id=81)");
 				
 			} else if(checkForPattern(s, "[~]/[~]~")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 82");
+				throw new Exception("implicit multiplication used, not implemented. (id=82)");
 				
 			} else if(checkForPattern(s, "[~]/[~]")) {
 				//O
@@ -795,11 +1139,11 @@ throw new Exception("\\cos^~ ~ not implemented yet.");
 				
 			} else if(checkForPattern(s, "[~]/~[~]")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 83");
+				throw new Exception("implicit multiplication used, not implemented. (id=83)");
 				
 			} else if(checkForPattern(s, "[~]/~ ~")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 84");
+				throw new Exception("implicit multiplication used, not implemented. (id=84)");
 				
 			} else if(checkForPattern(s, "[~]/~")) {
 				//O
@@ -815,11 +1159,11 @@ throw new Exception("\\cos^~ ~ not implemented yet.");
 				
 			} else if(checkForPattern(s, "\\frac[~][~][~]")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 85");
+				throw new Exception("implicit multiplication used, not implemented. (id=85)");
 				
 			} else if(checkForPattern(s, "\\frac[~][~]~")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 86");
+				throw new Exception("implicit multiplication used, not implemented. (id=86)");
 				
 			} else if(checkForPattern(s, "\\frac[~][~]")) {
 				//O
@@ -835,11 +1179,11 @@ throw new Exception("\\cos^~ ~ not implemented yet.");
 				
 			} else if(checkForPattern(s, "[~]%[~][~]")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 87");
+				throw new Exception("implicit multiplication used, not implemented. (id=87)");
 				
 			} else if(checkForPattern(s, "[~]%[~]~")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 88");
+				throw new Exception("implicit multiplication used, not implemented. (id=88)");
 				
 			} else if(checkForPattern(s, "[~]%[~]")) {
 				//O
@@ -855,11 +1199,11 @@ throw new Exception("\\cos^~ ~ not implemented yet.");
 				
 			} else if(checkForPattern(s, "[~]^[~][~]")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 89");
+				throw new Exception("implicit multiplication used, not implemented. (id=89)");
 				
 			} else if(checkForPattern(s, "[~]^[~]~")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 90");
+				throw new Exception("implicit multiplication used, not implemented. (id=90)");
 				
 			} else if(checkForPattern(s, "[~]^[~]")) {
 				//O
@@ -875,46 +1219,61 @@ throw new Exception("\\cos^~ ~ not implemented yet.");
 				
 			} else if(checkForPattern(s, "rand[~][~]")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 91");
+				throw new Exception("implicit multiplication used, not implemented. (id=91)");
 				
 			} else if(checkForPattern(s, "rand[~]~")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 92");
+				throw new Exception("implicit multiplication used, not implemented. (id=92)");
 				
 			} else if(checkForPattern(s, "rand[~]")) {
 				//O
-throw new Exception("rand[~] not implemented yet.");
+				ArrayList<String> contents = getPatternContents(s, "rand[~]");		
+				String s1 = fm.get("["+contents.get(0)+"]");	
+				if(checkForPattern(s1, "[~],[~]")) {				
+					btn.setData(new STC("O","rand"));
+					
+					contents = getPatternContents(s1, "[~],[~]");
+					BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+					convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(0)+"]"),b);
+					btn.addL(b);
+					b = new BinaryTreeNode<STC>();
+					convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(1)+"]"),b);
+					btn.addR(b);	
+					
+				} else {
+					throw new Exception("parameters for random operator not valid");
+				}
 
 
 			} else if(checkForPattern(s, "[~][~]")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 76");
+				throw new Exception("implicit multiplication used, not implemented. (id=93)");
 				
 			} else if(checkForPattern(s, "[~][~]~")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 77");
+				throw new Exception("implicit multiplication used, not implemented. (id=94)");
 				
 			} else if(checkForPattern(s, "[~]~")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 78");
+				throw new Exception("implicit multiplication used, not implemented. (id=95)");
 				
 			} else if(checkForPattern(s, "~[~]~")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 79");
+				throw new Exception("implicit multiplication used, not implemented. (id=96)");
 				
 			} else if(checkForPattern(s, "~[~]")) {
 				//O with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 80");
+				throw new Exception("implicit multiplication used, not implemented. (id=97)");
 				
 				
 		//V				
 			} else if(checkForPattern(s, "~_[~][~]")) {
 				//V with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 93");
+				throw new Exception("implicit multiplication used, not implemented. (id=98)");
 				
 			} else if(checkForPattern(s, "~_[~]~")) {
 				//V with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 94");
+				throw new Exception("implicit multiplication used, not implemented. (id=99)");
 				
 			} else if(checkForPattern(s, "~_[~]")) {
 				//V
@@ -932,11 +1291,11 @@ throw new Exception("rand[~] not implemented yet.");
 				
 			} else if(checkForPattern(s, "~_~[~]")) {
 				//V with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 95");
+				throw new Exception("implicit multiplication used, not implemented. (id=100)");
 			
 			} else if(checkForPattern(s, "~_~ ~")) {
 				//V with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 96");
+				throw new Exception("implicit multiplication used, not implemented. (id=101)");
 				
 			} else if(checkForPattern(s, "~_~")) {
 				//V
@@ -954,11 +1313,11 @@ throw new Exception("rand[~] not implemented yet.");
 		//N or V			
 			} else if(checkForPattern(s, "~ [~]")) {
 				//N or V with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 97");
+				throw new Exception("implicit multiplication used, not implemented. (id=102)");
 			
 			} else if(checkForPattern(s, "~ ~")) {
 				//N or V with implicit multiplication
-				throw new Exception("implicit multiplication used, not implemented yet. 98");
+				throw new Exception("implicit multiplication used, not implemented. (id=103)");
 	
 			} else if(checkForPattern(s, "~")) {
 				//N or V				
@@ -981,11 +1340,10 @@ throw new Exception("rand[~] not implemented yet.");
 	
 	
 	private boolean checkForPattern(String s, String pattern) throws Exception {		
-		ArrayList<String> patterns = new ArrayList<String>(Arrays.asList(pattern.replaceAll("~", ",~,").split(",")));
+		ArrayList<String> patterns = new ArrayList<String>(Arrays.asList(pattern.replaceAll("~", "&~&").split("&")));
 		if(patterns.get(0).equals("")) {
 			patterns.remove(0);
 		}		
-		
 		if(patterns.size()>0) {
 			for(int i=0; i<patterns.size(); i++) {
 				if(patterns.get(i).equals("~")){
@@ -1034,7 +1392,7 @@ throw new Exception("rand[~] not implemented yet.");
 	private ArrayList<String> getPatternContents(String s, String pattern) throws Exception {
 		ArrayList<String> contents = new ArrayList<String>();
 		
-		ArrayList<String> patterns = new ArrayList<String>(Arrays.asList(pattern.replaceAll("~", ",~,").split(",")));
+		ArrayList<String> patterns = new ArrayList<String>(Arrays.asList(pattern.replaceAll("~", "&~&").split("&")));
 		if(patterns.get(0).equals("")) {
 			patterns.remove(0);
 		}		
@@ -1166,6 +1524,7 @@ throw new Exception("rand[~] not implemented yet.");
 			}
 		}
 
+		
 		//remove spaces before and after [] brackets and operands	
 		fm.setAllUnchecked();
 		for(int i=0; i<fm.size(); i++) {
@@ -1210,7 +1569,7 @@ throw new Exception("rand[~] not implemented yet.");
 				int indexOfBackslash = s.indexOf("\\");
 				if(indexOfBackslash > 0) {
 					String before = s.substring(indexOfBackslash-1, indexOfBackslash);
-					if(!before.equals("+") || !before.equals("-") || !before.equals("/") || !before.equals("*") || !before.equals("^") || !before.equals("%"))
+					if(!before.equals("+") && !before.equals("-") && !before.equals("/") && !before.equals("*") && !before.equals("^") && !before.equals("%"))
 					s = s.substring(0, indexOfBackslash).concat("*").concat(s.substring(indexOfBackslash));
 				}
 				

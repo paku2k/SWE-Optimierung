@@ -8,7 +8,7 @@ public class STC { //syntax tree content
 	public String constant; //pi, e
 	public String operation; // +, -, *, /, ^, %, rand
 	public String specialop; // sqrt, sin, cos, abs, floor, ceil, ln
-	public String paramop; // logn, nth root
+	public String paramop; // log, nth root
 	public String loopop; // sum, prod
 	public MathfunctionTree tree; 
 	//for paramop
@@ -136,7 +136,7 @@ public class STC { //syntax tree content
 				return Math.PI;
 			if(constant.equals("e"))
 				return Math.E;
-			throw new Exception("Cannot resolve constant from syntaxtree node. (unknown constant)");
+			throw new Exception("Cannot resolve constant from syntaxtree node. (unknown constant "+constant+")");
 		} 
 		throw new Exception("Cannot resolve constant from syntaxtree node. (not a constant)");
 	}
