@@ -3,7 +3,7 @@
 var timeout;
 
 function openInfo(type, text){
-    openInfoAdvanced(type, text, 10000)
+    openInfoAdvanced(type, text, 5000)
 }
 
 function openInfoAdvanced(type, text, ontime){
