@@ -1,6 +1,7 @@
 package swe_mo.fitnessfunction;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Stack;
 
 public class FitnessFunctionCustom {
@@ -83,12 +84,7 @@ public class FitnessFunctionCustom {
 			}
 
 			functionTree = new MathfunctionTree(new STC("F",expr[0]));
-
 				
-for(String u : detectedVars) {
-	System.out.println(u);
-}
-System.out.println("-----");
 		//parse expression		
 			expr[1] = replaceAll(expr[1], "\\cdot ", "*");
 			
@@ -96,21 +92,726 @@ System.out.println("-----");
 			FunctionMap fm = new FunctionMap();
 			fm.rootkey = "["+fm.add(expr[1])+"]";
 			fmTraverseBrackets(fm);
-			
-			
-			
-			
-System.out.println(s);
-//throw new Exception(fm.toString());
-			//functionTree.getRoot().addR();
 
-			functionTree.getRoot().addR(temp());
+			BinaryTreeNode<STC> btn = new BinaryTreeNode<STC>();
+			convertFmToBtn(fm, detectedVars, fm.get(fm.rootkey), btn);			
+			
+			functionTree.getRoot().addR(btn);
+			
 			this.functionString = s;	
 			this.functionStringStyled = styled;
+
+			
+for(String u : detectedVars) {
+	System.out.println(u);
+}
+System.out.println("-----");
+
+System.out.println(s);
+System.out.println(fm);
+System.out.println("Root: "+fm.rootkey);
+System.out.println("-----");
+			
+System.out.println(functionTree.toString());
+//throw new Exception("Parser to be implemented.");
 		} catch(Exception e) {
 			throw new Exception("Error while parsing function string. ("+e.getMessage()+")");
 		}
 	}
+	
+	
+	
+
+	private void convertFmToBtn(FunctionMap fm, ArrayList<String> detectedVars, String s, BinaryTreeNode btn) throws Exception {
+		//L	
+			if(checkForPattern(s, "\\sum_[~]^[~][~][~]")) {
+				//L with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\sum_[~]^[~][~]~")) {
+				//L with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\sum_[~]^[~][~]")) {
+				//L
+				
+			} else if(checkForPattern(s, "\\sum_[~]^~[~][~]")) {
+				//L with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\sum_[~]^~[~]~")) {
+				//L with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\sum_[~]^~[~]")) {
+				//L
+		
+			} else if(checkForPattern(s, "\\sum_[~]^[~]~[~]")) {
+				//L with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\sum_[~]^[~]~ ~")) {
+				//L with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\sum_[~]^[~]~")) {
+				//L
+		
+			} else if(checkForPattern(s, "\\sum_[~]^~ ~[~]")) {
+				//L with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\sum_[~]^~ ~ ~")) {
+				//L with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\sum_[~]^~ ~")) {
+				//L
+				
+		
+			} else if(checkForPattern(s, "\\prod_[~]^[~][~][~]")) {
+				//L with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\prod_[~]^[~][~]~")) {
+				//L with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\prod_[~]^[~][~]")) {
+				//L
+				
+			} else if(checkForPattern(s, "\\prod_[~]^~[~][~]")) {
+				//L with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\prod_[~]^~[~]~")) {
+				//L with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\prod_[~]^~[~]")) {
+				//L
+		
+			} else if(checkForPattern(s, "\\prod_[~]^[~]~[~]")) {
+				//L with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\prod_[~]^[~]~ ~")) {
+				//L with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\prod_[~]^[~]~")) {
+				//L
+		
+			} else if(checkForPattern(s, "\\prod_[~]^~ ~[~]")) {
+				//L with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\prod_[~]^~ ~ ~")) {
+				//L with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\prod_[~]^~ ~")) {
+				//L
+		
+		
+		//S	
+			} else if(checkForPattern(s, "\\sqrt[~][~]")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\sqrt[~]~")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\sqrt[~]")) {
+				//S				
+				
+			} else if(checkForPattern(s, "\\sqrt ~[~]")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\sqrt ~ ~")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\sqrt ~")) {
+				//S
+				
+		
+			} else if(checkForPattern(s, "\\ln[~][~]")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\ln[~]~")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\ln[~]")) {
+				//S				
+				
+			} else if(checkForPattern(s, "\\ln ~[~]")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\ln ~ ~")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\ln ~")) {
+				//S
+				
+
+			} else if(checkForPattern(s, "\\sin^[~][~][~]")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+	
+			} else if(checkForPattern(s, "\\sin^[~][~]~")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+	
+			} else if(checkForPattern(s, "\\sin^[~][~]")) {
+				//S with implicit multiplication
+				
+	
+			} else if(checkForPattern(s, "\\sin^~[~][~]")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+	
+			} else if(checkForPattern(s, "\\sin^~[~]~")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+	
+			} else if(checkForPattern(s, "\\sin^~[~]")) {
+				//S with implicit multiplication
+				
+	
+			} else if(checkForPattern(s, "\\sin^[~]~[~]")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+	
+			} else if(checkForPattern(s, "\\sin^[~]~ ~")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+	
+			} else if(checkForPattern(s, "\\sin^[~]~")) {
+				//S with implicit multiplication
+				
+	
+			} else if(checkForPattern(s, "\\sin^~ ~[~]")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+	
+			} else if(checkForPattern(s, "\\sin^~ ~ ~")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+	
+			} else if(checkForPattern(s, "\\sin^~ ~")) {
+				//S with implicit multiplication		
+				
+		
+			} else if(checkForPattern(s, "\\sin[~][~]")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\sin[~]~")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\sin[~]")) {
+				//S				
+				
+			} else if(checkForPattern(s, "\\sin ~[~]")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\sin ~ ~")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\sin ~")) {
+				//S
+				
+
+			} else if(checkForPattern(s, "\\cos^[~][~][~]")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+		
+			} else if(checkForPattern(s, "\\cos^[~][~]~")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+		
+			} else if(checkForPattern(s, "\\cos^[~][~]")) {
+				//S with implicit multiplication
+				
+		
+			} else if(checkForPattern(s, "\\cos^~[~][~]")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+		
+			} else if(checkForPattern(s, "\\cos^~[~]~")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+		
+			} else if(checkForPattern(s, "\\cos^~[~]")) {
+				//S with implicit multiplication
+				
+		
+			} else if(checkForPattern(s, "\\cos^[~]~[~]")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+		
+			} else if(checkForPattern(s, "\\cos^[~]~ ~")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+		
+			} else if(checkForPattern(s, "\\cos^[~]~")) {
+				//S with implicit multiplication
+				
+		
+			} else if(checkForPattern(s, "\\cos^~ ~[~]")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+		
+			} else if(checkForPattern(s, "\\cos^~ ~ ~")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+		
+			} else if(checkForPattern(s, "\\cos^~ ~")) {
+				//S with implicit multiplication
+					
+		
+			} else if(checkForPattern(s, "\\cos[~][~]")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\cos[~]~")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\cos[~]")) {
+				//S				
+				
+			} else if(checkForPattern(s, "\\cos ~[~]")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\cos ~ ~")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\cos ~")) {
+				//S
+				
+		
+			} else if(checkForPattern(s, "\\abs[~][~]")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\abs[~]~")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\abs[~]")) {
+				//S		
+				
+		
+			} else if(checkForPattern(s, "\\floor[~][~]")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\floor[~]~")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\floor[~]")) {
+				//S		
+				
+		
+			} else if(checkForPattern(s, "\\ceil[~][~]")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\ceil[~]~")) {
+				//S with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\ceil[~]")) {
+				//S	
+		
+		
+		//P	
+			} else if(checkForPattern(s, "\\log_[~][~][~]")) {
+				//P with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\log_[~][~]~")) {
+				//P with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\log_[~][~]")) {
+				//P				
+		
+			} else if(checkForPattern(s, "\\log_[~]~[~]")) {
+				//P with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\log_[~]~ ~")) {
+				//P with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\log_[~]~")) {
+				//P		
+		
+			} else if(checkForPattern(s, "\\log[~][~]")) {
+				//P with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\log[~]~")) {
+				//P with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\log[~]")) {
+				//P				
+		
+			} else if(checkForPattern(s, "\\log ~[~]")) {
+				//P with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\log ~ ~")) {
+				//P with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\log ~")) {
+				//P		
+		
+		
+			} else if(checkForPattern(s, "\\sqrt_[~][~][~]")) {
+				//P with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\sqrt_[~][~]~")) {
+				//P with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\sqrt_[~][~]")) {
+				//P				
+		
+			} else if(checkForPattern(s, "\\sqrt_[~]~[~]")) {
+				//P with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\sqrt_[~]~ ~")) {
+				//P with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\sqrt_[~]~")) {
+				//P	
+				
+				
+		//C				
+			} else if(checkForPattern(s, "\\pi[~]")) {
+				//C with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\pi ~")) {
+				//C with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\pi")) {
+				//C
+
+
+			} else if(checkForPattern(s, "e[~]")) {
+				//C with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "e ~")) {
+				//C with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "e")) {
+				//C
+			
+				
+		//O
+			} else if(checkForPattern(s, "[~]+[~][~]")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+
+			} else if(checkForPattern(s, "[~]+[~]~")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "[~]+[~]")) {
+				//O
+
+				
+			} else if(checkForPattern(s, "[~]-[~][~]")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "[~]-[~]~")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "[~]-[~]")) {
+				//O
+
+				
+			} else if(checkForPattern(s, "[~]*[~][~]")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "[~]*[~]~")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "[~]*[~]")) {
+				//O
+
+				
+			} else if(checkForPattern(s, "[~][~]")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "[~][~]~")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "[~]~")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "~[~]~")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "~[~]")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+
+				
+			} else if(checkForPattern(s, "[~]/[~][~]")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "[~]/[~]~")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "[~]/[~]")) {
+				//O
+
+				
+			} else if(checkForPattern(s, "[~]/[~][~]")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "[~]/[~]~")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "[~]/[~]")) {
+				//O
+
+				
+			} else if(checkForPattern(s, "\\frac[~][~][~]")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\frac[~][~]~")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "\\frac[~][~]")) {
+				//O
+
+				
+			} else if(checkForPattern(s, "[~]%[~][~]")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "[~]%[~]~")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "[~]%[~]")) {
+				//O
+
+				
+			} else if(checkForPattern(s, "[~]^[~][~]")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "[~]^[~]~")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "[~]^[~]")) {
+				//O
+
+				
+			} else if(checkForPattern(s, "rand[~][~]")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "rand[~]~")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "rand[~]")) {
+				//O
+				
+				
+		//V				
+			} else if(checkForPattern(s, "~_[~][~]")) {
+				//V with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "~_[~]~")) {
+				//V with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "~_[~]")) {
+				//V
+				
+				
+			} else if(checkForPattern(s, "~_~[~]")) {
+				//V with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+			
+			} else if(checkForPattern(s, "~_~ ~")) {
+				//V with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+				
+			} else if(checkForPattern(s, "~_~")) {
+				//V
+				ArrayList<String> contents = getPatternContents(s, "~_~");
+				if(detectedVars.contains(contents.get(0))) {
+					BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+					convertFmToBtn(fm,detectedVars,contents.get(1),b);
+					MathfunctionTree mft = new MathfunctionTree(b.getData());
+					btn.setData(new STC("V",contents.get(0),mft));
+				} else {
+					throw new Exception("variable "+contents.get(0)+" not found in varspace");
+				}
+
+				
+		//N or V			
+			} else if(checkForPattern(s, "~ [~]")) {
+				//N or V with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+			
+			} else if(checkForPattern(s, "~ ~")) {
+				//N or V with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented yet.");
+	
+			} else if(checkForPattern(s, "~")) {
+				//N or V				
+				if(s.matches(".*[0-9].*") && !(s.matches(".*[A-Z].*") || s.matches(".*[a-z].*"))){
+					//N
+					btn.setData(new STC(Double.parseDouble(s)));
+				} else if(!s.matches(".*[0-9].*") && (s.matches(".*[A-Z].*") || s.matches(".*[a-z].*"))){
+					if(detectedVars.contains(s)) {
+						btn.setData(new STC("V",s));
+					} else {
+						btn.setData(new STC("C",s));						
+					}				
+				} else {
+					throw new Exception("cannot distinguish N or V");
+				}
+			}
+	}
+	
+	private boolean checkForPattern(String s, String pattern) throws Exception {		
+		ArrayList<String> patterns = new ArrayList<String>(Arrays.asList(pattern.replaceAll("~", ",~,").split(",")));
+		if(patterns.get(0).equals("")) {
+			patterns.remove(0);
+		}		
+		
+		if(patterns.size()>0) {
+			for(int i=0; i<patterns.size(); i++) {
+				if(patterns.get(i).equals("~")){
+					if(i<patterns.size()-1) {
+						String nextPat = patterns.get(i+1);
+						int indexOfNextPat = s.indexOf(nextPat);
+						
+						if(indexOfNextPat <= 0) return false;
+						
+						s = s.substring(indexOfNextPat);
+						
+					} else {
+						if(s.length() == 0) return false;
+						return true;
+					}
+				} else {
+					String pat = patterns.get(i);
+					int indexOfPat = s.indexOf(pat);
+					
+					if(indexOfPat != 0) return false;
+
+					s = s.substring(indexOfPat+pat.length());
+				}
+			}
+			
+			if(s.length() != 0) return false;
+			
+			return true;
+		} else {
+			throw new Exception("no pattern given");
+		}
+	}
+	
+	private ArrayList<String> getPatternContents(String s, String pattern) throws Exception {
+		ArrayList<String> contents = new ArrayList<String>();
+		
+		ArrayList<String> patterns = new ArrayList<String>(Arrays.asList(pattern.replaceAll("~", ",~,").split(",")));
+		if(patterns.get(0).equals("")) {
+			patterns.remove(0);
+		}		
+		
+		if(patterns.size()>0) {
+			
+			for(int i=0; i<patterns.size(); i++) {
+				if(patterns.get(i).equals("~")){
+					if(i<patterns.size()-1) {
+						String nextPat = patterns.get(i+1);
+						int indexOfNextPat = s.indexOf(nextPat);
+						
+						if(indexOfNextPat <= 0) throw new Exception("pattern does not match");
+						
+						contents.add(s.substring(0,indexOfNextPat));
+						s = s.substring(indexOfNextPat);
+						
+					} else {
+						if(s.length() == 0) throw new Exception("pattern does not match");						
+						contents.add(s);
+						return contents;
+					}
+				} else {
+					String pat = patterns.get(i);
+					int indexOfPat = s.indexOf(pat);
+					
+					if(indexOfPat != 0) throw new Exception("pattern does not match");
+
+					s = s.substring(indexOfPat+pat.length());
+				}
+				
+			}
+			
+			if(s.length() != 0) throw new Exception("pattern does not match");
+			
+			return contents;
+		} else {
+			throw new Exception("no pattern given");
+		}
+	}
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -143,6 +844,22 @@ System.out.println(s);
 			}
 			
 			fm.edit("["+i+"]", s, true);
+		}
+		
+		//put content in <> brackets after \sqrt in own element 	
+		fm.setAllUnchecked();
+		for(int i=0; i<fm.size(); i++) {
+			if(!fm.checked("["+i+"]")) {
+				String s = fm.get("["+i+"]");
+				
+				if(s.contains("\\sqrt<")) {
+					int closeBracketIndex = s.indexOf("\\sqrt<")+"\\sqrt<".length() +findCorrespondingBracket(s.substring(s.indexOf("\\sqrt<")+"\\sqrt<".length()+1),"<");
+					String bracketcontent = s.substring(s.indexOf("\\sqrt<")+"\\sqrt<".length(), closeBracketIndex);
+					s = s.substring(0, s.indexOf("\\sqrt<")+"\\sqrt<".length()-1).concat("_["+fm.add(bracketcontent)+"]").concat(s.substring(closeBracketIndex+1));
+				}
+				
+				fm.edit("["+i+"]", s, true);		
+			}
 		}
 		
 		//clean up fields with a reference to another field only + delete empty fields		
@@ -202,10 +919,10 @@ System.out.println(s);
 		for(int i=0; i<fm.size(); i++) {
 			if(!fm.checked("["+i+"]")) {
 				String s = fm.get("["+i+"]");
-				
+
+				s = operandsToOwnEntry(s, ",", fm);
 				s = operandsToOwnEntry(s, "+", fm);
 				s = operandsToOwnEntry(s, "-", fm);
-				s = operandsToOwnEntry(s, "/", fm);
 				s = operandsToOwnEntry(s, "%", fm);
 
 				
@@ -216,7 +933,8 @@ System.out.println(s);
 					s = s.substring(0, indexOfBackslash).concat("*").concat(s.substring(indexOfBackslash));
 				}
 				
-				s = operandsToOwnEntry(s, "*", fm);				
+				s = operandsToOwnEntry(s, "*", fm);	
+				s = operandsToOwnEntry(s, "/", fm);			
 				
 				fm.edit("["+i+"]", s, true);
 			}
@@ -239,10 +957,6 @@ System.out.println(s);
 				fm.edit("["+i+"]", s, true);
 			}
 		}
-
-System.out.println(fm);
-System.out.println("Root: "+fm.rootkey);
-
 	}
 	
 	private String resolveVariableNumberProd(String s, FunctionMap fm) {    	
@@ -450,6 +1164,8 @@ System.out.println("Root: "+fm.rootkey);
 	private static String removeLRBrackets(String s) throws Exception {
 		s = replaceAll(s, "\\left", "");
 		s = replaceAll(s, "\\right", "");
+		s = replaceAll(s, "~", " ");
+		s = replaceAll(s, "\\cdot", "*");
 
 		s = replaceAll(s, "\\{", "(");
 		s = replaceAll(s, "\\}", ")");

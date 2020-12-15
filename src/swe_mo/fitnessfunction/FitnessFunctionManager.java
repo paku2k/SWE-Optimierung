@@ -17,9 +17,10 @@ public class FitnessFunctionManager {
 	
 
 	public static int add(String functionString) throws Exception {
-		int id = FitnessFunction.numberOfHardCoded + counter++;
+		int id = FitnessFunction.numberOfHardCoded + counter;
 		if(ffcList.get(id) == null) {
 			ffcList.put(id, new FitnessFunctionCustom(functionString));
+			counter++;
 			return id;
 		} else {
 			throw new Exception("There is already a custom fitness function with ID "+id+".");
