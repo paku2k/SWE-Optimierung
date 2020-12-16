@@ -130,3 +130,17 @@
 #tab_settings #settings_credentials tr > td:first-of-type {
     text-align: right;
 }
+
+.helpdoc {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.helpdoc > p {
+    cursor: pointer;
+    margin: 0;
+    margin-left: 0.2rem;
+    margin-right: 0.2rem;
+    color: #444;
+    display: inline;
+}

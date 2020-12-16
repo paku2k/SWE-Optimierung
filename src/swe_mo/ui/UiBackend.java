@@ -243,7 +243,8 @@ public class UiBackend {
 				 		 + "\t" + "mv  \t\tMO Visualizer\r"
 				 		 + "\t" + "ffm \t\tFitnessFunctionManager\r"
 						 + "\t" + "sm  \t\tSolverManager\r"
-						 + "\t" + "om  \t\tOptimizer\r";
+						 + "\t" + "om  \t\tOptimizer\r"
+						 + "For further details consult documentation (via Settings in WebGUI)\r";
 			} else {
 				return cmd(auth, cmd_queue.poll()+" help");
 			}
@@ -519,7 +520,9 @@ public class UiBackend {
 						 + "\t" + "create \tCreate new fitness function\r"
 						 + "\t" + "modify \tModify fitness function\r"
 						 + "\t" + "delete \tDelete fitness function\r"
-				 		 + "\t" + "get    \tGet fitness function string\r";	
+				 		 + "\t" + "set    \tset parameters\r"
+				 		 + "\t" + "get    \tGet fitness function string or parameters\r"
+				 		 + "\t" + "lsbd   \tGet list of boundaries from hard coded ffs\r";	
 				
 			} else if(cmd_queue.peek().equals("list") || cmd_queue.peek().equals("lsit")) {
 				cmd_queue.remove();	

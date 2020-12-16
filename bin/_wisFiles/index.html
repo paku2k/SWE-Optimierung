@@ -154,7 +154,7 @@
                 <table id="ffEditor">
                     <tr id="ffEditor_fields">
                         <th colspan="4">
-                            <input id="ff_editor_in" oninput="ffEditor_oninput();" type="text" placeholder="LaTex equation f(x,n)=" autocomplete="off">
+                            <input id="ff_editor_in" oninput="ffEditor_oninput();" type="text" placeholder="LaTeX equation f(x,n)=" autocomplete="off">
                             <div class="ff_editor_out" id="ff_editor_out1" class="math"></div>
                             <div class="ff_editor_out" id="ff_editor_out2" class="math"></div>
                             <input class="ff_editor_boundary" id="ff_editor_lowerBoundary" type="text" placeholder="Lower boundary" autocomplete="off">
@@ -449,8 +449,12 @@
                         <td>Developers</td>
                         <td id="appinfo_developers"></td>
                     </tr>
-                </table>    
-                <p>&copy; 2020</p>                
+                </table>   
+                <p>&copy; 2020</p> 
+                <div class="helpdoc">
+                    <p onclick="openHelp();">Help</p> |
+                    <p onclick="openDoc();">Documentation</p>   
+                </div>             
             </div>
         </div>   
         

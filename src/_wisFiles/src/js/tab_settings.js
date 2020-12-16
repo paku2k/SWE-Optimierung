@@ -57,8 +57,7 @@ function tab_settings_responseHandler(){
 }
 
 
-
-
+/* Settings */
 
 function createOrChangeSettingHTML(key, value){    
     if(key == "WebGUIshowDelSolvers"){
@@ -101,4 +100,14 @@ function settingsChange(key, value){
 function settingsReset(){
     if(window.confirm("Reset application settings?"))
         sendCmds(["cfg -reset"], 2000, tab_settings_responseHandler);    
+}
+
+
+
+/* help & documentation */
+function openHelp(){
+    window.open('mo_help.pdf', '_blank');
+}
+function openDoc(){
+    window.open('mo_help.pdf', '_blank');
 }
