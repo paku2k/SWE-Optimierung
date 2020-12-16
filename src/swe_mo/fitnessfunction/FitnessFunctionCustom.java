@@ -8,6 +8,7 @@ public class FitnessFunctionCustom {
 
 	private String functionString;
 	private String functionStringStyled;
+	private FunctionMap functionMap;
 	private MathfunctionTree functionTree;
 	
 	
@@ -92,6 +93,9 @@ public class FitnessFunctionCustom {
 			FunctionMap fm = new FunctionMap();
 			fm.rootkey = "["+fm.add(expr[1])+"]";
 			fmTraverseBrackets(fm);
+			
+			this.functionMap = fm;
+	System.out.println(fm);
 
 			BinaryTreeNode<STC> btn = new BinaryTreeNode<STC>();
 			convertFmToBtn(fm, detectedVars, fm.get(fm.rootkey), btn);			
@@ -110,6 +114,7 @@ public class FitnessFunctionCustom {
 
 	private void convertFmToBtn(FunctionMap fm, ArrayList<String> detectedVars, String s, BinaryTreeNode btn) throws Exception {
 		//L	
+	System.out.println(s);
 			if(checkForPattern(s, "\\sum_[~]^[~][~][~]")) {
 				//L with implicit multiplication
 				throw new Exception("implicit multiplication used, not implemented. (id=1)");
@@ -1267,6 +1272,131 @@ public class FitnessFunctionCustom {
 				
 				
 		//V				
+			} else if(checkForPattern(s, "~_[~]^[~][~]")) {
+				//V with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented. (id=104)");
+				
+			} else if(checkForPattern(s, "~_[~]^[~]~")) {
+				//V with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented. (id=105)");				
+				
+			} else if(checkForPattern(s, "~_[~]^[~]")) {
+				//V
+				ArrayList<String> contents = getPatternContents(s, "~_[~]^[~]");
+				if(detectedVars.contains(contents.get(0))) {
+					BinaryTreeNode<STC> a = new BinaryTreeNode<STC>();
+					BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+					convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(1)+"]"),b);
+					MathfunctionTree mft = new MathfunctionTree(new STC("F",""));
+					mft.getRoot().addR(b);
+					a.setData(new STC("V",contents.get(0),mft));										
+
+					btn.setData(new STC("O","^"));	
+					
+					b = new BinaryTreeNode<STC>();
+					convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(2)+"]"),b);
+									
+					btn.addL(a);
+					btn.addR(b);						
+					
+				} else {
+					throw new Exception("variable "+contents.get(0)+" not found in varspace");
+				}		
+				
+			} else if(checkForPattern(s, "~_[~]^~[~]")) {
+				//V with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented. (id=106)");
+				
+			} else if(checkForPattern(s, "~_[~]^~ ~")) {
+				//V with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented. (id=107)");				
+				
+			} else if(checkForPattern(s, "~_[~]^~")) {
+				//V
+				ArrayList<String> contents = getPatternContents(s, "~_[~]^~");
+				if(detectedVars.contains(contents.get(0))) {
+					BinaryTreeNode<STC> a = new BinaryTreeNode<STC>();
+					BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+					convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(1)+"]"),b);
+					MathfunctionTree mft = new MathfunctionTree(new STC("F",""));
+					mft.getRoot().addR(b);
+					a.setData(new STC("V",contents.get(0),mft));										
+
+					btn.setData(new STC("O","^"));	
+					
+					b = new BinaryTreeNode<STC>();
+					convertFmToBtn(fm,detectedVars,contents.get(2),b);
+									
+					btn.addL(a);
+					btn.addR(b);						
+					
+				} else {
+					throw new Exception("variable "+contents.get(0)+" not found in varspace");
+				}	
+				
+			} else if(checkForPattern(s, "~_~^[~][~]")) {
+				//V with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented. (id=108)");
+				
+			} else if(checkForPattern(s, "~_~^[~] ~")) {
+				//V with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented. (id=109)");				
+				
+			} else if(checkForPattern(s, "~_~^[~]")) {
+				//V
+				ArrayList<String> contents = getPatternContents(s, "~_~^[~]");
+				if(detectedVars.contains(contents.get(0))) {
+					BinaryTreeNode<STC> a = new BinaryTreeNode<STC>();
+					BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+					convertFmToBtn(fm,detectedVars,contents.get(1),b);
+					MathfunctionTree mft = new MathfunctionTree(new STC("F",""));
+					mft.getRoot().addR(b);
+					a.setData(new STC("V",contents.get(0),mft));										
+
+					btn.setData(new STC("O","^"));	
+					
+					b = new BinaryTreeNode<STC>();
+					convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(2)+"]"),b);
+									
+					btn.addL(a);
+					btn.addR(b);						
+					
+				} else {
+					throw new Exception("variable "+contents.get(0)+" not found in varspace");
+				}		
+				
+			} else if(checkForPattern(s, "~_~^~[~]")) {
+				//V with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented. (id=110)");
+				
+			} else if(checkForPattern(s, "~_~^~ ~")) {
+				//V with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented. (id=111)");				
+				
+			} else if(checkForPattern(s, "~_~^~")) {
+				//V
+				ArrayList<String> contents = getPatternContents(s, "~_~^~");
+				if(detectedVars.contains(contents.get(0))) {
+					BinaryTreeNode<STC> a = new BinaryTreeNode<STC>();
+					BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+					convertFmToBtn(fm,detectedVars,contents.get(1),b);
+					MathfunctionTree mft = new MathfunctionTree(new STC("F",""));
+					mft.getRoot().addR(b);
+					a.setData(new STC("V",contents.get(0),mft));										
+
+					btn.setData(new STC("O","^"));	
+					
+					b = new BinaryTreeNode<STC>();
+					convertFmToBtn(fm,detectedVars,contents.get(2),b);
+									
+					btn.addL(a);
+					btn.addR(b);						
+					
+				} else {
+					throw new Exception("variable "+contents.get(0)+" not found in varspace");
+				}		
+				
+				
 			} else if(checkForPattern(s, "~_[~][~]")) {
 				//V with implicit multiplication
 				throw new Exception("implicit multiplication used, not implemented. (id=98)");
@@ -1311,6 +1441,49 @@ public class FitnessFunctionCustom {
 
 				
 		//N or V			
+			} else if(checkForPattern(s, "~^[~] [~]")) {
+				//N or V with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented. (id=104)");
+			
+			} else if(checkForPattern(s, "~^[~] ~")) {
+				//N or V with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented. (id=105)");
+	
+			} else if(checkForPattern(s, "~^[~]")) {
+				//N or V				
+				ArrayList<String> contents = getPatternContents(s, "~^[~]");
+				BinaryTreeNode<STC> a = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(0),a);
+				
+				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(1)+"]"),b);
+
+				btn.setData(new STC("O","^"));	
+				btn.addL(a);
+				btn.addR(b);				
+				
+			} else if(checkForPattern(s, "~^~ [~]")) {
+				//N or V with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented. (id=104)");
+			
+			} else if(checkForPattern(s, "~^~ ~")) {
+				//N or V with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented. (id=105)");
+	
+			} else if(checkForPattern(s, "~^~")) {
+				//N or V				
+				ArrayList<String> contents = getPatternContents(s, "~^~");
+				BinaryTreeNode<STC> a = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(0),a);
+				
+				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(1),b);
+
+				btn.setData(new STC("O","^"));	
+				btn.addL(a);
+				btn.addR(b);				
+				
+				
 			} else if(checkForPattern(s, "~ [~]")) {
 				//N or V with implicit multiplication
 				throw new Exception("implicit multiplication used, not implemented. (id=102)");
@@ -1586,7 +1759,7 @@ public class FitnessFunctionCustom {
 			if(!fm.checked("["+i+"]")) {
 				String s = fm.get("["+i+"]");
 				
-				if(!s.contains("\\") && !s.contains("_") && !s.contains("=") && !s.contains("[")) {
+				if(!s.contains("\\") && !s.contains("_") && !s.contains("=") && !s.contains("[") && !s.contains("^")) {
 					//check if contains both letters and numbers
 				    if(s.matches(".*[0-9].*") && (s.matches(".*[A-Z].*") || s.matches(".*[a-z].*"))) {
 				    	s = resolveVariableNumberProd(s, fm);
