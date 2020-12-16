@@ -2,7 +2,7 @@ var REFRESH_RATE_FUNCTIONS = 5000;
 
 
 function ffLoadBoundaries(){
-    sendCmds(["sm lsffbd -json"], 2000, tab_functions_responseHandler);
+    sendCmds(["ffm lsbd -json"], 2000, tab_functions_responseHandler);
 }
 
 function tab_functions_responseHandler(){   
@@ -13,7 +13,7 @@ function tab_functions_responseHandler(){
         var cmd_ans = response.cmd_ans;
         
         for(var i=0; i < cmd_ans.length; i++){
-            if(cmd_ans[i].cmd == "sm lsffbd -json"){
+            if(cmd_ans[i].cmd == "ffm lsbd -json"){
                 // display fitness function boundaries
                 if(cmd_ans[i].err){
                     openInfo("err", "Error while loading fitnessfunction boundaries: "+cmd_ans[i].err);
@@ -35,6 +35,8 @@ function tab_functions_responseHandler(){
                 if(cmd_ans[i].ans){
                     sendCmds(["ffm list -json"], 1000, tab_functions_responseHandler);
                     document.getElementById("ff_editor_in").value = "";
+                    document.getElementById("ff_editor_lowerBoundary").value = "";
+                    document.getElementById("ff_editor_upperBoundary").value = "";
                     ffEditor_oninput();
                 } else if(cmd_ans[i].err){
                     openInfo("err", cmd_ans[i].err);
@@ -110,7 +112,7 @@ function cff_createOrChangeHTML() {
         for(var i=0; i<cffList.length; i++){
             var cff = cffList[i]; 
             if(document.getElementById("cff_"+cff.id)){
-                //if exists check for changes
+                //if exists check for changes (equation)
                 if(document.getElementById("cff_"+cff.id+"_equation").style.display != "none"){
                     if(document.getElementById("cff_"+cff.id+"_equation").getElementsByTagName("script")[0] != null){
                         if(document.getElementById("cff_"+cff.id+"_equation").getElementsByTagName("script")[0].innerHTML != "\\begin{equation} "+cff.functionString+" \\end{equation}"){
@@ -134,16 +136,45 @@ function cff_createOrChangeHTML() {
                         }  
                     }
                 }
+                
+                //if exists check for changes (boundaries)
+                if(document.getElementById("cff_"+cff.id+"_boundaries").style.display != "none"){
+                    if(document.getElementById("cff_"+cff.id+"_boundaries").getElementsByTagName("script")[0] != null){
+                        if(document.getElementById("cff_"+cff.id+"_boundaries").getElementsByTagName("script")[0].innerHTML != ('\\begin{equation} '+((cff.bdl!=null)?cff.bdl:'\\text{not set}~')+' < x_i < '+((cff.bdu!=null)?cff.bdu:'\\text{not set}~')+' \\end{equation}').replace("-","\\text{-}")){
+                            document.getElementById("cff_"+cff.id+"_boundaries2").innerHTML = ('\\begin{equation} '+((cff.bdl!=null)?cff.bdl:'\\text{not set}~')+' < x_i < '+((cff.bdu!=null)?cff.bdu:'\\text{not set}~')+' \\end{equation}').replace("-","\\text{-}");
+                            MathJax.Hub.Queue(["Typeset",MathJax.Hub, "cff_"+cff.id+"_boundaries2"]);   
+                            setTimeout(function(id){ 
+                                document.getElementById("cff_"+id+"_boundaries").style.display = "none";
+                                document.getElementById("cff_"+cff.id+"_boundaries2").style.display = ""; 
+                            }.bind(this, cff.id),500);
+                        }               
+                    }                    
+                } else {
+                    if(document.getElementById("cff_"+cff.id+"_boundaries2").getElementsByTagName("script")[0] != null){
+                        if(document.getElementById("cff_"+cff.id+"_boundaries2").getElementsByTagName("script")[0].innerHTML != ('\\begin{equation} '+((cff.bdl!=null)?cff.bdl:'\\text{not set}~')+' < x_i < '+((cff.bdu!=null)?cff.bdu:'\\text{not set}~')+' \\end{equation}').replace("-","\\text{-}")){
+                            document.getElementById("cff_"+cff.id+"_boundaries").innerHTML = ('\\begin{equation} '+((cff.bdl!=null)?cff.bdl:'\\text{not set}~')+' < x_i < '+((cff.bdu!=null)?cff.bdu:'\\text{not set}~')+' \\end{equation}').replace("-","\\text{-}");
+                            MathJax.Hub.Queue(["Typeset",MathJax.Hub, "cff_"+cff.id+"_boundaries"]);   
+                            setTimeout(function(id){     
+                                document.getElementById("cff_"+cff.id+"_boundaries2").style.display = "none";
+                                document.getElementById("cff_"+id+"_boundaries").style.display = ""; 
+                            }.bind(this, cff.id),500);
+                        }      
+                    }
+                }
             } else {
                 //does not exists -> create new
                 var tr = document.createElement("tr");
                 tr.setAttribute("id","cff_"+cff.id);
-                tr.innerHTML = '<td id="cff_'+cff.id+'_id">'+cff.id+'</td><td><div id="cff_'+cff.id+'_equation" class="math">\\begin{equation} '+cff.functionString+' \\end{equation}</div><div id="cff_'+cff.id+'_equation2" class="math"></div></td><td onclick="cff_delete('+cff.id+');">delete</td>';
+                tr.innerHTML = '<td id="cff_'+cff.id+'_id">'+cff.id+'</td><td><div id="cff_'+cff.id+'_equation" class="math">\\begin{equation} '+cff.functionString+' \\end{equation}</div><div id="cff_'+cff.id+'_equation2" class="math"></div></td><td><div class="math" id="cff_'+cff.id+'_boundaries">\\begin{equation} '+((cff.bdl!=null)?cff.bdl:'\\text{not set}~')+' < x_i < '+((cff.bdu!=null)?cff.bdu:'\\text{not set}~')+' \\end{equation}</div><div class="math" id="cff_'+cff.id+'_boundaries2"></div></td><td onclick="cff_delete('+cff.id+');">delete</td>';
                 document.getElementById("ffEditor_fields").parentElement.appendChild(tr);
-                document.getElementById("cff_"+cff.id+"_equation2").style.display = "none";
-                
                 document.getElementById("cff_"+cff.id).style.display = "none";
+                document.getElementById("cff_"+cff.id+"_equation2").style.display = "none";
+                document.getElementById("cff_"+cff.id+"_boundaries2").style.display = "none";                
+                document.getElementById("cff_"+cff.id+"_boundaries").innerHTML = document.getElementById("cff_"+cff.id+"_boundaries").innerHTML.replace("-","\\text{-}");
+                document.getElementById("cff_"+cff.id+"_boundaries2").innerHTML = document.getElementById("cff_"+cff.id+"_boundaries2").innerHTML.replace("-","\\text{-}");
+                
                 MathJax.Hub.Queue(["Typeset",MathJax.Hub, "cff_"+cff.id+"_equation"]);     
+                MathJax.Hub.Queue(["Typeset",MathJax.Hub, "cff_"+cff.id+"_boundaries"]);     
                 setTimeout(function(id){
                     document.getElementById("cff_"+id).style.display = "inherit";
                 }.bind(this, cff.id),500);
@@ -158,8 +189,19 @@ function cff_delete(id){
 }
 function cff_create(){
     var eq = document.getElementById("ff_editor_in").value;
+    var bdl = document.getElementById("ff_editor_lowerBoundary").value.replace(",",".").trim();
+    var bdu = document.getElementById("ff_editor_upperBoundary").value.replace(",",".").trim();
     if(eq.trim() != ""){
-        sendCmds(["ffm create "+eq], 1000, tab_functions_responseHandler);
+        if(bdl != "" && bdu != ""){
+            var cmd = ["ffm create "+eq, "ffm set bdl "+bdl, "ffm set bdu "+bdu];            
+        } else if(bdu != ""){
+            var cmd = ["ffm create "+eq, "ffm set bdu "+bdu];            
+        } else if(bdl != ""){
+            var cmd = ["ffm create "+eq, "ffm set bdl "+bdl];            
+        } else {
+            var cmd = ["ffm create "+eq];            
+        }
+        sendCmds(cmd, 1000, tab_functions_responseHandler);
     }
 }
 

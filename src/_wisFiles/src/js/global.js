@@ -67,6 +67,10 @@ function closeInfoNWcon(){
 
 
 
+
+
+
+
 /* easter egg (memes)*/
 
 var easterEgg_unlock_time = 1000;

@@ -10,6 +10,8 @@ public class FitnessFunctionCustom {
 	private String functionStringStyled;
 	private FunctionMap functionMap;
 	private MathfunctionTree functionTree;
+	private Double lowerBound;
+	private Double upperBound;
 	
 	
 
@@ -17,6 +19,21 @@ public class FitnessFunctionCustom {
 	public FitnessFunctionCustom(String s) throws Exception {
 		parseFunctionString(s);
 	}
+	
+
+	public void setLowerBound(Double b) {
+		lowerBound = b;
+	}
+	public void setUpperBound(Double b) {
+		upperBound = b;
+	}
+	public Double getLowerBound() {
+		return lowerBound;
+	}
+	public Double getUpperBound() {
+		return upperBound;
+	}
+	
 	
 
 	@Override
@@ -59,6 +76,7 @@ public class FitnessFunctionCustom {
 			
 			//detect variables
 			try {
+				@SuppressWarnings("unused")
 				String test = ppf_f.children.get(ppf_f.children.size()-1).children.get(0).brackettype;
 			} catch(Exception e) {
 				throw new Exception("variablenames for function call needed (e.g. f(x,n))");
@@ -98,7 +116,6 @@ public class FitnessFunctionCustom {
 			fmTraverseBrackets(fm);
 			
 			this.functionMap = fm;
-	System.out.println(fm);
 
 			BinaryTreeNode<STC> btn = new BinaryTreeNode<STC>();
 			convertFmToBtn(fm, detectedVars, fm.get(fm.rootkey), btn);			
@@ -115,9 +132,8 @@ public class FitnessFunctionCustom {
 	
 	
 
-	private void convertFmToBtn(FunctionMap fm, ArrayList<String> detectedVars, String s, BinaryTreeNode btn) throws Exception {
+	private void convertFmToBtn(FunctionMap fm, ArrayList<String> detectedVars, String s, BinaryTreeNode<STC> btn) throws Exception {
 		//L	
-	System.out.println(s);
 			if(checkForPattern(s, "\\sum_[~]^[~][~][~]")) {
 				//L with implicit multiplication
 				throw new Exception("implicit multiplication used, not implemented. (id=1)");
@@ -1046,7 +1062,6 @@ public class FitnessFunctionCustom {
 				
 			} else if(checkForPattern(s, "\\pi")) {
 				//C
-				ArrayList<String> contents = getPatternContents(s, "\\pi");
 				btn.setData(new STC("C","pi"));
 
 
@@ -1060,7 +1075,6 @@ public class FitnessFunctionCustom {
 				
 			} else if(checkForPattern(s, "e")) {
 				//C
-				ArrayList<String> contents = getPatternContents(s, "e");
 				btn.setData(new STC("C","e"));
 			
 				
@@ -1219,6 +1233,45 @@ public class FitnessFunctionCustom {
 				btn.setData(new STC("O","^"));
 				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
 				convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(0)+"]"),b);
+				btn.addL(b);
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(1)+"]"),b);
+				btn.addR(b);
+
+				
+			} else if(checkForPattern(s, "[~]^~[~]")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented. (id=112)");
+				
+			} else if(checkForPattern(s, "[~]^~ ~")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented. (id=113)");
+				
+			} else if(checkForPattern(s, "[~]^~")) {
+				//O
+				ArrayList<String> contents = getPatternContents(s, "[~]^~");				
+				btn.setData(new STC("O","^"));
+				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(0)+"]"),b);
+				btn.addL(b);
+				b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(1),b);
+				btn.addR(b);
+				
+			} else if(checkForPattern(s, "~^[~][~]")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented. (id=114)");
+				
+			} else if(checkForPattern(s, "~^[~]~")) {
+				//O with implicit multiplication
+				throw new Exception("implicit multiplication used, not implemented. (id=115)");
+				
+			} else if(checkForPattern(s, "~^[~]")) {
+				//O
+				ArrayList<String> contents = getPatternContents(s, "~^[~]");				
+				btn.setData(new STC("O","^"));
+				BinaryTreeNode<STC> b = new BinaryTreeNode<STC>();
+				convertFmToBtn(fm,detectedVars,contents.get(0),b);
 				btn.addL(b);
 				b = new BinaryTreeNode<STC>();
 				convertFmToBtn(fm,detectedVars,fm.get("["+contents.get(1)+"]"),b);
@@ -2079,20 +2132,6 @@ public class FitnessFunctionCustom {
 			s = s.substring(0, s.indexOf(sequence)).concat(replacement).concat(s.substring(s.indexOf(sequence)+sequence.length()));
 		}		
 		return s;
-	}
-	
-	private String insertBefore(String s, String insert, String before) throws Exception {
-		if(s.indexOf(before) < 0) {
-			throw new Exception("insert before string not found");
-		}
-		return s.substring(0, s.indexOf(before)).concat(insert).concat(s.substring(s.indexOf(before)));		
-	}
-	
-	private String insertAfter(String s, String insert, String after) throws Exception {
-		if(s.indexOf(after) < 0) {
-			throw new Exception("insert after string not found");
-		}
-		return s.substring(0, s.indexOf(after)+after.length()).concat(insert).concat(s.substring(s.indexOf(after)+after.length()));		
 	}
 	
 	private String deleteFromString(String s, String delete) throws Exception {

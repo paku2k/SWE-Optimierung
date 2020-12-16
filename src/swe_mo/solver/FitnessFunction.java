@@ -377,8 +377,12 @@ public class FitnessFunction {
 		 		if(t.equals("lower")) return -2.0;
 		 		if(t.equals("upper")) return 2.0;
 		 	default:
-		 		return null;
+				if(FitnessFunctionManager.exists(index)) {
+					if(t.equals("lower")) return FitnessFunctionManager.getBoundaryLower(index);
+					if(t.equals("upper")) return FitnessFunctionManager.getBoundaryUpper(index);
+				} 
 		 }
+		 return null;
 	 }
 	 
 	 @SuppressWarnings("unchecked")

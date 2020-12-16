@@ -1,7 +1,5 @@
 package swe_mo.ui;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -27,7 +25,6 @@ public class UiBackend {
 	private static Thread Thread_WebInterfaceServer;	
 	
  	
-	
 	
 	
 /*
@@ -246,7 +243,8 @@ public class UiBackend {
 				 		 + "\t" + "mv  \t\tMO Visualizer\r"
 				 		 + "\t" + "ffm \t\tFitnessFunctionManager\r"
 						 + "\t" + "sm  \t\tSolverManager\r"
-						 + "\t" + "om  \t\tOptimizer\r";
+						 + "\t" + "om  \t\tOptimizer\r"
+						 + "For further details consult documentation (via Settings in WebGUI)\r";
 			} else {
 				return cmd(auth, cmd_queue.poll()+" help");
 			}
@@ -522,7 +520,9 @@ public class UiBackend {
 						 + "\t" + "create \tCreate new fitness function\r"
 						 + "\t" + "modify \tModify fitness function\r"
 						 + "\t" + "delete \tDelete fitness function\r"
-				 		 + "\t" + "get    \tGet fitness function string\r";	
+				 		 + "\t" + "set    \tset parameters\r"
+				 		 + "\t" + "get    \tGet fitness function string or parameters\r"
+				 		 + "\t" + "lsbd   \tGet list of boundaries from hard coded ffs\r";	
 				
 			} else if(cmd_queue.peek().equals("list") || cmd_queue.peek().equals("lsit")) {
 				cmd_queue.remove();	
@@ -593,6 +593,45 @@ public class UiBackend {
 					}
 				} 
 				throw new Exception("Missing fitness function id");
+				
+				
+			} else if(cmd_queue.peek().equals("set")) {
+				cmd_queue.remove();	
+						
+				if(!cmd_queue.isEmpty()) {
+					int id = -1;
+					try {
+						id = Integer.parseInt(cmd_queue.peek());
+						cmd_queue.poll();
+					} catch(Exception e) {}
+	
+					if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("bdl")) {
+						cmd_queue.poll();
+						Double val;
+						try {
+							val = Double.parseDouble(cmd_queue.peek());
+						} catch(Exception e) {
+							throw new Exception("Value format not correct.");
+						}
+						if(id>-1) FitnessFunctionManager.setBoundaryLower(id, val);
+						else id = FitnessFunctionManager.setBoundaryLower(val);
+						return "Changed lower boundary of custom fitness function "+id+".";
+					} else if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("bdu")) {
+						cmd_queue.poll();
+						Double val;
+						try {
+							val = Double.parseDouble(cmd_queue.peek());
+						} catch(Exception e) {
+							throw new Exception("Value format not correct.");
+						}
+						if(id>-1) FitnessFunctionManager.setBoundaryUpper(id, val);
+						else id = FitnessFunctionManager.setBoundaryUpper(val);
+						return "Changed upper boundary of custom fitness function "+id+".";
+					} else {
+						throw new Exception("Missing parameter descriptor.");					
+					}
+				}
+				throw new Exception("Missing fitness function id");
 					
 				
 			} else if(cmd_queue.peek().equals("get")) {
@@ -602,21 +641,41 @@ public class UiBackend {
 					int id = -1;
 					try {
 						id = Integer.parseInt(cmd_queue.peek());
-					} catch(Exception e) {
-						throw new Exception("Fitness function id format not correct.");
-					}
-					cmd_queue.poll();
+						cmd_queue.poll();
+					} catch(Exception e) {}
 
-					if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-tree")) {
-						return FitnessFunctionManager.print(id);
-					} else if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-map")) {
-						return FitnessFunctionManager.printFM(id);
+					if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("tree")) {
+						if(id>-1) return FitnessFunctionManager.print(id);
+						else return FitnessFunctionManager.print();
+					} else if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("map")) {
+						if(id>-1) return FitnessFunctionManager.printFM(id);
+						else return FitnessFunctionManager.printFM();
+					} else if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("bdl")) {
+						Double v;
+						if(id>-1) v = FitnessFunctionManager.getBoundaryLower(id);
+						else v = FitnessFunctionManager.getBoundaryLower();
+						if(v != null)
+							return v;
+						else 
+							return "not set";
+					} else if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("bdu")) {
+						Double v;
+						if(id>-1) v = FitnessFunctionManager.getBoundaryUpper(id);
+						else v = FitnessFunctionManager.getBoundaryUpper();
+						if(v != null)
+							return v;
+						else 
+							return "not set";
 					} else {
-						return FitnessFunctionManager.printTex(id);						
+						if(id>-1) return FitnessFunctionManager.printTex(id);		
+						else return FitnessFunctionManager.printTex();
 					}
+				} else {
+					return FitnessFunctionManager.printTex();
 				}
-				throw new Exception("Missing fitness function id");
 				
+			} else if(cmd_queue.peek().equals("lsbd")) {
+				return FitnessFunction.ffBoundariesJSON();				
 			}
 			
 
@@ -1012,9 +1071,6 @@ public class UiBackend {
 				} else {
 					throw new Exception("Specify algorithm.");
 				}
-				
-			} else if(cmd_queue.peek().equals("lsffbd")) {
-				return FitnessFunction.ffBoundariesJSON();
 			}
 			
 			

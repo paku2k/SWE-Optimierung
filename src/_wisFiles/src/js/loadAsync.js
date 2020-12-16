@@ -39,6 +39,8 @@ function sendCmds(dataarray, timeout, callback) {
             } else if(dataarray[i] == "sfx v+"){ easterEgg_sfxVolume(true);
             } else if(dataarray[i] == "sfx v-"){ easterEgg_sfxVolume(false);
             } else if(dataarray[i] == "sfx off"){ easterEgg_sfxDisable();   
+            } else if(dataarray[i] == "help"){ openHelp();
+            } else if(dataarray[i] == "doc"){ openDoc();
             } else {
                 if(data.length > 0) data += "&";
                 data += "cmd"+datacnt+"="+dataarray[i];
