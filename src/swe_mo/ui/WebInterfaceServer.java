@@ -682,7 +682,6 @@ public class WebInterfaceServer{
     		return parstring;
     	}
     	
-    	@SuppressWarnings("unused")
 		public ArrayList<String[]> getPar(){
     		return par;
     	}
