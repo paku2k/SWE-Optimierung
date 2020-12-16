@@ -30,6 +30,9 @@ public class FitnessFunctionCustom {
 	public String getFunctionStringStyled() {
 		return functionStringStyled;
 	}
+	public FunctionMap getFunctionMap() {
+		return functionMap;
+	}
 	public void parseFunctionString(String s) throws Exception {
 		s = s.trim();
 		String styled = s;
@@ -2106,59 +2109,6 @@ public class FitnessFunctionCustom {
 		} else {
 			return s;
 		}
-	}
-	
-	
-	
-	
-	private BinaryTreeNode temp() throws Exception {
-		// temp	
-		// "f_{test}(x,n)=\sum_{a=0}^{n-1}((5 x_a-3)+\sqrt{2n})+x_3"
-		
-			//5x_1-3
-	 		BinaryTreeNode<STC> n1 = new BinaryTreeNode<STC>(new STC("O","-"));
-			BinaryTreeNode<STC> n2 = new BinaryTreeNode<STC>(new STC("O","*"));
-			n2.addL(new BinaryTreeNode<STC>(new STC(5)));
-			MathfunctionTree mathfunctionTree2 = new MathfunctionTree(new STC("V","a"));
-			n2.addR(new BinaryTreeNode<STC>(new STC("V", "x", mathfunctionTree2)));
-			BinaryTreeNode<STC> n3 = new BinaryTreeNode<STC>(new STC(3));
-			n1.addL(n2);
-			n1.addR(n3);
-			
-			//sqrt(2n)
-			MathfunctionTree mathfunctionTree3 = new MathfunctionTree(new STC("F","f(n)"));
-			BinaryTreeNode<STC> n6 = new BinaryTreeNode<STC>(new STC("O","*"));
-			n6.addL(new BinaryTreeNode<STC>(new STC(2)));
-			n6.addR(new BinaryTreeNode<STC>(new STC("V","n")));
-			mathfunctionTree3.getRoot().addR(n6);
-			BinaryTreeNode<STC> n5 = new BinaryTreeNode<STC>(new STC("S","sqrt",mathfunctionTree3));
-
-			BinaryTreeNode<STC> n4 = new BinaryTreeNode<STC>(new STC("O","+"));
-			n4.addL(n1);
-			n4.addR(n5);	
-
-			//sum
-			MathfunctionTree mathfunctionTree4 = new MathfunctionTree(new STC("F", "f(x,n,a)"));
-			mathfunctionTree4.getRoot().addR(n4);
-			MathfunctionTree mathfunctionTree4a = new MathfunctionTree(new STC("F", "f(n)"));
-			BinaryTreeNode<STC> a = new BinaryTreeNode<STC>(new STC("O", "-"));
-			a.addL(new BinaryTreeNode<STC>(new STC("V","n")));
-			a.addR(new BinaryTreeNode<STC>(new STC(1)));
-			BinaryTreeNode<STC> b = new BinaryTreeNode<STC>(new STC("F","f(n)"));
-			b.addR(a);
-			mathfunctionTree4a.getRoot().addR(b);
-			BinaryTreeNode<STC> nA = new BinaryTreeNode<STC>(new STC("L", "sum", "a", new MathfunctionTree(new STC(0)), mathfunctionTree4a, mathfunctionTree4));
-			
-			//+x_3
-			MathfunctionTree mathfunctionTree5 = new MathfunctionTree(new STC(3));
-			BinaryTreeNode<STC> nB = new BinaryTreeNode<STC>(new STC("V", "x", mathfunctionTree5));
-			
-			BinaryTreeNode<STC> n = new BinaryTreeNode<STC>(new STC("O","+"));
-			n.addL(nA);
-			n.addR(nB);
-			
-			return n;
-		
 	}
 	
 	

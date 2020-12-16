@@ -606,9 +606,11 @@ public class UiBackend {
 						throw new Exception("Fitness function id format not correct.");
 					}
 					cmd_queue.poll();
-					
+
 					if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-tree")) {
 						return FitnessFunctionManager.print(id);
+					} else if(!cmd_queue.isEmpty() && cmd_queue.peek().equals("-map")) {
+						return FitnessFunctionManager.printFM(id);
 					} else {
 						return FitnessFunctionManager.printTex(id);						
 					}

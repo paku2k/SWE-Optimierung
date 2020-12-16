@@ -116,6 +116,14 @@ public class FitnessFunctionManager {
 		}		
 	}
 	
+	public static String printFM(int id) throws Exception {
+		if(ffcList.get(id) != null) {			
+			return ffcList.get(id).getFunctionMap().toString();
+		} else {
+			throw new Exception("No custom fitness function with ID "+id+".");
+		}		
+	}
+	
 	
 	
 	
