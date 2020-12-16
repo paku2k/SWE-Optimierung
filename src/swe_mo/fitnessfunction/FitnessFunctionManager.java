@@ -9,9 +9,7 @@ import org.json.simple.JSONObject;
 import swe_mo.solver.FitnessFunction;
 import swe_mo.solver.de.Particle_DE;
 
-public class FitnessFunctionManager {
-	private final static String AUTH = "FFM";	
-	
+public class FitnessFunctionManager {	
 	private static Map<Integer, FitnessFunctionCustom> ffcList = new HashMap<Integer, FitnessFunctionCustom>();
 	private static int counter = 0;
 	
@@ -27,6 +25,9 @@ public class FitnessFunctionManager {
 		}
 	}
 	
+	public static void change(String functionString) throws Exception {
+		change(FitnessFunction.numberOfHardCoded + counter-1,functionString);
+	}
 	public static void change(int id, String functionString) throws Exception {
 		if(ffcList.get(id) != null) {
 			ffcList.put(id, new FitnessFunctionCustom(functionString));
@@ -73,7 +74,7 @@ public class FitnessFunctionManager {
 		}
 	}
 	
-	
+
 	public static double calculate(int id, Particle_DE vector) throws Exception {
 		if(ffcList.get(id) != null) {
 			
@@ -88,10 +89,43 @@ public class FitnessFunctionManager {
 	}
 	
 	
+
+	public static int setBoundaryLower(Double b) {
+		setBoundaryLower(FitnessFunction.numberOfHardCoded + counter-1, b);
+		return FitnessFunction.numberOfHardCoded + counter-1;
+	}
+	public static void setBoundaryLower(int id, Double b) {
+		ffcList.get(id).setLowerBound(b);
+	}
+
+	public static int setBoundaryUpper(Double b) {
+		setBoundaryUpper(FitnessFunction.numberOfHardCoded + counter-1, b);
+		return FitnessFunction.numberOfHardCoded + counter-1;
+	}
+	public static void setBoundaryUpper(int id, Double b) {
+		ffcList.get(id).setUpperBound(b);		
+	}
+	
+	public static Double getBoundaryLower() {
+		return getBoundaryLower(FitnessFunction.numberOfHardCoded + counter-1);
+	}
+	public static Double getBoundaryLower(int id) {
+		return ffcList.get(id).getLowerBound();
+	}
+	
+	public static Double getBoundaryUpper() {
+		return getBoundaryUpper(FitnessFunction.numberOfHardCoded + counter-1);
+	}
+	public static Double getBoundaryUpper(int id) {
+		return ffcList.get(id).getUpperBound();
+	}
 	
 	
 	
 	
+	public static String print() throws Exception {
+		return print(FitnessFunction.numberOfHardCoded + counter-1);
+	}
 	public static String print(int id) throws Exception {
 		if(ffcList.get(id) != null) {			
 			return ffcList.get(id).toString();
@@ -99,7 +133,10 @@ public class FitnessFunctionManager {
 			throw new Exception("No custom fitness function with ID "+id+".");
 		}		
 	}
-	
+
+	public static String printTex() throws Exception {
+		return printTex(FitnessFunction.numberOfHardCoded + counter-1);
+	}
 	public static String printTex(int id) throws Exception {
 		if(ffcList.get(id) != null) {			
 			return ffcList.get(id).getFunctionString();
@@ -107,7 +144,10 @@ public class FitnessFunctionManager {
 			throw new Exception("No custom fitness function with ID "+id+".");
 		}		
 	}
-	
+
+	public static String printTexStyled() throws Exception {
+		return printTexStyled(FitnessFunction.numberOfHardCoded + counter-1);
+	}
 	public static String printTexStyled(int id) throws Exception {
 		if(ffcList.get(id) != null) {			
 			return ffcList.get(id).getFunctionStringStyled();
@@ -115,7 +155,10 @@ public class FitnessFunctionManager {
 			throw new Exception("No custom fitness function with ID "+id+".");
 		}		
 	}
-	
+
+	public static String printFM() throws Exception {
+		return printFM(FitnessFunction.numberOfHardCoded + counter-1);
+	}
 	public static String printFM(int id) throws Exception {
 		if(ffcList.get(id) != null) {			
 			return ffcList.get(id).getFunctionMap().toString();
@@ -141,6 +184,8 @@ public class FitnessFunctionManager {
 				JSONObject jobj = new JSONObject();
 				jobj.put("id", id);
 				jobj.put("functionString", printTexStyled(id));
+				jobj.put("bdl", getBoundaryLower(id));
+				jobj.put("bdu", getBoundaryUpper(id));
 				
 				jsonarr.add(jobj);
 			}

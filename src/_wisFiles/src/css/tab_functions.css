@@ -99,16 +99,23 @@
 
 #ffEditor {
     width: 100%;
+    text-align: right;
 }
 
 #ffEditor button {
-    float: right;
+    display: inline;
+    height: 1.5rem;
 }
 
 #ffEditor td:first-of-type {
     width: 2rem;
 }
 
+#ffEditor td:nth-of-type(3) {
+    vertical-align: middle;
+    width: 1rem;
+}
+ 
 #ffEditor td:last-of-type {    
     width: 10%;
     min-width: 6rem;
@@ -125,6 +132,14 @@
     min-height: 2rem;
     text-align: center;
     margin-bottom: .5rem;
+}
+
+.ff_editor_boundary{
+    border: 1px solid grey;
+    text-align: center;
+    display: inline;
+    height: 1.5rem;
+    margin-right: 0.2rem;
 }
 
 .ff_editor_out {

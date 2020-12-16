@@ -153,10 +153,12 @@
                 <i style="font-size: 0.6rem">Experimental! (Don't use implicit multiplication &#x26; the more brackets, the better)</i>
                 <table id="ffEditor">
                     <tr id="ffEditor_fields">
-                        <th colspan="3">
+                        <th colspan="4">
                             <input id="ff_editor_in" oninput="ffEditor_oninput();" type="text" placeholder="LaTex equation f(x,n)=" autocomplete="off">
                             <div class="ff_editor_out" id="ff_editor_out1" class="math"></div>
                             <div class="ff_editor_out" id="ff_editor_out2" class="math"></div>
+                            <input class="ff_editor_boundary" id="ff_editor_lowerBoundary" type="text" placeholder="Lower boundary" autocomplete="off">
+                            <input class="ff_editor_boundary" id="ff_editor_upperBoundary" type="text" placeholder="Upper boundary" autocomplete="off">
                             <button onclick="cff_create()">Create Fitness Function</button>
                         </th>
                     </tr>
@@ -437,7 +439,7 @@
                     </tr>
                     <tr>
                         <td>WebGUI Version</td>
-                        <td id="appinfo_wguiversion">0.3.0.0</td>
+                        <td id="appinfo_wguiversion">0.3.1.0</td>
                     </tr>
                     <tr>
                         <td>Release Date</td>
