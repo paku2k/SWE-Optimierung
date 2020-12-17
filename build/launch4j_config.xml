@@ -24,12 +24,12 @@
     <runtimeBits>64/32</runtimeBits>
   </jre>
   <versionInfo>
-    <fileVersion>0.0.3.7</fileVersion>
-    <txtFileVersion>0.0.3.7</txtFileVersion>
+    <fileVersion>0.0.3.8</fileVersion>
+    <txtFileVersion>0.0.3.8</txtFileVersion>
     <fileDescription>mOptimizer </fileDescription>
     <copyright>Elite Software Services</copyright>
-    <productVersion>0.0.3.7</productVersion>
-    <txtProductVersion>0.0.3.7</txtProductVersion>
+    <productVersion>0.0.3.8</productVersion>
+    <txtProductVersion>0.0.3.8</txtProductVersion>
     <productName>mOptimizer</productName>
     <companyName>Elite Software Services</companyName>
     <internalName>moptimizer</internalName>

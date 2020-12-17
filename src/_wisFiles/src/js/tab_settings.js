@@ -111,5 +111,5 @@ function openHelp(){
     window.open('mo_help.pdf', '_blank');
 }
 function openDoc(){
-    window.open('mo_help.pdf', '_blank');
+    window.open('mo_doc.pdf', '_blank');
 }
