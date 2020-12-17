@@ -11,6 +11,7 @@ import swe_mo.solver.FitnessFunction;
 import swe_mo.solver.SolverManager;
 import swe_mo.solver.SolverResult;
 import swe_mo.solver.de.CRN;
+import swe_mo.ui.clogger;
 
 public class RandomSearch extends BaseOptimizer{
 	
@@ -57,7 +58,7 @@ public class RandomSearch extends BaseOptimizer{
 
 		int solverID = SolverManager.create("O-"+optimizerID, solverType);
 		SolverManager.configure(solverID, "ffid="+ffID+", N="+dimensions+" maxGenerations="+numberIterations+", lowerBound="+lowerBound+", upperBound="+upperBound+", convergence=0");
-
+		
 		FileGenerator file = null;
 		if(printfile) {
 			String fileheader = "iteration; ffCalls; minimum";

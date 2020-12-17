@@ -19,14 +19,20 @@ public class SolverManager {
 	
 	
 
-	
+	private static boolean lockCreate = false; 
 	public static int create(String creator) throws Exception{
+		while(lockCreate);
+		lockCreate = true;
 		runningSolvers.add(new Solver(runningSolvers.size(), creator));	
+		lockCreate = false;
 		return runningSolvers.size()-1;
 	}
 
 	public static int create(String creator, String algorithm) throws Exception {
+		while(lockCreate);
+		lockCreate = true;
 		runningSolvers.add(new Solver(runningSolvers.size(), creator, algorithm));
+		lockCreate = false;
 		return runningSolvers.size()-1;
 	}																						
 	

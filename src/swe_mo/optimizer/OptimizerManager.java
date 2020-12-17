@@ -4,6 +4,7 @@ import swe_mo.ui.clogger;
 import swe_mo.solver.SolverManager;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -319,9 +320,15 @@ public class OptimizerManager {
 		if(id1<0) id1=0;
 		if(id2>runningOptimizers.size()-1) id2 = runningOptimizers.size()-1;
 		
+		if(id2-id1 >= 5) {
+			throw new Exception("do not start more than 5 optimizers at once.");
+		}
+		
 		for(int i=id1; i<=id2; i++) {
-			if(status(i)<0 && status(i)>-3)
+			if(status(i)<0 && status(i)>-3) {
 				start(i);			
+				TimeUnit.MILLISECONDS.sleep(10);
+			}
 		}		
 	}
 	
