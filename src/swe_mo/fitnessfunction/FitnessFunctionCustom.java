@@ -2152,8 +2152,7 @@ public class FitnessFunctionCustom {
 	
 	
 	public Double calculate(VarSpace v) throws Exception {
-		functionTree.setVarSpace(v);	
-		return functionTree.calculate();
+		return functionTree.calculate(v);
 	}
 	
 	

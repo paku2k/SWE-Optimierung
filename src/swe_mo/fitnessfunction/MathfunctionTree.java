@@ -11,7 +11,6 @@ public class MathfunctionTree {
 	final static String AUTH = "MFT";
 	
 	private BinaryTreeNode<STC> root;
-	private VarSpace varspace;
 	
 	public MathfunctionTree(STC rootData) {
 		root = new BinaryTreeNode<STC>(rootData);
@@ -28,23 +27,13 @@ public class MathfunctionTree {
 		return root;
 	}
 	
-	
-	
-	
-	public void setVarSpace(VarSpace vars) {
-		this.varspace = vars;
-	}
-	public double getFromVarSpace(String var, int index) throws Exception {
-		return varspace.get(var, index);
-	}
-		
 
 	
 	
 	
 	@SuppressWarnings("unchecked")
-	public double calculate() throws Exception {		
-		BinaryTreeNode<STC> resultNode = calculateNode(root);
+	public double calculate(VarSpace varspace) throws Exception {		
+		BinaryTreeNode<STC> resultNode = calculateNode(root, varspace);
 		
 		return ((STC)resultNode.getData()).number;
 	}
@@ -53,7 +42,7 @@ public class MathfunctionTree {
 	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public BinaryTreeNode calculateNode(BinaryTreeNode node) throws Exception {
+	public BinaryTreeNode calculateNode(BinaryTreeNode node, VarSpace varspace) throws Exception {
 		BinaryTreeNode<STC> replacementNode = new BinaryTreeNode();
 		
 		if(((STC)node.getData()).getType().equals("N")) {
@@ -69,10 +58,9 @@ public class MathfunctionTree {
 			//if node is a variable	
 			Double index = 0.0;
 			if(((STC)node.getData()).tree != null) {
-				((STC)node.getData()).tree.setVarSpace(varspace);
-				index = ((STC)node.getData()).tree.calculate();
+				index = ((STC)node.getData()).tree.calculate(varspace);
 			}
-			Double resolved = getFromVarSpace(((STC)node.getData()).variable, index.intValue());
+			Double resolved = varspace.get(((STC)node.getData()).variable, index.intValue());
 			replacementNode = new BinaryTreeNode(new STC(resolved));
 			
 		} else if(((STC)node.getData()).getType().equals("O")) {
@@ -84,13 +72,13 @@ public class MathfunctionTree {
 				dataR.number = null;
 				
 			if(node.getChildL() != null) {
-				dataL = (STC)calculateNode(node.getChildL()).getData();
+				dataL = (STC)calculateNode(node.getChildL(), varspace).getData();
 				if(!dataL.getType().equals("N")) {
 					throw new Exception("Cannot calculate operation node. (did not calculate left node)");								
 				}
 			}
 			if(node.getChildR() != null) {
-				dataR = (STC)calculateNode(node.getChildR()).getData();
+				dataR = (STC)calculateNode(node.getChildR(), varspace).getData();
 				if(!dataR.getType().equals("N")) {
 					throw new Exception("Cannot calculate operation node. (did not calculate right node)");								
 				}
@@ -159,32 +147,26 @@ public class MathfunctionTree {
 			switch(op) {
 				case "sum":
 					resolved = 0.0;
-					((STC)node.getData()).lowerBound.setVarSpace(varspace);
-					lB = (int)((STC)node.getData()).lowerBound.calculate();
-					((STC)node.getData()).upperBound.setVarSpace(varspace);
-					uB = (int)((STC)node.getData()).upperBound.calculate();
+					lB = (int)((STC)node.getData()).lowerBound.calculate(varspace);
+					uB = (int)((STC)node.getData()).upperBound.calculate(varspace);
 					for(int i=lB; i<=uB; i++) {
 						vsnew = new VarSpace(varspace);
 								vsarrl = new ArrayList<Double>();
 								vsarrl.add((double)i);
 							vsnew.addVector(((STC)node.getData()).counterName, vsarrl);
-						((STC)node.getData()).tree.setVarSpace(vsnew);
-						resolved +=((STC)node.getData()).tree.calculate();
+						resolved +=((STC)node.getData()).tree.calculate(vsnew);
 					}
 					break;
 				case "prod":
 					resolved = 1.0;
-					((STC)node.getData()).lowerBound.setVarSpace(varspace);
-					lB = (int)((STC)node.getData()).lowerBound.calculate();
-					((STC)node.getData()).upperBound.setVarSpace(varspace);
-					uB = (int)((STC)node.getData()).upperBound.calculate();
+					lB = (int)((STC)node.getData()).lowerBound.calculate(varspace);
+					uB = (int)((STC)node.getData()).upperBound.calculate(varspace);
 					for(int i=lB; i<=uB; i++) {
 						vsnew = new VarSpace(varspace);
 								vsarrl = new ArrayList<Double>();
 								vsarrl.add((double)i);
 							vsnew.addVector(((STC)node.getData()).counterName, vsarrl);
-						((STC)node.getData()).tree.setVarSpace(vsnew);
-						resolved *=((STC)node.getData()).tree.calculate();
+						resolved *=((STC)node.getData()).tree.calculate(vsnew);
 					}
 					break;
 				default:
@@ -196,28 +178,27 @@ public class MathfunctionTree {
 			//if node is a special function
 			String op = ((STC)node.getData()).specialop;
 			Double resolved = null;
-			((STC)node.getData()).tree.setVarSpace(varspace);
 			switch(op) {
 				case "sqrt":
-					resolved = Math.sqrt(((STC)node.getData()).tree.calculate());
+					resolved = Math.sqrt(((STC)node.getData()).tree.calculate(varspace));
 					break;
 				case "ln":
-					resolved = Math.log(((STC)node.getData()).tree.calculate());
+					resolved = Math.log(((STC)node.getData()).tree.calculate(varspace));
 					break;
 				case "sin":
-					resolved = Math.sin(((STC)node.getData()).tree.calculate());
+					resolved = Math.sin(((STC)node.getData()).tree.calculate(varspace));
 					break;
 				case "cos":
-					resolved = Math.cos(((STC)node.getData()).tree.calculate());
+					resolved = Math.cos(((STC)node.getData()).tree.calculate(varspace));
 					break;
 				case "abs":
-					resolved = Math.abs(((STC)node.getData()).tree.calculate());
+					resolved = Math.abs(((STC)node.getData()).tree.calculate(varspace));
 					break;
 				case "floor":
-					resolved = Math.floor(((STC)node.getData()).tree.calculate());
+					resolved = Math.floor(((STC)node.getData()).tree.calculate(varspace));
 					break;
 				case "ceil":
-					resolved = Math.ceil(((STC)node.getData()).tree.calculate());
+					resolved = Math.ceil(((STC)node.getData()).tree.calculate(varspace));
 					break;
 				default:
 					throw new Exception("Cannot calculate operation node. (unknown operation)");
@@ -228,14 +209,12 @@ public class MathfunctionTree {
 			//if node is a special function
 			String op = ((STC)node.getData()).paramop;
 			Double resolved = null;
-			((STC)node.getData()).tree.setVarSpace(varspace);
-			((STC)node.getData()).parameter.setVarSpace(varspace);
 			switch(op) {
 				case "log":
-					resolved = (double)Math.log(((STC)node.getData()).tree.calculate()) / (double)Math.log(((STC)node.getData()).parameter.calculate());
+					resolved = (double)Math.log(((STC)node.getData()).tree.calculate(varspace)) / (double)Math.log(((STC)node.getData()).parameter.calculate(varspace));
 					break;
 				case "nroot":
-					resolved = Math.pow(((STC)node.getData()).tree.calculate(), 1.0/((STC)node.getData()).parameter.calculate());
+					resolved = Math.pow(((STC)node.getData()).tree.calculate(varspace), 1.0/((STC)node.getData()).parameter.calculate(varspace));
 					break;
 				default:
 					throw new Exception("Cannot calculate operation node. (unknown operation)");
@@ -246,9 +225,9 @@ public class MathfunctionTree {
 			//if node is a function
 			Double resolved = null;
 			if(node.getChildL() != null && node.getChildR() == null) {
-				resolved = ((STC)calculateNode(node.getChildL()).getData()).number;			
+				resolved = ((STC)calculateNode(node.getChildL(),varspace).getData()).number;			
 			} else if(node.getChildL() == null && node.getChildR() != null) {
-				resolved = ((STC)calculateNode(node.getChildR()).getData()).number;			
+				resolved = ((STC)calculateNode(node.getChildR(),varspace).getData()).number;			
 			} else if(node.getChildL() == null && node.getChildR() == null) {
 				throw new Exception("Cannot resolve function node. (no expression given)");								
 			} else {
