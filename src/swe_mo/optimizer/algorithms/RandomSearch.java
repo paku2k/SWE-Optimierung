@@ -49,14 +49,7 @@ public class RandomSearch extends BaseOptimizer{
 	}
 
 	public OptimizerResult optimize() throws Exception {
-		FileGenerator file = null;
-		if(printfile) {
-			String fileheader = "iteration; ffCalls; minimum";
-			for(int a = 0; a < parametersName.size(); a++) {
-				fileheader += "; "+parametersName.get(a);
-			}
-			file = new FileGenerator("Test_PSOgsc_DeepRandomSearch", fileheader);				
-		}
+		
 		ArrayList<Double> tempParametersMin = new ArrayList<Double>(parametersMin);
 		ArrayList<Double> tempParametersMax = new ArrayList<Double>(parametersMax);
 		double [] p = new double[parametersName.size()];
@@ -65,7 +58,14 @@ public class RandomSearch extends BaseOptimizer{
 		int solverID = SolverManager.create("O-"+optimizerID, solverType);
 		SolverManager.configure(solverID, "ffid="+ffID+", N="+dimensions+" maxGenerations="+numberIterations+", lowerBound="+lowerBound+", upperBound="+upperBound+", convergence=0");
 
-		
+		FileGenerator file = null;
+		if(printfile) {
+			String fileheader = "iteration; ffCalls; minimum";
+			for(int a = 0; a < parametersName.size(); a++) {
+				fileheader += "; "+parametersName.get(a);
+			}
+			file = new FileGenerator("RandomSearch_"+solverType, fileheader);				
+		}
 		
 		for(int j = 0; j < guesses && !OptimizerManager.checkTerminated(optimizerID); j++) {
 			System.gc();
