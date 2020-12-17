@@ -1,5 +1,7 @@
 /* TAB CMD load and save */
 
+var REFRESH_RATE_CMD = REFRESH_RATE_CMD_ini;
+
 var drag_active = false;
 function cmdInputDragOver(e){
     e.preventDefault();  
@@ -238,7 +240,7 @@ function cmdInputExecute(){
         cmd_string = string_helper1 + string_helper2.substring(string_helper2.indexOf("\n"),string_helper2.length);
     }
     
-    sendCmds(cmd_string.split(/\n/), 2000, tab_cmd_responseHandler);
+    sendCmds(cmd_string.split(/\n/), REFRESH_RATE_CMD-100, tab_cmd_responseHandler);
 }
 
 

@@ -1,8 +1,8 @@
-var REFRESH_RATE_FUNCTIONS = 5000;
+var REFRESH_RATE_FUNCTIONS = REFRESH_RATE_FUNCTIONS_ini;
 
 
 function ffLoadBoundaries(){
-    sendCmds(["ffm lsbd -json"], 2000, tab_functions_responseHandler);
+    sendCmds(["ffm lsbd -json"], (REFRESH_RATE_FUNCTIONS/2)-100, tab_functions_responseHandler);
 }
 
 function tab_functions_responseHandler(){   
@@ -33,7 +33,7 @@ function tab_functions_responseHandler(){
             } else if(cmd_ans[i].cmd.includes("ffm create ")){
                 // created new cff
                 if(cmd_ans[i].ans){
-                    sendCmds(["ffm list -json"], 1000, tab_functions_responseHandler);
+                    sendCmds(["ffm list -json"], (REFRESH_RATE_FUNCTIONS/2)-100, tab_functions_responseHandler);
                     document.getElementById("ff_editor_in").value = "";
                     document.getElementById("ff_editor_lowerBoundary").value = "";
                     document.getElementById("ff_editor_upperBoundary").value = "";
@@ -46,7 +46,7 @@ function tab_functions_responseHandler(){
             } else if(cmd_ans[i].cmd.includes("ffm delete ")){
                 // deleted cff
                 if(cmd_ans[i].ans){
-                    sendCmds(["ffm list -json"], 1000, tab_functions_responseHandler);
+                    sendCmds(["ffm list -json"], (REFRESH_RATE_FUNCTIONS/2)-100, tab_functions_responseHandler);
                 } else if(cmd_ans[i].err){
                     openInfo("err", cmd_ans[i].err);
                 } else {
@@ -83,7 +83,7 @@ function ffDisplayBoundary(ffid, lower, upper){
 var cffList;
 
 function checkCffList(){    
-    sendCmds(["ffm list -json"], 1000, tab_functions_responseHandler);
+    sendCmds(["ffm list -json"], (REFRESH_RATE_FUNCTIONS/2)-100, tab_functions_responseHandler);
     setTimeout(checkCffList, REFRESH_RATE_FUNCTIONS);
 }
 
@@ -185,7 +185,7 @@ function cff_createOrChangeHTML() {
 
 
 function cff_delete(id){
-    sendCmds(["ffm delete "+id], 1000, tab_functions_responseHandler);    
+    sendCmds(["ffm delete "+id], (REFRESH_RATE_FUNCTIONS/2)-100, tab_functions_responseHandler);    
 }
 function cff_create(){
     var eq = document.getElementById("ff_editor_in").value;
@@ -201,7 +201,7 @@ function cff_create(){
         } else {
             var cmd = ["ffm create "+eq];            
         }
-        sendCmds(cmd, 1000, tab_functions_responseHandler);
+        sendCmds(cmd, (REFRESH_RATE_FUNCTIONS/2)-100, tab_functions_responseHandler);
     }
 }
 

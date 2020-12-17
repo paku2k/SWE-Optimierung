@@ -1,10 +1,12 @@
+var REFRESH_RATE_SETTINGS = REFRESH_RATE_SETTINGS_ini;
+
 function loadAppInfo(){
-    sendCmds(["app info -json"], 2000, tab_settings_responseHandler);
+    sendCmds(["app info -json"], (REFRESH_RATE_SETTINGS/2)-100, tab_settings_responseHandler);
 }
 
 function loadAppSettings(){
-    sendCmds(["cfg -list -json"], 2000, tab_settings_responseHandler);
-    setTimeout(loadAppSettings, 5000);
+    sendCmds(["cfg -list -json"], REFRESH_RATE_SETTINGS-100, tab_settings_responseHandler);
+    setTimeout(loadAppSettings, REFRESH_RATE_SETTINGS);
 }
 
 function tab_settings_responseHandler(){   
@@ -92,14 +94,14 @@ function createOrChangeSettingHTML(key, value){
 
 
 function settingsChange(key, value){
-    sendCmds(["cfg "+key+" "+value], 2000, tab_settings_responseHandler);
+    sendCmds(["cfg "+key+" "+value], (REFRESH_RATE_SETTINGS/2)-100, tab_settings_responseHandler);
 }
 
 
 
 function settingsReset(){
     if(window.confirm("Reset application settings?"))
-        sendCmds(["cfg -reset"], 2000, tab_settings_responseHandler);    
+        sendCmds(["cfg -reset"], (REFRESH_RATE_SETTINGS/2)-100, tab_settings_responseHandler);    
 }
 
 

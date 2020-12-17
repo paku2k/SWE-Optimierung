@@ -1,4 +1,4 @@
-var REFRESH_RATE_OPTIMIZER = 2000;
+var REFRESH_RATE_OPTIMIZER = REFRESH_RATE_OPTIMIZER_ini;
 
 
 /* TAB_OPTIMIZER switching tabs */
@@ -41,7 +41,7 @@ function loadOptimizerInitial(){
     checkOptimizerList();
     loadOptimizerDetail_updater();
     
-    sendCmds(["om lsalgo -json"], 1000, tab_optimizer_responseHandler);
+    sendCmds(["om lsalgo -json"], REFRESH_RATE_OPTIMIZER-100, tab_optimizer_responseHandler);
 }
 
 
@@ -50,7 +50,7 @@ function loadOptimizerInitial(){
 var currentOptimizerList_JSON;
 
 function checkOptimizerList(){    
-    sendCmds(["om list -json"], 1000, tab_optimizer_responseHandler);
+    sendCmds(["om list -json"], REFRESH_RATE_OPTIMIZER-100, tab_optimizer_responseHandler);
     setTimeout(checkOptimizerList, REFRESH_RATE_OPTIMIZER);
 }
 
@@ -266,15 +266,15 @@ function loadOptimizerDetail_updater(){
 
 
 function loadOptimizerStatus(id){
-    sendCmds(["om status "+id], 1000, tab_optimizer_detail_responseHandler);     
+    sendCmds(["om status "+id], REFRESH_RATE_OPTIMIZER-100, tab_optimizer_detail_responseHandler);     
 }
 
 function loadOptimizerConfiguration(id){
-    sendCmds(["om config "+id+" -get -json"], 1000, tab_optimizer_detail_responseHandler); 
+    sendCmds(["om config "+id+" -get -json"], REFRESH_RATE_OPTIMIZER-100, tab_optimizer_detail_responseHandler); 
 }
 
 function loadOptimizerResult(id){
-    sendCmds(["om result "+id+" -json"], 1000, tab_optimizer_detail_responseHandler);       
+    sendCmds(["om result "+id+" -json"], REFRESH_RATE_OPTIMIZER-100, tab_optimizer_detail_responseHandler);       
 }
 
 
@@ -613,22 +613,22 @@ function newOptimizerContentDiv(id, algorithm, creator){
 /* actions in optimizer detail view */
 
 function optimizerDuplicate(id){
-    sendCmds(["om clone "+id], 1000, tab_optimizer_responseHandler);    
+    sendCmds(["om clone "+id], REFRESH_RATE_OPTIMIZER-100, tab_optimizer_responseHandler);    
 }
 
 function optimizerDelete(id){
     if(window.confirm("Delete optimizer?")){
-        sendCmds(["om delete "+id], 1000, tab_optimizer_responseHandler); 
+        sendCmds(["om delete "+id], REFRESH_RATE_OPTIMIZER-100, tab_optimizer_responseHandler); 
     }   
 }
 
 function optimizerCfgCopyFrom(id){
-    sendCmds(["om config "+id+" -clone "+document.getElementById("optimizer_"+id+"_copyfrom").value], 1000, tab_optimizer_responseHandler);  
+    sendCmds(["om config "+id+" -clone "+document.getElementById("optimizer_"+id+"_copyfrom").value], REFRESH_RATE_OPTIMIZER-100, tab_optimizer_responseHandler);  
     loadOptimizerConfiguration(id);
 }
 
 function optimizerCfgChange(id, name, value){
-    sendCmds(["om config "+id+" "+name.replace(",",".")+"="+value.replace(",",".")], 1000, tab_optimizer_responseHandler);   
+    sendCmds(["om config "+id+" "+name.replace(",",".")+"="+value.replace(",",".")], REFRESH_RATE_OPTIMIZER-100, tab_optimizer_responseHandler);   
 }
 
 function optimizerCfgChangeMMPar(id, name){
@@ -639,12 +639,12 @@ function optimizerCfgChangeMMPar(id, name){
 }
 
 function optimizerCfgChangeMM(id, name, min, max){
-    sendCmds(["om config "+id+" "+name.replace(",",".")+"="+min.replace(",",".")+"/"+max.replace(",",".")], 1000, tab_optimizer_responseHandler);   
+    sendCmds(["om config "+id+" "+name.replace(",",".")+"="+min.replace(",",".")+"/"+max.replace(",",".")], REFRESH_RATE_OPTIMIZER-100, tab_optimizer_responseHandler);   
 }
 
 function optimizerCfgResetAll(id){
     if(window.confirm("Reset configuration?"))
-        sendCmds(["om config "+id+" -reset"], 1000, tab_optimizer_detail_responseHandler);   
+        sendCmds(["om config "+id+" -reset"], REFRESH_RATE_OPTIMIZER-100, tab_optimizer_detail_responseHandler);   
 }
 
 function optimizerCfgReset(id, name){
@@ -693,7 +693,7 @@ function optimizerCfgAddSHP(id){
     s += document.getElementById("optimizer_"+id+"_cfg_newSHP_min").value.replace(",",".") + "/";
     s += document.getElementById("optimizer_"+id+"_cfg_newSHP_max").value.replace(",",".");
         
-    sendCmds(["om config "+id+" -addSHP "+s], 1000, tab_optimizer_detail_responseHandler);   
+    sendCmds(["om config "+id+" -addSHP "+s], REFRESH_RATE_OPTIMIZER-100, tab_optimizer_detail_responseHandler);   
     
     document.getElementById("optimizer_"+id+"_cfg_newSHP_name").value = "";
     document.getElementById("optimizer_"+id+"_cfg_newSHP_min").value = "";
@@ -703,11 +703,11 @@ function optimizerCfgAddSHP(id){
 
 
 function optimizerCfgRemoveSHP(id, name){
-    sendCmds(["om config "+id+" -rmvSHP "+name], 1000, tab_optimizer_detail_responseHandler);      
+    sendCmds(["om config "+id+" -rmvSHP "+name], REFRESH_RATE_OPTIMIZER-100, tab_optimizer_detail_responseHandler);      
 }
 
 function optimizerSolve(id){
-    sendCmds(["om start "+id], 1000, tab_optimizer_responseHandler);  
+    sendCmds(["om start "+id], REFRESH_RATE_OPTIMIZER-100, tab_optimizer_responseHandler);  
     loadOptimizerStatus(id);
     if(currentOptimizerList_JSON[id].status == -2){
         openInfo("warn","Optimizer not configured, using default values.");
@@ -715,12 +715,12 @@ function optimizerSolve(id){
 }
 
 function optimizerTerm(id){
-    sendCmds(["om term "+id], 1000, tab_optimizer_responseHandler);   
+    sendCmds(["om term "+id], REFRESH_RATE_OPTIMIZER-100, tab_optimizer_responseHandler);   
     loadOptimizerStatus(id)
 }
 
 function optimizerClear(id){
-    sendCmds(["om clear "+id], 1000, tab_optimizer_responseHandler);  
+    sendCmds(["om clear "+id], REFRESH_RATE_OPTIMIZER-100, tab_optimizer_responseHandler);  
     loadOptimizerStatus(id)
 }
 
@@ -740,7 +740,7 @@ function createOptimizer(){
     if(algorithm != "default"){
         cmd += " "+algorithm;
     }
-    sendCmds([cmd], 1000, tab_optimizer_responseHandler);
+    sendCmds([cmd], REFRESH_RATE_OPTIMIZER-100, tab_optimizer_responseHandler);
 }
 
 

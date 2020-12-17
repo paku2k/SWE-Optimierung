@@ -1,4 +1,4 @@
-var REFRESH_RATE_SOLVER = 1000;
+var REFRESH_RATE_SOLVER = REFRESH_RATE_SOLVER_ini;
 
 
 /* TAB_SOLVER switching tabs */
@@ -42,7 +42,7 @@ function loadSolverInitial(){
     checkSolverList();
     loadSolverDetail_updater();
     
-    sendCmds(["sm lsalgo -json"], 1000, tab_solver_responseHandler);
+    sendCmds(["sm lsalgo -json"], REFRESH_RATE_SOLVER-100, tab_solver_responseHandler);
 }
 
 
@@ -51,7 +51,7 @@ function loadSolverInitial(){
 var currentSolverList_JSON;
 
 function checkSolverList(){    
-    sendCmds(["sm list -json"], 1000, tab_solver_responseHandler);
+    sendCmds(["sm list -json"], REFRESH_RATE_SOLVER-100, tab_solver_responseHandler);
     setTimeout(checkSolverList, REFRESH_RATE_SOLVER);
 }
 
@@ -270,15 +270,15 @@ function loadSolverDetail_updater(){
 
 
 function loadSolverStatus(id){
-    sendCmds(["sm status "+id], 1000, tab_solver_detail_responseHandler);     
+    sendCmds(["sm status "+id], REFRESH_RATE_SOLVER-100, tab_solver_detail_responseHandler);     
 }
 
 function loadSolverConfiguration(id){
-    sendCmds(["sm config "+id+" -get -json"], 1000, tab_solver_detail_responseHandler); 
+    sendCmds(["sm config "+id+" -get -json"], REFRESH_RATE_SOLVER-100, tab_solver_detail_responseHandler); 
 }
 
 function loadSolverResult(id){
-    sendCmds(["sm result "+id+" -json"], 1000, tab_solver_detail_responseHandler);       
+    sendCmds(["sm result "+id+" -json"], REFRESH_RATE_SOLVER-100, tab_solver_detail_responseHandler);       
 }
 
 
@@ -559,27 +559,27 @@ function newSolverContentDiv(id, algorithm, creator){
 /* actions in solver detail view */
 
 function solverDuplicate(id){
-    sendCmds(["sm clone "+id], 1000, tab_solver_responseHandler);    
+    sendCmds(["sm clone "+id], REFRESH_RATE_SOLVER-100, tab_solver_responseHandler);    
 }
 
 function solverDelete(id){
     if(window.confirm("Delete solver?")){
-        sendCmds(["sm delete "+id], 1000, tab_solver_responseHandler); 
+        sendCmds(["sm delete "+id],REFRESH_RATE_SOLVER-100, tab_solver_responseHandler); 
     }   
 }
 
 function solverCfgCopyFrom(id){
-    sendCmds(["sm config "+id+" -clone "+document.getElementById("solver_"+id+"_copyfrom").value], 1000, tab_solver_responseHandler);  
+    sendCmds(["sm config "+id+" -clone "+document.getElementById("solver_"+id+"_copyfrom").value], REFRESH_RATE_SOLVER-100, tab_solver_responseHandler);  
     loadSolverConfiguration(id);
 }
 
 function solverCfgChange(id, name, value){
-    sendCmds(["sm config "+id+" "+name.replace(",",".")+"="+value.replace(",",".")], 1000, tab_solver_responseHandler);   
+    sendCmds(["sm config "+id+" "+name.replace(",",".")+"="+value.replace(",",".")], REFRESH_RATE_SOLVER-100, tab_solver_responseHandler);   
 }
 
 function solverCfgResetAll(id){
     if(window.confirm("Reset configuration?"))
-        sendCmds(["sm config "+id+" -reset"], 1000, tab_solver_detail_responseHandler);   
+        sendCmds(["sm config "+id+" -reset"], REFRESH_RATE_SOLVER-100, tab_solver_detail_responseHandler);   
 }
 
 function solverCfgReset(id, name){
@@ -617,7 +617,7 @@ function solverCfgReset(id, name){
 }
 
 function solverSolve(id){
-    sendCmds(["sm solve "+id], 1000, tab_solver_responseHandler);  
+    sendCmds(["sm solve "+id], REFRESH_RATE_SOLVER-100, tab_solver_responseHandler);  
     loadSolverStatus(id);
     if(currentSolverList_JSON[id].status == -2){
         openInfo("warn","Solver not configured, using default values.");
@@ -625,12 +625,12 @@ function solverSolve(id){
 }
 
 function solverTerm(id){
-    sendCmds(["sm term "+id], 1000, tab_solver_responseHandler);   
+    sendCmds(["sm term "+id], REFRESH_RATE_SOLVER-100, tab_solver_responseHandler);   
     loadSolverStatus(id)
 }
 
 function solverClear(id){
-    sendCmds(["sm clear "+id], 1000, tab_solver_responseHandler);  
+    sendCmds(["sm clear "+id], REFRESH_RATE_SOLVER-100, tab_solver_responseHandler);  
     loadSolverStatus(id)
 }
 
@@ -650,7 +650,7 @@ function createSolver(){
     if(algorithm != "default"){
         cmd += " "+algorithm;
     }
-    sendCmds([cmd], 1000, tab_solver_responseHandler);
+    sendCmds([cmd], REFRESH_RATE_SOLVER-100, tab_solver_responseHandler);
 }
 
 

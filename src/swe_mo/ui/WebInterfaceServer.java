@@ -335,6 +335,8 @@ public class WebInterfaceServer{
 	        	httpExchange.sendResponseHeaders(code, 0);  	
 	            httpExchange.close();	      
 	        }
+		} catch(IOException e) {
+			//clogger.err(AUTH, "sendHttpResponse", e);
 		} catch(Exception e) {
 			clogger.err(AUTH, "sendHttpResponse", e);
 		}

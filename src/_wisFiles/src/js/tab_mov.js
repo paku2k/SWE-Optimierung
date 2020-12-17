@@ -1,16 +1,18 @@
+var REFRESH_RATE_MOV = REFRESH_RATE_MOV_ini;
+
 function mov_start(){    
-    sendCmds(["mv start"], 1000, tab_mov_responseHandler);
+    sendCmds(["mv start"], REFRESH_RATE_MOV-100, tab_mov_responseHandler);
 }
 
 function mov_install(){
-    sendCmds(["mv install"], 1000, tab_mov_responseHandler);    
+    sendCmds(["mv install"], REFRESH_RATE_MOV-100, tab_mov_responseHandler);    
 }
 
 
 
 
 function tab_mov_responseHandler(){   
-    console.log("tab_mov: \n"+this.responseText);
+    //console.log("tab_mov: \n"+this.responseText);
     var response = JSON.parse(this.responseText);
     
     if(response.cmd_ans){
