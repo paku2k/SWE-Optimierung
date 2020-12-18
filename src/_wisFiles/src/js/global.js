@@ -201,6 +201,8 @@ function easterEggUnlock(found_lvl){
         
         window.addEventListener('resize', easterEggResize);
         
+        changeLogo("http://assets.stickpng.com/images/580b585b2edbce24c47b2a2c.png");
+        
         easterEgg_diashow();
         
         return true;
@@ -233,7 +235,8 @@ function easterEggClose(){
         easterEgg_unlocked = false;
         document.body.removeChild(document.getElementById("easteregg"));
     },300)
-    
+        
+    changeLogo("img/icon.png");
 }
 
 var easterEgg_diashow_timeout;
@@ -403,4 +406,10 @@ function easterEgg_sfxStop(){
         audio.parentElement.removeChild(audio);
     clearTimeout(easterEgg_sfxEndTimeout);
     easterEgg_currentSfx = "";
+}
+
+
+function changeLogo(src) {
+    const favicon = document.getElementById("img_logo");
+    favicon.setAttribute("src", src); 
 }
