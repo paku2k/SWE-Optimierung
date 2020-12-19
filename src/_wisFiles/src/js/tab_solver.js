@@ -484,7 +484,7 @@ function newSolverContentDiv(id, algorithm, creator){
     
         var table1 = document.createElement("table");
         table1.setAttribute("class", "manager_content_t1");
-        table1.innerHTML = '<tr><td><h3>'+algorithm+'</h3></td><td>'+creator+'</td><td><span id="solver_'+id+'_status">initialized</span></td><td><button onclick="solverDuplicate('+id+');">Duplicate</button><button onclick="solverDelete('+id+');">Delete</button></td></tr>';
+        table1.innerHTML = '<tr><td><h3>'+algorithm+'</h3></td><td>'+creator+'</td><td><span id="solver_'+id+'_status">initialized</span></td><td><button onclick="solverCfgToCMDE('+id+');">Cfg to CMD Editor</button><button onclick="solverDuplicate('+id+');">Duplicate</button><button onclick="solverDelete('+id+');">Delete</button></td></tr>';
             
     div.appendChild(table1);
 
@@ -663,6 +663,46 @@ function createSolvAlgorithmSelectHTML(algorithm){
 }
 
 
+
+
+
+
+
+
+
+/* config to CMD Editor */
+function solverCfgToCMDE(id){
+    var contents = "sm create ";
+    
+    var solver;
+    for(var i=0; i < currentSolverList_JSON.length; i++){
+        if(currentSolverList_JSON[i].id == id){
+            solver = currentSolverList_JSON[i];
+            break;
+        }
+    }
+    
+    if(solver != null){
+        contents += solver.algorithm;
+        contents += "\n";
+        contents += "sm config ";
+        
+        var pars;
+        for(var i=0; i < Algorithms_JSON.length; i++){
+            if(Algorithms_JSON[i].algorithm == solver.algorithm){
+                pars = Algorithms_JSON[i].parameters;
+            }
+        }
+        for(var i=0; i < pars.length; i++){
+            contents += pars[i].name + "=" + document.getElementById("solver_"+id+"_cfg_"+pars[i].name).value + ", ";
+        }
+        contents += "\n";
+        
+        /* push to cmd editor input */
+        addToCmdInput("/***************  SOLVER CONFIGURATION  ***************/\n" + contents);   
+        openInfo("suc","Configuration copied to CMD Editor.")
+    }    
+}
 
 
 

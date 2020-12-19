@@ -165,7 +165,7 @@ function cff_createOrChangeHTML() {
                 //does not exists -> create new
                 var tr = document.createElement("tr");
                 tr.setAttribute("id","cff_"+cff.id);
-                tr.innerHTML = '<td id="cff_'+cff.id+'_id">'+cff.id+'</td><td><div id="cff_'+cff.id+'_equation" class="math">\\begin{equation} '+cff.functionString+' \\end{equation}</div><div id="cff_'+cff.id+'_equation2" class="math"></div></td><td><div class="math" id="cff_'+cff.id+'_boundaries">\\begin{equation} '+((cff.bdl!=null)?cff.bdl:'\\text{not set}~')+' < x_i < '+((cff.bdu!=null)?cff.bdu:'\\text{not set}~')+' \\end{equation}</div><div class="math" id="cff_'+cff.id+'_boundaries2"></div></td><td onclick="cff_delete('+cff.id+');">delete</td>';
+                tr.innerHTML = '<td id="cff_'+cff.id+'_id">'+cff.id+'</td><td ondblclick="cffCopyToEditor('+cff.id+')"><div id="cff_'+cff.id+'_equation" class="math">\\begin{equation} '+cff.functionString+' \\end{equation}</div><div id="cff_'+cff.id+'_equation2" class="math"></div></td><td><div class="math" id="cff_'+cff.id+'_boundaries">\\begin{equation} '+((cff.bdl!=null)?cff.bdl:'\\text{not set}~')+' < x_i < '+((cff.bdu!=null)?cff.bdu:'\\text{not set}~')+' \\end{equation}</div><div class="math" id="cff_'+cff.id+'_boundaries2"></div></td><td onclick="cff_delete('+cff.id+');">delete</td>';
                 document.getElementById("ffEditor_fields").parentElement.appendChild(tr);
                 document.getElementById("cff_"+cff.id).style.display = "none";
                 document.getElementById("cff_"+cff.id+"_equation2").style.display = "none";
@@ -205,6 +205,26 @@ function cff_create(){
     }
 }
 
+
+
+
+function cffCopyToEditor(id){
+    var cff;
+    if(cffList != null){
+        for(var i=0; i<cffList.length; i++){
+            if(id == cffList[i].id){
+                cff = cffList[i];
+                break;
+            }
+        }
+        if(cff != null){
+            document.getElementById("ff_editor_in").value = cff.functionString;
+            document.getElementById("ff_editor_lowerBoundary").value = cff.bdl;
+            document.getElementById("ff_editor_upperBoundary").value = cff.bdu;
+            ffEditor_oninput();
+        }
+    }
+}
 
 
 

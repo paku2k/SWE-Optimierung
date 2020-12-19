@@ -513,7 +513,7 @@ function newOptimizerContentDiv(id, algorithm, creator){
     
         var table1 = document.createElement("table");
         table1.setAttribute("class", "manager_content_t1");
-        table1.innerHTML = '<tr><td><h3>'+algorithm+'</h3></td><td>'+creator+'</td><td><span id="optimizer_'+id+'_status">initialized</span></td><td><button onclick="optimizerDuplicate('+id+');">Duplicate</button><button onclick="optimizerDelete('+id+');">Delete</button></td></tr>';
+        table1.innerHTML = '<tr><td><h3>'+algorithm+'</h3></td><td>'+creator+'</td><td><span id="optimizer_'+id+'_status">initialized</span></td><td><button onclick="optimizerCfgToCMDE('+id+');">Cfg to CMD Editor</button><button onclick="optimizerDuplicate('+id+');">Duplicate</button><button onclick="optimizerDelete('+id+');">Delete</button></td></tr>';
             
     div.appendChild(table1);
 
@@ -756,6 +756,54 @@ function createOptiAlgorithmSelectHTML(algorithm){
 
 
 
+
+
+
+
+/* config to CMD Editor */
+function optimizerCfgToCMDE(id){
+    var contents = "om create ";
+    
+    var optimizer;
+    for(var i=0; i < currentOptimizerList_JSON.length; i++){
+        if(currentOptimizerList_JSON[i].id == id){
+            optimizer = currentOptimizerList_JSON[i];
+            break;
+        }
+    }
+    
+    if(optimizer != null){
+        contents += optimizer.algorithm;
+        contents += "\n";
+        contents += "om config ";
+        
+        var pars;
+        for(var i=0; i < OptiAlgorithms_JSON.length; i++){
+            if(OptiAlgorithms_JSON[i].algorithm == optimizer.algorithm){
+                pars = OptiAlgorithms_JSON[i].parameters;
+            }
+        }
+        for(var i=0; i < pars.length; i++){
+            if(pars[i].name == "SHP") continue; 
+            contents += pars[i].name + "=" + document.getElementById("optimizer_"+id+"_cfg_"+pars[i].name).value + ", ";
+        }
+        contents += "\n";
+        
+        var shp_contents = "om config -addSHP ";
+        var shp = document.getElementById("optimizer_"+id+"_config_solver_add").parentElement.children;
+        for(var i=2; i < shp.length; i++){
+            var name = shp[i].children[0].innerHTML;
+            shp_contents += name + "=" + document.getElementById("optimizer_"+id+"_cfg_"+name+"_min").value +"/"+ document.getElementById("optimizer_"+id+"_cfg_"+name+"_max").value + ", ";
+        }
+        
+        if(shp_contents != "om config -addSHP ")
+            contents += shp_contents+"\n";
+        
+        /* push to cmd editor input */
+        addToCmdInput("/***************  OPTIMIZER CONFIGURATION  ***************/\n" + contents);   
+        openInfo("suc","Configuration copied to CMD Editor.")
+    }    
+}
 
 
 
