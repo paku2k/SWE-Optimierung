@@ -10,16 +10,25 @@ import swe_mo.solver.SolverResult;
 
 public class PSOgnsc extends PSOnsc {
 	
+	
+	
 	public PSOgnsc(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, int solverID, int neighbors, double convergence) throws Exception {
+		//This constructor sets all parameters for the GNSC PSO algorithm
 		super(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID, neighbors, convergence);
 		c = new Convergence("PSOgnsc");
 
 	}
 	
+	
+	
+	
 	public static SolverConfig defaultConfig() {
+		//This method sets the default parameters
 		//int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, neighbors, convergence
 		return new SolverConfig(1, 30, 100, 5000, 5.12, -5.12, 0.9, 0.5, 0.9, 1, 10, 1.0);
 	}
+	
+	
 	
 	
 	@Override

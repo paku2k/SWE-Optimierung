@@ -88,16 +88,16 @@ public class PSOgsc {
 		}
 		
 
-
-			public static SolverConfig defaultConfig() {
-				//int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, 
+			public static SolverConfig defaultConfig() { 
+				//this method sets the default parameters
+				//int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, double convergence
 				return new SolverConfig(1, 30, 100, 5000, 5.12, -5.12, 0.9, 0.5, 0.9, 1, 1.0);
 			}
 			
 	
 			
 			public SolverResult solve() throws Exception {
-			// This method is the engine of the solver, that creates the swarm and updates / finds the globalBestPosition
+			// This method is the engine of the solver, that creates the swarm and updates / finds the globalBestPosition 
 				
 				int counter = 0;
 					
@@ -147,9 +147,6 @@ public class PSOgsc {
 			
 			public void updateGlobalBestPosition(PSOparticle particle) {
 			// This method updates the globalBestPosition through calculating the corresponding value for a given position
-				
-				
-				//double minimum = FitnessFunction.solve(ffID, particle);
 				if(particle.personalMinimum<globalMinimum) {
 					globalMinimum = particle.personalMinimum;
 					globalBestPosition = new ArrayList<Double>(particle.position);
