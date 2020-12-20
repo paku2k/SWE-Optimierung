@@ -21,8 +21,6 @@ public class DEbest2 extends DEbest1{
 					header=header+"P"+i+"axis"+j+";";
 				}
 			}
-			
-			
 			g = new FileGenerator("DEbest2_Positions_FFID"+ffIndex, header);
 		}
 
@@ -42,8 +40,6 @@ public class DEbest2 extends DEbest1{
 					header=header+"P"+i+"axis"+j+";";
 				}
 			}
-			
-			
 			g = new FileGenerator("DEbest2_Positions_FFID"+ffIndex, header);
 		}
 	}
@@ -94,7 +90,6 @@ public class DEbest2 extends DEbest1{
 		}
 
 		this.sumOfDifferencesGlobal+=Math.sqrt(sumOfDifferences);
-
 		
 		return newP;
 	}

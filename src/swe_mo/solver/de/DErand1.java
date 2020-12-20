@@ -176,6 +176,7 @@ public class DErand1 {
 	}
 	
 	public SolverResult solve() throws Exception  {
+		//set the result and status of the solvermanager
 		
 		SolverManager.updateStatus(solverID, 0.0);
 		
@@ -214,23 +215,10 @@ public class DErand1 {
 				catch (Exception e) {
 					
 				}
-			
 
 				return new SolverResult(best, bestParticle.position, fitCount, generation);
-
-
-
-				
-
 			}
 		}
-			//System.out.println("\n\n NEW GENERATION \n\n");
-			//System.out.println("Convergence: "+Math.abs(((sumOfDifferencesGlobalLast-sumOfDifferencesGlobal)/sumOfDifferencesGlobalLast)));
-			//System.out.println("Sum of differences: "+sumOfDifferencesGlobal);
-			
-
-
-		
 		
 		c.closeFile();
 		try {
@@ -276,9 +264,6 @@ public class DErand1 {
 		}
 	
 		while( (CRN.rn(1, 0)<this.CR) && (L<N) );
-		//System.out.println("L: "+L);
-		//System.out.println("n: "+n);
-
 		
 		for(int j = 0; j<(vectorV.position.size()*2); j++) {
 			
@@ -345,8 +330,6 @@ public class DErand1 {
 			if(uRes<this.best) {
 				this.best = uRes;
 				bestParticle = new Particle_DE(vectorU);
-				//System.out.println("In generation: "+ generation);
-
 			}
 
 			lastResult.set(xIndex, uRes);

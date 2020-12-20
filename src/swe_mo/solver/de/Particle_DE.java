@@ -3,7 +3,9 @@ import java.util.ArrayList;
 
 public class Particle_DE {
 
+	//position indicates the value of the particle in every dimension
 	public ArrayList<Double> position = new ArrayList<Double>(); 
+	//ffValueOld indicates the Fitnessfunction ID
 	public double ffValueOld;
 	
 	
@@ -29,6 +31,7 @@ public class Particle_DE {
 	  }
 	
 	public void add(Particle_DE part2) {
+		//Adds new from this particle
 		for(int i=0; i<this.position.size(); i++) {
 			this.position.set(i, part2.position.get(i)+this.position.get(i));
 		}
