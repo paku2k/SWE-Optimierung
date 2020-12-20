@@ -32,8 +32,6 @@ public class DErandToBest1 extends DEbest1 {
 					header=header+"P"+i+"axis"+j+";";
 				}
 			}
-			
-			
 			g = new FileGenerator("DErtb_Positions_FFID"+ffIndex, header);
 		}
 	}
@@ -57,8 +55,6 @@ public class DErandToBest1 extends DEbest1 {
 					header=header+"P"+i+"axis"+j+";";
 				}
 			}
-			
-			
 			g = new FileGenerator("DErtb_Positions_FFID"+ffIndex, header);
 		}
 		
@@ -67,6 +63,7 @@ public class DErandToBest1 extends DEbest1 {
 	
 	
 	public static SolverConfig defaultConfig() {		
+		//sets default solver-configuration
 		return new SolverConfig(1,5,50,0.3,0.3,0.3,1000,5.14,-5.14,1.0, false, false);
 	}
 	
@@ -77,16 +74,12 @@ public class DErandToBest1 extends DEbest1 {
 		//calculates the Vector V for current generation
 		Particle_DE p=this.calculateRandomDifference(index);
 
-		
-		
 		p.multiply(this.F);
 		Particle_DE differenceToBest = new Particle_DE(bestParticle);
 		differenceToBest.substract(xPop.get(index));
 		differenceToBest.multiply(this.lambda);
 		p.add(differenceToBest);
 		p.add(xPop.get(index));
-
-		
 	
 		for (int i = 0; i < p.position.size(); i++) {
 			if(p.position.get(i)>this.upperBound) {
@@ -94,12 +87,8 @@ public class DErandToBest1 extends DEbest1 {
 			}
 			if(p.position.get(i)<this.lowerBound) {
 				p.position.set(i, this.lowerBound);
-			}
-			
+			}			
 		}
-		
-		
-		
 		return p;
 	}
 	

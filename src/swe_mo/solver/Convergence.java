@@ -77,7 +77,6 @@ public class Convergence {
 			return false;
 		}
 		
-		
 		this.iterations+=1;
 		this.sum=sum;
 		this.best=best;
@@ -121,10 +120,7 @@ public class Convergence {
 		if(gradientMeanBest>maxGradientBest&&iterations<minObserveGenerations) {
 			maxGradientBest=gradientMeanBest;
 		}
-		
-		//System.out.println(floatingGradientMean.toString());
-		//System.out.println(gradientMean);
-		
+				
 		if(print) {
 			file.write(iterations+";"+sum+";"+gradientMean+";"+best+";"+gradientMeanBest);
 		}
@@ -141,18 +137,13 @@ public class Convergence {
 			
 			if(gradientMean<maxGradient*gradientDecay&&bestGradientCount>=20&&convergence!=0.0)
 			{
-				//System.out.println("Gradient converged to: "+gradientMean+" with the criteria being "+(gradientDecay*maxGradient)+" with max Gradient in the first "+minObserveGenerations+" iterations of: "+maxGradient);
-				//System.out.println("Gradient of MinValue converged to: "+gradientMeanBest+" with the criteria being "+(gradientDecay*maxGradientBest)+" with max Gradient in the first "+minObserveGenerations+" iterations of: "+maxGradientBest);
 
 				return true;
 			}
 		}
-		
 	
 		this.lastSum=sum;
 		this.lastBest=best;
-
-		
 		
 		return false;
 		

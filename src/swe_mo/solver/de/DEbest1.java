@@ -5,8 +5,8 @@ import java.io.IOException;
 import swe_mo.solver.Convergence;
 import swe_mo.solver.FileGenerator;
 
+
 public class DEbest1 extends DErand1{
-	
 	
 	
 	public DEbest1(int N, int NP, double F, double CR, int maxGenerations, double upperBound, double lowerBound,
@@ -21,13 +21,8 @@ public class DEbest1 extends DErand1{
 					header=header+"P"+i+"axis"+j+";";
 				}
 			}
-			
-			
 			g = new FileGenerator("DEbest1_Positions_FFID"+ffIndex, header);
 		}
-
-
-		
 	}
 	
 	
@@ -43,12 +38,9 @@ public class DEbest1 extends DErand1{
 					header=header+"P"+i+"axis"+j+";";
 				}
 			}
-			
-			
 			g = new FileGenerator("DEbest1_Positions_FFID"+ffIndex, header);
 		}
 
-		
 	}
 	
 	@Override
@@ -58,9 +50,6 @@ public class DEbest1 extends DErand1{
 		
 		p.multiply(this.F);
 		p.add(bestParticle);
-
-		
-		
 	
 		for (int i = 0; i < p.position.size(); i++) {
 			if(p.position.get(i)>this.upperBound) {
@@ -70,13 +59,6 @@ public class DEbest1 extends DErand1{
 				p.position.set(i, this.lowerBound);
 			}
 		}
-		
-		//System.out.println("new particle v: "+p);
-
-		//System.out.println("v: "+p);
-		//System.out.println("x: "+xPop.get(index));
-
-
 		
 		return p;
 	}

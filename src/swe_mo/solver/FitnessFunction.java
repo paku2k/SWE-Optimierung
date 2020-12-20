@@ -63,8 +63,6 @@ public class FitnessFunction {
 		
 	}
 
-	
-
 	 
 	 static double calculatef1(Particle_DE vector)	{
 		 double sum = 0.0;
@@ -301,7 +299,6 @@ public class FitnessFunction {
 	 
 	 static double calculatef18(Particle_DE vector)	{
 		 if (vector.position.size()>2) {
-			// throw new Exception("Too many dimensions for this function");
 		 }
 		 
 		 double x0=vector.position.get(0);
