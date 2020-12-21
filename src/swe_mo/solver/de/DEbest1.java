@@ -71,12 +71,6 @@ public class DEbest1 extends DErand1{
 			}
 		}
 		
-		//System.out.println("new particle v: "+p);
-
-		//System.out.println("v: "+p);
-		//System.out.println("x: "+xPop.get(index));
-
-
 		
 		return p;
 	}
