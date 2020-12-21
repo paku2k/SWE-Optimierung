@@ -73,11 +73,12 @@ public class RandomSearch extends BaseOptimizer{
 
 			// define parameters for search
 			for(int k = 0; k < parametersName.size(); k++) {	
-				if(tempParametersMax.get(k) == tempParametersMin.get(k)) {
+				if(tempParametersMax.get(k).equals(tempParametersMin.get(k))) {
 					p[k] = tempParametersMax.get(k);
 					continue;
+				} else {
+					p[k] = CRN.rn(tempParametersMax.get(k), tempParametersMin.get(k));
 				}
-				p[k] = CRN.rn(tempParametersMax.get(k), tempParametersMin.get(k));
 			}
 			
 			//calculate solution

@@ -74,12 +74,13 @@ public class DeepRandomSearch extends BaseOptimizer{
 					System.gc();
 
 					// define parameters for search
-					for(int k = 0; k < parametersName.size(); k++) {	
-						if(tempParametersMax.get(k) == tempParametersMin.get(k)) {
+					for(int k = 0; k < parametersName.size(); k++) {
+						if(tempParametersMax.get(k).equals(tempParametersMin.get(k))) {
 							p[k] = tempParametersMax.get(k);
 							continue;
+						} else {
+							p[k] = CRN.rn(tempParametersMax.get(k), tempParametersMin.get(k));
 						}
-						p[k] = CRN.rn(tempParametersMax.get(k), tempParametersMin.get(k));
 					}
 					
 					//calculate solution
@@ -131,10 +132,10 @@ public class DeepRandomSearch extends BaseOptimizer{
 				
 				// update boundaries of search space
 				for(int n = 0; n < parametersName.size(); n++) {
-					if(tempParametersMax.get(n) == tempParametersMin.get(n)) {
+					if(tempParametersMax.get(n).equals(tempParametersMin.get(n))) {
 						continue;
 					}
-					if(bestSolution[n+1]<((tempParametersMax.get(n)-tempParametersMin.get(n))/2)) {
+					else if(bestSolution[n+1]<((tempParametersMax.get(n)-tempParametersMin.get(n))/2)) {
 						tempParametersMax.set(n, ((tempParametersMax.get(n)-tempParametersMin.get(n))/2));
 					}
 					else {
