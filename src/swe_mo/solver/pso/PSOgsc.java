@@ -2,9 +2,6 @@ package swe_mo.solver.pso;
 
 import swe_mo.solver.*;
 import swe_mo.solver.de.CRN;
-import swe_mo.solver.de.Particle_DE;
-
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class PSOgsc {
@@ -201,12 +198,12 @@ public class PSOgsc {
 				PSOparticle newP;
 				
 				do {
-					index1 = CRN.rInt(0, (int)particleCount-1);
+					index1 = CRN.rInt((int)particleCount-1, 0);
 				}
 				while (index1 == skip);
 				
 				do {
-					index2 = CRN.rInt(0, (int)particleCount-1);
+					index2 = CRN.rInt((int)particleCount-1, 0);
 				}
 				while (index2 == skip || index2 == index1);
 				

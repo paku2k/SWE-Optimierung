@@ -1,6 +1,5 @@
 package swe_mo.solver.pso;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import swe_mo.solver.Convergence;
