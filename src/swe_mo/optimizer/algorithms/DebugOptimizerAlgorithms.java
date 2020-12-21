@@ -6,10 +6,6 @@ public class DebugOptimizerAlgorithms {
 
 	public static void main(String [] args) {
 		
-		int ffID = 1;
-		int numberIterations = 1000;
-		int levels = 3;
-		int levelGuesses = 100;
 		
 		ArrayList<Double> parametersMin = new ArrayList<Double>();
 			parametersMin.add(0.1);

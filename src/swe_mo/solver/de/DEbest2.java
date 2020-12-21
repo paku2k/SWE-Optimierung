@@ -1,7 +1,5 @@
 package swe_mo.solver.de;
 
-import java.io.IOException;
-
 import swe_mo.solver.Convergence;
 import swe_mo.solver.FileGenerator;
 

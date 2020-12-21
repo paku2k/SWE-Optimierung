@@ -1,7 +1,6 @@
 package swe_mo.solver.pso;
 
 import java.io.*;
-import java.util.Arrays;
 
 import swe_mo.solver.SolverResult;
 

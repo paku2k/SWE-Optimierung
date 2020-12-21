@@ -11,7 +11,6 @@ import swe_mo.solver.FitnessFunction;
 import swe_mo.solver.SolverManager;
 import swe_mo.solver.SolverResult;
 import swe_mo.solver.de.CRN;
-import swe_mo.ui.clogger;
 
 public class RandomSearch extends BaseOptimizer{
 	

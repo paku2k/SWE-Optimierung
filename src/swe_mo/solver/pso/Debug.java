@@ -1,9 +1,5 @@
 package swe_mo.solver.pso;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-
 import swe_mo.solver.SolverResult;
 
 public class Debug {
@@ -25,8 +21,6 @@ public class Debug {
 		int numIter = 50000;
 		int solverID = 1;
 		int ffID = 3;
-		double decayStart = 0.9;
-		double decayEnd = 0.4;
 
 		int neighbors = 50;
 		//PSOgscDecay psoGlobalSolver = new PSOgscDecay(dimension, min, max, particleCount, w, cc, cs, dt, numIter, ffID, solverID, decayStart, decayEnd);

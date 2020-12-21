@@ -1,6 +1,5 @@
 package swe_mo.solver;
 import java.io.IOException;
-import java.math.*;
 import java.util.ArrayList;
 
 public class Convergence {

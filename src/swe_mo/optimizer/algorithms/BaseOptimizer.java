@@ -1,6 +1,5 @@
 package swe_mo.optimizer.algorithms;
 
-import swe_mo.solver.de.*;
 
 public class BaseOptimizer {
 
