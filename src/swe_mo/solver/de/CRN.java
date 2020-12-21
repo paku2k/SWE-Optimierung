@@ -12,5 +12,6 @@ public class CRN {
 		//both bounds are included in the number generation
 		if (max==min) return max;
 		return (int)rn((double)max+1.0, (double)min);
+
 	}
 }

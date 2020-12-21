@@ -9,8 +9,14 @@ public class DEbest2 extends DEbest1{
 
 	
 	public DEbest2(int N, int NP, double F, double CR, int maxGenerations, double upperBound, double lowerBound,
-			int ffIndex, int solverID, double convergence, boolean printConvergenceFile, boolean printPositionFile) throws IOException {
+			int ffIndex, int solverID, double convergence, boolean printConvergenceFile, boolean printPositionFile) throws Exception {
+		
 		super(N, NP, F, CR, maxGenerations, upperBound, lowerBound, ffIndex, solverID, convergence, false, false);
+		
+		if(NP < 5) {
+			throw new Exception("You need at least 5 particles.");
+		}
+		
 		c= new Convergence("DEbest2Convergence", printConvergenceFile, convergence);
 		
 		if(printPositionFile) {
@@ -28,10 +34,16 @@ public class DEbest2 extends DEbest1{
 	
 	
 	public DEbest2(int N, int NP, double F, double CR, int maxGenerations, 
-			int ffIndex, int solverID, double convergence, boolean printConvergenceFile, boolean printPositionFile) throws IOException {
+			int ffIndex, int solverID, double convergence, boolean printConvergenceFile, boolean printPositionFile) throws Exception {
+		
 		super(N, NP, F, CR, maxGenerations,  ffIndex, solverID, convergence, false, false);
+		
+		if(NP < 5) {
+			throw new Exception("You need at least 5 particles.");
+		}
+		
 		c= new Convergence("DEbest2Convergence", printConvergenceFile, convergence);
-
+		
 		if(printPositionFile) {
 			String header = "generation;";
 			for (int i=0; i<NP; i++) {
@@ -48,8 +60,9 @@ public class DEbest2 extends DEbest1{
 		
 	@Override
 	public Particle_DE calculateRandomDifference(int skip) {
-		//Calculates a random difference between two vectors of the population and returns it as a new vector
+		//Calculates a random difference between four vectors of the population and returns it as a new vector
 		//skip defines, what index to skip (because it belongs to the original vector)
+		
 		int index1;
 		int index2;
 		int index3;
@@ -57,22 +70,22 @@ public class DEbest2 extends DEbest1{
 		Particle_DE newP = new Particle_DE(this.N);
 		
 		do {
-			index1 = CRN.rInt(0, (int)NP-1);
+			index1 = CRN.rInt((int)NP-1, 0);
 		}
 		while (index1 == skip);
 		
 		do {
-			index2 = CRN.rInt(0, (int)NP-1);
+			index2 = CRN.rInt((int)NP-1, 0);
 		}
 		while (index2 == skip || index2 == index1);
 		
 		do {
-			index3 = CRN.rInt(0, (int)NP-1);
+			index3 = CRN.rInt((int)NP-1, 0);
 		}
 		while (index3 == skip || index3 == index1 || index3 == index2);
 		
 		do {
-			index4 = CRN.rInt(0, (int)NP-1);
+			index4 = CRN.rInt((int)NP-1, 0);
 		}
 		while (index4 == skip || index4 == index1 || index4 == index2 || index4 == index3);
 		
