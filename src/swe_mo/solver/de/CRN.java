@@ -10,7 +10,7 @@ public class CRN {
 
 	public static int rInt(int max, int min) {
 		//both bounds are included in the number generation
-		
-		return (int)rn((double)min, (double)max+1.0);
+		if (max==min) return max;
+		return (int)rn((double)max+1.0, (double)min);
 	}
 }
