@@ -17,7 +17,7 @@ public class PSOgscDecay extends PSOgsc{
 
 	public PSOgscDecay(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, int solverID, double decayStart, double decayEnd, double convergence, boolean printConvergenceFile, boolean printPositionFile) throws Exception {
 
-		
+		//This constructor sets all parameters for the decay PSO algorithm
 		super(dimension, min, max, particleCount, w, cc, cs, dt, numIter,  ffID, convergence, solverID, false, false);
 		this.printPositionFile=printPositionFile;
 
@@ -44,16 +44,17 @@ public class PSOgscDecay extends PSOgsc{
 		}
 	}
 
+	
 	public static SolverConfig defaultConfig() {
-
+		//this method sets the default parameters
+		//int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, double decayStart, double decayEnd, double convergence, <print files>
 		return new SolverConfig(1, 30, 100, 5000, 5.12, -5.12, 0.9, 0.5, 0.9, 1, 0.9, 0.4, 1.0, false, false);
-
 	}
 	
 	
 	@Override
 	public SolverResult solve() throws Exception {
-		// This method is the engine of the solver, that creates the swarm and updates / finds the globalBestPosition
+		// This method is the engine of the solver, that creates the swarm and updates / finds the globalBestPosition with the decay PSO algorithm
 			
 			int counter = 0;
 				

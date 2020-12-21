@@ -15,7 +15,7 @@ public class PSOnsc extends PSOgsc {
 	
 
 	public PSOnsc(int dimension, double min, double max, int particleCount, double w, double cc, double cs, double dt, int numIter,  int ffID, int solverID, int neighbors, double convergence, boolean printConvergenceFile, boolean printPositionFile) throws Exception {
-
+		//This constructor sets all parameters for the NSC PSO algorithm
 		super(dimension, min, max, particleCount, w, cc, cs, dt, numIter,  ffID, convergence, solverID, false, false);
 		this.printPositionFile=printPositionFile;
 		c = new Convergence("PSOnscConvergence", printConvergenceFile, convergence);
@@ -43,10 +43,15 @@ public class PSOnsc extends PSOgsc {
 	}
 	
 	
+	
+	
 	public static SolverConfig defaultConfig() {
+		//This method sets the default parameters
 		//int ffid, int n, int nP, int maxGenerations, double upperBound, double lowerBound, double w, double cc, double cs, double dt, neighbors, convergence
 		return new SolverConfig(1, 30, 100, 5000, 5.12, -5.12, 0.9, 0.5, 0.9, 1, 20, 1.0, false, false);
 	}
+	
+	
 	
 	
 	@Override
@@ -119,7 +124,10 @@ public class PSOnsc extends PSOgsc {
 			return new SolverResult(val, ret, counter, numIter);
 		}
 	
+	
+	
 	public void updateNC(PSOparticle particle) {
+		//This method searches and updates the best position of the neighborhood
 		for(int i=0; i < (neighbors-1); i++) {
 			int x = particle.neighborhood.get(i);
 			if(particle.ncMinimum > swarm.get(x).personalMinimum) {
