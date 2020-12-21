@@ -83,8 +83,8 @@ public class PSOgsc {
 			if(min >= max) {
 				throw new Exception("Ranges are set incorrectly. Maximum must be greater than the minimum");
 				}
-			if(particleCount < 1) {
-				throw new Exception("You need at least 1 Particle");
+			if(particleCount < 5) {
+				throw new Exception("You need at least 5 Particle");
 				}
 			if(w < 0 || w > 1) {
 				throw new Exception("w has to be between 0 and 1");
