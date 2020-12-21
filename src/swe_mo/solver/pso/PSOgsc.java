@@ -2,9 +2,6 @@ package swe_mo.solver.pso;
 
 import swe_mo.solver.*;
 import swe_mo.solver.de.CRN;
-import swe_mo.solver.de.Particle_DE;
-
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class PSOgsc {
@@ -86,8 +83,8 @@ public class PSOgsc {
 			if(min >= max) {
 				throw new Exception("Ranges are set incorrectly. Maximum must be greater than the minimum");
 				}
-			if(particleCount < 1) {
-				throw new Exception("You need at least 1 Particle");
+			if(particleCount < 5) {
+				throw new Exception("You need at least 5 Particle");
 				}
 			if(w < 0 || w > 1) {
 				throw new Exception("w has to be between 0 and 1");
@@ -201,12 +198,12 @@ public class PSOgsc {
 				PSOparticle newP;
 				
 				do {
-					index1 = CRN.rInt(0, (int)particleCount-1);
+					index1 = CRN.rInt((int)particleCount-1, 0);
 				}
 				while (index1 == skip);
 				
 				do {
-					index2 = CRN.rInt(0, (int)particleCount-1);
+					index2 = CRN.rInt((int)particleCount-1, 0);
 				}
 				while (index2 == skip || index2 == index1);
 				
