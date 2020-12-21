@@ -525,6 +525,9 @@ function newSolverContentDiv(id, algorithm, creator){
 
                         table3.appendChild(tr3x);
                     }                    
+                } else {                    
+                    sendCmds(["sm lsalgo -json"], REFRESH_RATE_SOLVER-100, tab_solver_responseHandler);
+                    return;
                 }
     
         div1.appendChild(table3);
@@ -612,7 +615,9 @@ function solverCfgReset(id, name){
 
                 break;
             }
-        }
+        }                  
+    } else {                    
+        sendCmds(["sm lsalgo -json"], REFRESH_RATE_SOLVER-100, tab_solver_responseHandler);
     }
 }
 
@@ -655,6 +660,10 @@ function createSolver(){
 
 
 function createSolvAlgorithmSelectHTML(algorithm){
+    var options = document.getElementById("solvalgorithm").children;
+    for(var i=0; i < options.length; i++){
+        if(options[i].innerHTML == algorithm) return;
+    }
     var option = document.createElement("option");
     option.setAttribute("value", algorithm);
     option.innerHTML = algorithm;
