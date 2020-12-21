@@ -332,7 +332,10 @@ public class DErand1 {
 			if(uRes<this.best) {
 				this.best = uRes;
 				bestParticle = new Particle_DE(vectorU);
-		}
+			}
+
+			lastResult.set(xIndex, uRes);
+			return vectorU;
 		}
 		
 	}
