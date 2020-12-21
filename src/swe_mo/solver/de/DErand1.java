@@ -333,6 +333,7 @@ public class DErand1 {
 				this.best = uRes;
 				bestParticle = new Particle_DE(vectorU);
 		}
+		}
 		
 	}
 	
