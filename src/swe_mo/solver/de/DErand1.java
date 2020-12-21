@@ -17,9 +17,7 @@ import swe_mo.solver.FitnessFunction;
 public class DErand1 {
 	
 	FileGenerator g;
-	
-	
-	Convergence c;
+
 	int N;
 	int NP;
 	double F;
@@ -33,21 +31,22 @@ public class DErand1 {
 	int solverID;
 	double best;
 	
-	
 	double sumOfDifferencesGlobal;
 	boolean printConvergenceFile;
 	boolean printPositionFile;
 
 	double convergenceCrit;
+	Convergence c;
 	
 	String csv;
-
 
 	Particle_DE bestParticle;
 	int ffIndex;
 	ArrayList<Double> lastResult;
 	ArrayList<Particle_DE> xPop;
 	int numberOfCalls = 0;
+	
+	
 	
 	public DErand1(int N, int NP, double F, double CR, int maxGenerations, double upperBound, double lowerBound, int ffIndex, int solverID, double convergence, boolean printConvergenceFile, boolean printPositionFile) throws IOException {
 		//With this constructor the population will be created with random set particles within the provided bounds. 
@@ -73,6 +72,7 @@ public class DErand1 {
 		return new SolverConfig(1,5,50,0.3,0.3,1000,5.12,-5.12, 1.0, false, false);
 	}
 
+	
 	
 	public DErand1(int N, int NP, double F, double CR, int maxGenerations, int ffIndex, int solverID, double convergence, boolean printConvergenceFile, boolean printPositionFile) throws IOException {
 		//If, for whatever reason, the population should be populated manually, this constructor can be used
@@ -218,20 +218,9 @@ public class DErand1 {
 
 				return new SolverResult(best, bestParticle.position, fitCount, generation);
 
-
-
-				
-
 			}
 		}
-			//System.out.println("\n\n NEW GENERATION \n\n");
-			//System.out.println("Convergence: "+Math.abs(((sumOfDifferencesGlobalLast-sumOfDifferencesGlobal)/sumOfDifferencesGlobalLast)));
-			//System.out.println("Sum of differences: "+sumOfDifferencesGlobal);
 			
-
-
-		
-		
 		c.closeFile();
 		try {
 			g.close();
@@ -276,10 +265,6 @@ public class DErand1 {
 		}
 	
 		while( (CRN.rn(1, 0)<this.CR) && (L<N) );
-		//System.out.println("L: "+L);
-		//System.out.println("n: "+n);
-
-		
 		for(int j = 0; j<(vectorV.position.size()*2); j++) {
 			
 			if(j>=n&&j<=(n+L-1)) {
@@ -345,7 +330,6 @@ public class DErand1 {
 			if(uRes<this.best) {
 				this.best = uRes;
 				bestParticle = new Particle_DE(vectorU);
-				//System.out.println("In generation: "+ generation);
 
 			}
 
@@ -363,12 +347,12 @@ public class DErand1 {
 		Particle_DE newP = new Particle_DE(this.N);
 
 		do {
-			index1 = CRN.rInt(0, (int)NP-1);
+			index1 = CRN.rInt((int)NP-1, 0);
 		}
 		while (index1 == skip);
 		
 		do {
-			index2 = CRN.rInt(0, (int)NP-1);
+			index2 = CRN.rInt((int)NP-1, 0);
 		}
 		while (index2 == skip || index2 == index1);
 		

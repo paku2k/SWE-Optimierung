@@ -30,6 +30,8 @@ public class Convergence {
 	ArrayList<Double> floatingGradientMean=new ArrayList<Double>();
 	
 	public Convergence(String ident, boolean print, double convergence) throws IOException {	
+		//This creates a Convergence object, which monitors the convergence behaviour over the number of iterations
+		
 		if(convergence!=0.0) {
 			this.gradientDecay = 0.001/convergence;
 		}
@@ -69,6 +71,8 @@ public class Convergence {
 
 	
 	public boolean update(double sum, double best) throws IOException {
+		//This method should be called every generation, to update the convergence values
+		
 		if(iterations==0) {
 			this.lastBest=best;
 			this.lastSum=sum;
@@ -122,8 +126,6 @@ public class Convergence {
 			maxGradientBest=gradientMeanBest;
 		}
 		
-		//System.out.println(floatingGradientMean.toString());
-		//System.out.println(gradientMean);
 		
 		if(print) {
 			file.write(iterations+";"+sum+";"+gradientMean+";"+best+";"+gradientMeanBest);
@@ -141,9 +143,7 @@ public class Convergence {
 			
 			if(gradientMean<maxGradient*gradientDecay&&bestGradientCount>=20&&convergence!=0.0)
 			{
-				//System.out.println("Gradient converged to: "+gradientMean+" with the criteria being "+(gradientDecay*maxGradient)+" with max Gradient in the first "+minObserveGenerations+" iterations of: "+maxGradient);
-				//System.out.println("Gradient of MinValue converged to: "+gradientMeanBest+" with the criteria being "+(gradientDecay*maxGradientBest)+" with max Gradient in the first "+minObserveGenerations+" iterations of: "+maxGradientBest);
-
+				
 				return true;
 			}
 		}
