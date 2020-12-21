@@ -547,7 +547,12 @@ function newOptimizerContentDiv(id, algorithm, creator){
             table3a.appendChild(tr3a1);
             table3a.appendChild(tr3a2);
                 var pars;
-
+    
+                if(OptiAlgorithms_JSON == null){                    
+                    sendCmds(["om lsalgo -json"], REFRESH_RATE_OPTIMIZER-100, tab_optimizer_responseHandler);
+                    return;
+                }
+    
                 for(var i=0; i < OptiAlgorithms_JSON.length; i++){
                     if(OptiAlgorithms_JSON[i].algorithm == algorithm){
                         pars = OptiAlgorithms_JSON[i].parameters;
@@ -662,6 +667,11 @@ function optimizerCfgReset(id, name){
     
     var pars;
     
+    if(OptiAlgorithms_JSON == null){                    
+        sendCmds(["om lsalgo -json"], REFRESH_RATE_OPTIMIZER-100, tab_optimizer_responseHandler);
+        return;
+    }
+    
     for(var i=0; i < OptiAlgorithms_JSON.length; i++){
         if(OptiAlgorithms_JSON[i].algorithm == optimizer.algorithm){
             pars = OptiAlgorithms_JSON[i].parameters;
@@ -745,6 +755,10 @@ function createOptimizer(){
 
 
 function createOptiAlgorithmSelectHTML(algorithm){
+    var options = document.getElementById("optialgorithm").children;
+    for(var i=0; i < options.length; i++){
+        if(options[i].innerHTML == algorithm) return;
+    }
     var option = document.createElement("option");
     option.setAttribute("value", algorithm);
     option.innerHTML = algorithm;
