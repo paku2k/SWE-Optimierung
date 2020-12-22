@@ -1,5 +1,6 @@
 package swe_mo.solver;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import org.json.simple.JSONArray;
@@ -10,7 +11,7 @@ import swe_mo.solver.de.Particle_DE;
 
 public class FitnessFunction {
 	
-	public static int numberOfHardCoded = 19;
+	public static int numberOfHardCoded = 27;
 	
 	public static double solve(int index, Particle_DE vector) throws Exception {
 	//the index refers to Cakar's list of functions	
@@ -53,6 +54,24 @@ public class FitnessFunction {
 				return calculatef17(vector);
 			case 18:
 				return calculatef18(vector);
+
+			case 19:
+				return calculatef19(vector.position);
+			case 20:
+				return calculatef20(vector.position);
+			case 21:
+				return calculatef21(vector.position);
+			case 22:
+				return calculatef22(vector.position);
+			case 23:
+				return calculatef23(vector.position);
+			case 24:
+				return calculatef24(vector.position);
+			case 25:
+				return calculatef25(vector.position);
+			case 26:
+				return calculatef26(vector.position);
+			
 			default:
 				if(FitnessFunctionManager.exists(index)) {
 					return FitnessFunctionManager.calculate(index, vector);
@@ -63,6 +82,21 @@ public class FitnessFunction {
 		
 	}
 
+	 
+	 
+	 
+	 
+	 static double calculateRastrigin(Particle_DE vector) {
+		 double sum = 0.0;
+		 double A = 10.0;
+		 for(Double d : vector.position)
+		 {
+			 sum += (Math.pow(d, 2))-A*Math.cos(2*Math.PI*d);
+		 }
+		 
+		 return sum+A*vector.position.size();
+		 
+	 }
 	 
 	 static double calculatef1(Particle_DE vector)	{
 		 double sum = 0.0;
@@ -307,20 +341,129 @@ public class FitnessFunction {
 		 
 		 return (1+Math.pow((x0+x1+1),2)*(19-14*x0+3*x0*x0-14*x1+6*x0*x1+3*x1*x1))*(30+Math.pow(2*x0-3*x1,2)*(18-32*x0+12*x0*x0+48*x1-36*x0*x1+27*x1*x1));
 	 }
+
 	 
-	 
-	 
-	 
-	 static double calculateRastrigin(Particle_DE vector) {
-		 double sum = 0.0;
-		 double A = 10.0;
-		 for(Double d : vector.position)
-		 {
-			 sum += (Math.pow(d, 2))-A*Math.cos(2*Math.PI*d);
+	 static double calculatef19(ArrayList<Double> trialSolution) {
+		double newFitness = 0;
+		double x1 = trialSolution.get(0); 
+		double x2 = trialSolution.get(1);
+		double a = 1+(x1+x2+1)*(x1+x2+1)*(19-14*x1+3*x1*x1-14*x2+6*x1*x2+3*x2*x2);
+		double b = 30+(2*x1-3*x2)*(2*x1-3*x2)*(18-32*x1+12*x1*x1+48*x2-36*x1*x2+27*x2*x2);
+		newFitness = a*b;
+		return newFitness;
+	 }
+	 static double calculatef20(ArrayList<Double> trialSolution) {
+		 double newFitness = 0;
+		 double p[][] = {{0.1312,	0.1696,		0.5569,		0.0124,		0.8283,		0.5886}, 
+		 					{0.2329,	0.4135,		0.8307,		0.3736,		0.1004,		0.9991},
+		 					{0.2348,	0.1451,		0.3522,		0.2883,		0.3047,		0.6650},
+		 					{0.4047,	0.8828,		0.8732,		0.5743,		0.1091,		0.0381}};
+
+		 double a[][] = {{10.0, 	3.0, 	17.0, 	3.5,	1.7,	8.0}, 
+		 					{0.05, 	10.0, 	17.0, 	0.1, 	8.0,	14.0},
+		 					{3.0, 	3.5, 	1.7, 	10.0, 	17.0, 	8.0},
+		 					{17.0,	8.0,	0.05,	10.0,	0.1,	14.0}};
+
+		 double c[] = 	{1.0,	1.2,	3.0,	3.2};
+
+		 for (int i = 0 ; i < 4 ;++i){
+		 	double sm = 0;
+		 	for (int j = 0 ; j < 6; ++j){	
+		 		sm += a[i][j] * (trialSolution.get(j) - p [i][j]) * (trialSolution.get(j) - p [i][j]);
+		 	}
+		 	newFitness += c[i] * Math.exp(-sm);
 		 }
-		 
-		 return sum+A*vector.position.size();
-		 
+		 newFitness *= -1;
+		 return newFitness;
+	 }	 
+	 static double calculatef21(ArrayList<Double> trialSolution) {
+		 double newFitness = 0;
+		 for (int i = 1 ; i <= trialSolution.size(); ++i){	
+		 	double xi = trialSolution.get(i-1);
+		 	
+		 	newFitness += Math.sin(xi) * Math.pow(Math.sin((i*xi*xi)/ Math.PI), 2*10);
+		 }
+		 newFitness *= -1;
+		 return newFitness;
+	 }	 
+	 static double calculatef22(ArrayList<Double> trialSolution) {
+		 double newFitness = 0;
+		 double d = 1; //{1,2,3,4}
+		 double s = 1 - (1 / (2 * Math.sqrt(trialSolution.size() + 20) - 8.2));
+
+		 double mue1 = 2.5;
+		 double mue2 = -1 * (Math.sqrt((mue1*mue1 - d) / s));
+
+		 double firstTerm = 0;
+		 for (int i = 0; i < trialSolution.size(); ++i)
+		 {
+		 	firstTerm += Math.pow(trialSolution.get(i) - mue1, 2);
+		 }
+
+		 double secondTerm = 0;
+		 for (int i = 0; i < trialSolution.size(); ++i)
+		 {
+		 	secondTerm += Math.pow(trialSolution.get(i) - mue2, 2);
+		 }
+		 secondTerm *= s;
+		 secondTerm += (d*trialSolution.size());
+
+		 double thirdTerm = 0;
+		 for (int i = 0; i < trialSolution.size(); ++i)
+		 {
+		 	thirdTerm += (1 - Math.cos(2 * Math.PI * (trialSolution.get(i) - mue1)));
+		 }
+		 thirdTerm *= 10;
+
+		 newFitness = Math.min(firstTerm, secondTerm) + thirdTerm;
+		 return newFitness;
+	 }
+	 static double calculatef23(ArrayList<Double> trialSolution) {
+		 double newFitness = 0;
+		 double s1 = 0;
+		 double s2 = 0;
+
+		 for (int i = 0 ; i < trialSolution.size(); ++i){	
+		 	s1 += Math.pow(trialSolution.get(i)-1, 2.0);
+		 }
+
+		 for (int i = 1 ; i < trialSolution.size(); ++i){	
+		 	s2 += (trialSolution.get(i) *  trialSolution.get(i-1));
+		 }
+		 newFitness =  s1-s2;
+		 return newFitness;
+	 }
+	 static double calculatef24(ArrayList<Double> trialSolution) {
+		 double newFitness = 0;
+		 for (int i = 1; i < trialSolution.size(); ++i)
+		 {
+		 	newFitness += trialSolution.get(i) * trialSolution.get(i);
+		 }
+
+		 newFitness *= 10e6;
+		 newFitness += trialSolution.get(0) * trialSolution.get(0);
+		 return newFitness;
+	 }
+	 static double calculatef25(ArrayList<Double> trialSolution) {
+		 double newFitness = 0;
+		 double x1 = trialSolution.get(0); double x2 = trialSolution.get(1);
+		 double x3 = trialSolution.get(2); double x4 = trialSolution.get(3);
+
+		 newFitness =  100 * Math.pow((x1*x1 - x2),2) + Math.pow(x1-1,2) + 
+		 Math.pow(x3-1,2) + 90 * Math.pow((x3*x3 - x4),2) + 10.1 * (Math.pow(x2-1, 2) + Math.pow(x4-1, 2)) + 
+		 19.8*(x2-1)*(x4-1);
+		 return newFitness;
+	 }
+	 static double calculatef26(ArrayList<Double> trialSolution) {
+		 double newFitness = 0;
+		 for (int i = 1 ; i < trialSolution.size(); ++i){	
+		 	double xi		= trialSolution.get(i);
+		 	double xi_1		= trialSolution.get(i-1);
+		 	
+		 	newFitness += i*(((2*xi*xi) - xi_1)*((2*xi*xi) - xi_1));      
+		 }
+		 newFitness += Math.pow(trialSolution.get(0) - 1,2);
+		 return newFitness;
 	 }
 	 
 	 
@@ -373,6 +516,28 @@ public class FitnessFunction {
 		 	case 18:
 		 		if(t.equals("lower")) return -2.0;
 		 		if(t.equals("upper")) return 2.0;
+
+		 	case 19:
+		 		if(t.equals("lower")) return -2.0;
+		 		if(t.equals("upper")) return 2.0;
+		 	case 20:
+		 		if(t.equals("lower")) return -1.0;
+		 		if(t.equals("upper")) return 1.0;
+		 	case 21:
+		 		if(t.equals("lower")) return -3.14;
+		 		if(t.equals("upper")) return 3.14;
+		 	case 22:
+		 		if(t.equals("lower")) return -5.12;
+		 		if(t.equals("upper")) return 5.12;
+		 	case 23:
+		 	case 24:
+		 		if(t.equals("lower")) return -100.0;
+		 		if(t.equals("upper")) return 100.0;
+		 	case 25:
+		 	case 26:
+		 		if(t.equals("lower")) return -10.0;
+		 		if(t.equals("upper")) return 10.0;
+		 	
 		 	default:
 				if(FitnessFunctionManager.exists(index)) {
 					if(t.equals("lower")) return FitnessFunctionManager.getBoundaryLower(index);
