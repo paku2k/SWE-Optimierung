@@ -58,7 +58,6 @@ public class DEbest1 extends DErand1{
 				if(p.position.get(i)<0) {
 					p.position.set(i, (double) 0);
 				}
-				System.out.println(p.position.get(i)+"  "+this.upperBound);
 			}else{
 				if(p.position.get(i)>this.lowerBound) {
 					p.position.set(i, this.lowerBound);
@@ -66,10 +65,8 @@ public class DEbest1 extends DErand1{
 				if(p.position.get(i)<0) {
 					p.position.set(i, (double) 0);
 				}
-				System.out.println(p.position.get(i)+"  "+this.lowerBound);
 			}
 		}
-		System.out.println("---");
 		
 		return p;
 	}

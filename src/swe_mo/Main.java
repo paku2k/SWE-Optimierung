@@ -20,6 +20,8 @@ public class Main {
 			
 			UiBackend.start();
 			
+			score.result();
+			
 			Settings.save();
 			clogger.stop();
 			
