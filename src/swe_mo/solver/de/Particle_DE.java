@@ -36,6 +36,7 @@ public class Particle_DE {
 			this.position.set(i, part2.position.get(i)+this.position.get(i));
 		}
 		
+		
 	}
 	
 	public void substract(Particle_DE part2) {
