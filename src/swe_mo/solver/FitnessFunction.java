@@ -7,11 +7,12 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import swe_mo.fitnessfunction.FitnessFunctionManager;
+import swe_mo.fitnessfunction.reply.score;
 import swe_mo.solver.de.Particle_DE;
 
 public class FitnessFunction {
 	
-	public static int numberOfHardCoded = 27;
+	public static int numberOfHardCoded = 28;
 	
 	public static double solve(int index, Particle_DE vector) throws Exception {
 	//the index refers to Cakar's list of functions	
@@ -71,6 +72,8 @@ public class FitnessFunction {
 				return calculatef25(vector.position);
 			case 26:
 				return calculatef26(vector.position);
+			case 27:
+				return score.calculate_score(vector);
 			
 			default:
 				if(FitnessFunctionManager.exists(index)) {
