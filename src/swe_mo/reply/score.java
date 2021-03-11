@@ -1,4 +1,4 @@
-package swe_mo.fitnessfunction.reply;
+package swe_mo.reply;
 
 import swe_mo.solver.de.Particle_DE;
 

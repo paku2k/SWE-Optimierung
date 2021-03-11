@@ -1,6 +1,6 @@
 package swe_mo;
 
-import swe_mo.fitnessfunction.reply.score;
+import swe_mo.reply.score;
 import swe_mo.ui.*;
 
 

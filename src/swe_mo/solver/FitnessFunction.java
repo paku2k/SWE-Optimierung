@@ -7,7 +7,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import swe_mo.fitnessfunction.FitnessFunctionManager;
-import swe_mo.fitnessfunction.reply.score;
+import swe_mo.reply.score;
 import swe_mo.solver.de.Particle_DE;
 
 public class FitnessFunction {
