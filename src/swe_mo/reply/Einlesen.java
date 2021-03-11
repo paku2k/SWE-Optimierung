@@ -12,6 +12,7 @@ public class Einlesen {
     int numberOfBuildings;
     int numberOfAntenna;
     int reward;
+    
 
     public void Einlesen(String filePath) throws FileNotFoundException {
         File file = new File(filePath);
