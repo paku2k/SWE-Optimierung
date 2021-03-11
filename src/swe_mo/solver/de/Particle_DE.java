@@ -13,8 +13,12 @@ public class Particle_DE {
 		//This constructor creates a particle with the given dimension 
 		//and initializes all dimensions with a random number within the given bounds
 
-	    for(int i = dimension; i>0; i--) {
-	    	position.add(CRN.rn(max, min));
+	    for(int i = 0; i<dimension; i++) {
+	    	if(i%2==0) {
+	    		position.add(CRN.rn(max, 0));
+	    	} else {
+	    		position.add(CRN.rn(min, 0));	    		
+	    	}
 	    }
 	  }
 	
