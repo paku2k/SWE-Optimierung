@@ -59,7 +59,8 @@ public class DErand1 {
 		xPop.clear();
 		
 		for(int i = 0; i<NP; i++) {
-			Particle_DE part = new Particle_DE(N, lowerBound, upperBound);
+			Particle_DE part = new Particle_DE(N, upperBound, lowerBound);
+
 	    	xPop.add(part);
 	    }
 		this.convergenceCrit=NP*N*(upperBound-lowerBound)*10E-5*convergence;
@@ -165,7 +166,7 @@ public class DErand1 {
 		
 
 		for(int i = 0; i<NP; i++) {
-			Particle_DE part = new Particle_DE(N, lowerBound, upperBound);
+			Particle_DE part = new Particle_DE(N, upperBound, lowerBound);
 	    	xPop.add(part);
 	    }
 		
@@ -197,7 +198,7 @@ public class DErand1 {
 			for(int i=0; i<NP; i++) {
 
 				xPop.set(i, compare(i, crossOver(xPop.get(i), calculateV(i))));
-
+				
 			}
 			
 			if(g!=null) {

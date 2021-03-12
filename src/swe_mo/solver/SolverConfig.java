@@ -1,7 +1,6 @@
 package swe_mo.solver;
 
 import swe_mo.solver.de.DErand1;
-import swe_mo.reply.score;
 import swe_mo.solver.de.DEbest1;
 import swe_mo.solver.de.DEbest2;
 import swe_mo.solver.de.DErandToBest1;
@@ -320,8 +319,6 @@ public class SolverConfig {
 	
 	public static SolverConfig getDefault(String algorithm) throws Exception {
 		switch(algorithm) {
-			case "DEbest1_reply":
-				return score.defaultConfig();
 			case "DErand1":
 				return DErand1.defaultConfig();
 			case "DEbest1":
@@ -346,9 +343,6 @@ public class SolverConfig {
 	public static SolverResult solveMethod(String algorithm, int id, SolverConfig config) throws Exception {
 
 		switch(algorithm) {
-			case "DEbest1_reply":
-				return solveMethod("DEbest1",id,config);
-				
 			case "DErand1":
 				return new DErand1(config.N,
 										 config.NP,
@@ -486,7 +480,6 @@ public class SolverConfig {
 		algorithms.add("PSOnsc");
 		algorithms.add("PSOgnsc");
 		algorithms.add("PSOgscD");
-		algorithms.add("DEbest1_reply");
 		
 		
 		if(!pars) {
