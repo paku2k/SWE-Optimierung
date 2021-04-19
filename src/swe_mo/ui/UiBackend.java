@@ -432,6 +432,7 @@ public class UiBackend {
 				
 				if(cmd_queue.isEmpty()) {
 					Thread_WebInterfaceServer = new Thread() { public void run() {try {wis.start();} catch (Exception e) {clogger.err(AUTH, "Thread_WebInterfaceServer", e);}}};
+					Thread_WebInterfaceServer.setPriority(Thread.MAX_PRIORITY);
 					Thread_WebInterfaceServer.start();
 					return "Starting WIS (Port: "+wis.getPort()+")";
 				}
